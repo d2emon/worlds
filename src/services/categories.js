@@ -29,7 +29,7 @@ export default {
   getCategories: () => Promise
     .resolve(categories.map(title => ({
       title,
-      src: images[Math.floor(Math.random() * images.length)],
+      image: images[Math.floor(Math.random() * images.length)],
       to: '/',
     }))),
 };
