@@ -21,6 +21,7 @@ const mutations = {
 const actions = {
   getPortal: ({ commit }) => portalService
     .getPortal()
+    .then(portal => markdown2html(portal))
     .then(portal => commit('setPortal', portal)),
   getWorlds: ({ commit }) => worldsService
     .getWorlds()

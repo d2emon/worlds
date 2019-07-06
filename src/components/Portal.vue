@@ -24,14 +24,11 @@
         >
           <v-layout fill-height>
             <v-flex xs12 align-end flexbox>
-              <v-card-text class="white--text">
-                <!-- Описание портала. -->
-                <p
-                  v-for="(s, id) in portal"
-                  :key="id"
-                  v-text="s"
-                />
-              </v-card-text>
+              <!-- Описание портала. -->
+              <v-card-text
+                class="white--text"
+                v-html="portal"
+              />
             </v-flex>
           </v-layout>
         </v-container>

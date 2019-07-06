@@ -1,11 +1,8 @@
+import Axios from './axios_helper';
 import markdown from './markdown';
+import Url from './url';
 
-export const imageUrl = image => (
-  image ? `/images/worlds/${image}` : '/images/portal.jpg'
-);
-
-export const worldUrl = slug => (
-  slug  ? `/world/${slug}` : '/'
-);
-
+export const Api = Axios;
+export const imageUrl = Url.imageUrl;
+export const worldUrl = Url.worldUrl;
 export const markdown2html = text => text && markdown(text);

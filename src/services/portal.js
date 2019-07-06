@@ -1,3 +1,5 @@
+import { Api } from '@/helpers';
+
 import {itemIds, getRandomItem} from './data/portal';
 
 const validate5 = (item, items) => (item && (items[4].negative === item.negative));
@@ -38,6 +40,7 @@ const generate = () => {
 };
 
 export default {
+  /*
   getPortal: () => Promise.resolve(generate())
     .then(names => [
       `You ${names[1]} forward through the ${names[2]} portal ${names[3]}.
@@ -52,4 +55,8 @@ export default {
       `${names[18]} as ${names[19]}.
        But, with ${names[20][0]}, ${names[20][1]}, and ${names[20][2]}, ${names[21]}.`,
     ]),
+   */
+  getPortal: () => Api
+    .get('/api/portal')
+    .then(({ data }) => data.portal),
 };
