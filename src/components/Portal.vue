@@ -2,6 +2,7 @@
   <v-dialog
     v-model="value"
     width="500"
+    scrollable
   >
     <v-card>
       <v-card-title
@@ -19,12 +20,18 @@
           fill-height
           fluid
           pa-2
+          style="max-height: 200px; overflow: auto;"
         >
           <v-layout fill-height>
             <v-flex xs12 align-end flexbox>
-              <div class="white--text">
-                Описание портала.
-              </div>
+              <v-card-text class="white--text">
+                <!-- Описание портала. -->
+                <p
+                  v-for="(s, id) in portal"
+                  :key="id"
+                  v-text="s"
+                />
+              </v-card-text>
             </v-flex>
           </v-layout>
         </v-container>
@@ -47,14 +54,29 @@
 </template>
 
 <script>
+import {
+  mapState,
+  mapActions,
+} from 'vuex';
+
 export default {
   name: 'Portal',
   props: [
     'value',
   ],
-  data: () => ({
-    show: false,
-  }),
+  computed: {
+    ...mapState('worlds', [
+      'portal',
+    ]),
+  },
+  methods: {
+    ...mapActions('worlds', [
+      'getPortal',
+    ]),
+  },
+  mounted() {
+    this.getPortal();
+  },
 };
 </script>
 
