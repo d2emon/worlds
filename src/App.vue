@@ -27,3 +27,11 @@ export default {
   name: 'App',
 };
 </script>
+
+<style>
+blockquote {
+  border-left: .25em solid #dfe2e5;
+  color: #6a737d;
+  padding: 0 1em;
+}
+</style>

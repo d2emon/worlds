@@ -1,17 +1,9 @@
 import alternity from './alternity';
+import assassinsCreed from './assassinsCreed';
 
 const worlds = [
   alternity,
-  /*
-  {
-    title: 'Alternity',
-    image: 'al-logos.gif',
-    slug: 'alternity',
-  },
-   */
-  {
-    title: 'Assassin\'s Creed',
-  },
+  assassinsCreed,
   {
     title: 'Birthright',
     image: 'br-logos.gif',
