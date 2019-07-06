@@ -1,16 +1,24 @@
 <template>
   <v-container>
-    <v-btn
-      color="primary"
-      dark
-      @click.stop="enteringPortal = true"
-    >
-      Случайный Мир
-    </v-btn>
+    <v-card>
+      <v-card-title class="headline">
+        Миры
+      </v-card-title>
 
-    <portal v-model="enteringPortal" />
+      <v-container>
+        <v-btn
+          color="primary"
+          dark
+          @click.stop="enterPortal"
+        >
+          Случайный Мир
+        </v-btn>
 
-    <items-list :items="worlds" />
+        <portal v-model="enteringPortal" />
+
+        <items-list :items="worlds" />
+      </v-container>
+    </v-card>
   </v-container>
 </template>
 
@@ -26,21 +34,27 @@ export default {
     Portal: () => import('@/components/Portal.vue'),
     ItemsList: () => import('@/components/ItemsList.vue'),
   },
+  /*
   computed: {
     ...mapState('worlds', [
       'worlds',
     ]),
   },
+  */
+  props: [
+    'worlds',
+  ],
   data: () => ({
     enteringPortal: false,
   }),
   methods: {
     ...mapActions('worlds', [
-      'getWorlds',
+      'getPortal',
     ]),
-  },
-  mounted() {
-    this.getWorlds();
+    enterPortal() {
+      this.getPortal();
+      this.enteringPortal = true;
+    },
   },
 };
 </script>

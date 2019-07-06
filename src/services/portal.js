@@ -1,13 +1,17 @@
 import {itemIds, getRandomItem} from './data/portal';
 
-const validate5 = (item, items) => item && (items[4].negative === item.negative);
-const validate8 = (item, items) => item && (items[7].hostile === item.hostile);
+const validate5 = (item, items) => (item && (items[4].negative === item.negative));
+const validate8 = (item, items) => (item && (items[7].hostile === item.hostile));
 
-const generate5 = (item, items) => validate5(item, items) ? item : generate5(getRandomItem(5), items);
-const generate8 = (item, items) => validate8(item, items) ? item : generate8(getRandomItem(8), items);
+const generate5 = (item, items) => (
+  validate5(item, items) ? item : generate5(getRandomItem(5), items)
+);
+const generate8 = (item, items) => (
+  validate8(item, items) ? item : generate8(getRandomItem(8), items)
+);
 const generateMultiple = (itemId, count) => {
   const items = [];
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i += 1) {
     let item = null;
     while ((!item) || (items.indexOf(item) > 0)) {
       item = getRandomItem(itemId);

@@ -2,7 +2,9 @@
   <v-app>
     <v-toolbar app>
       <v-toolbar-title class="headline text-uppercase">
-        <span>Миры</span>
+        <router-link to="/">
+          <span>Миры</span>
+        </router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn

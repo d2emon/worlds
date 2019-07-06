@@ -1,13 +1,16 @@
+import alternity from './alternity';
+
 const worlds = [
+  alternity,
+  /*
   {
     title: 'Alternity',
     image: 'al-logos.gif',
     slug: 'alternity',
   },
+   */
   {
     title: 'Assassin\'s Creed',
-    //
-    // image: '3e-logos.gif',
   },
   {
     title: 'Birthright',
@@ -136,8 +139,6 @@ const worlds = [
   },
   {
     title: 'SCP Foundation',
-    //
-    // image: 'hw-logos.gif',
   },
   {
     title: 'Spelljammer',
@@ -156,13 +157,9 @@ const worlds = [
   },
   {
     title: 'Warhammer 40.000',
-    //
-    // image: 'dd-logos.gif',
   },
   {
     title: 'Warhammer Fantasy',
-    //
-    // image: 'gz-logos.gif',
   },
   {
     title: 'Wilderlands of High Fantasy',
@@ -196,8 +193,6 @@ const worlds = [
   },
   {
     title: 'Вестерос',
-    //
-    // image: 'cm-logos.gif',
   },
   {
     title: 'Вечный Воитель',
@@ -216,8 +211,6 @@ const worlds = [
   },
   {
     title: 'Дино',
-    //
-    // image: 'd20-logos.jpg',
   },
   { title: 'Звездные Войны' },
   { title: 'Кинг' },
@@ -232,7 +225,7 @@ const worlds = [
     slug: 'korol-i-shut',
   },
   {
-    title: 'Кром',
+    title: 'Крон',
     image: 'chronos.jpg',
     slug: 'chronos',
   },
@@ -265,6 +258,12 @@ const worlds = [
     slug: 'spectre',
   },
 ];
+// image: '3e-logos.gif',
+// image: 'hw-logos.gif',
+// image: 'dd-logos.gif',
+// image: 'gz-logos.gif',
+// image: 'cm-logos.gif',
+// image: 'd20-logos.jpg',
 
 export default worlds.map(world => ({
   // image: images[Math.floor(Math.random() * images.length)],

@@ -74,6 +74,9 @@ export default {
       'getPortal',
     ]),
   },
+  watch: {
+    value() { this.getPortal(); },
+  },
   mounted() {
     this.getPortal();
   },

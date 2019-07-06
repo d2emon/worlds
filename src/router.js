@@ -11,6 +11,11 @@ export default new Router({
       component: () => import('@/views/Worlds.vue'),
     },
     {
+      path: '/world/:slug',
+      name: 'world',
+      component: () => import('@/views/World.vue'),
+    },
+    {
       path: '/hello',
       name: 'hello',
       component: () => import('@/views/Home.vue'),

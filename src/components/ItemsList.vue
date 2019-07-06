@@ -10,7 +10,7 @@
         v-bind="{ [item.flex]: true }"
       >
         <v-card
-          :to="item.to"
+          :to="item.url"
         >
           <v-img
             :src="item.image"

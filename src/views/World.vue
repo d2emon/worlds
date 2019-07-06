@@ -1,7 +1,7 @@
 <template>
   <v-layout justify-center>
     <v-flex xs12 sm9>
-      <worlds-list :worlds="worlds" />
+      <world-card :world="world" />
     </v-flex>
   </v-layout>
 </template>
@@ -13,22 +13,23 @@ import {
 } from 'vuex';
 
 export default {
-  name: 'Worlds',
+  name: 'World',
   components: {
-    WorldsList: () => import('@/components/Worlds.vue'),
+    WorldCard: () => import('@/components/World.vue'),
   },
   computed: {
     ...mapState('worlds', [
-      'worlds',
+      'world',
     ]),
   },
   methods: {
     ...mapActions('worlds', [
-      'getWorlds',
+      'getWorld',
     ]),
   },
   mounted() {
-    this.getWorlds();
+    const { slug } = this.$route.params;
+    this.getWorld(slug);
   },
 };
 </script>

@@ -1,30 +1,37 @@
 import worldsService from '@/services/worlds';
 import portalService from '@/services/portal';
+import {
+  markdown2html,
+} from '@/helpers';
 
 const state = {
-  worlds: [],
   portal: [],
+  worlds: [],
+  world: null,
 };
 
 const getters = {};
 
 const mutations = {
-  setWorlds: (state, worlds) => { state.worlds = worlds; },
   setPortal: (state, portal) => { state.portal = portal; },
+  setWorlds: (state, worlds) => { state.worlds = worlds; },
+  setWorld: (state, world) => { state.world = world; },
 };
 
 const actions = {
-  getWorlds: ({ commit }) => worldsService
-    .getWorlds()
-    .then(worlds => worlds.map(world => ({
-      ...world,
-      to: world.slug ? `/world/${world.slug}` : '/',
-      image: world.image ? `/images/worlds/${world.image}` : '/images/portal.jpg',
-    })))
-    .then(worlds => commit('setWorlds', worlds)),
   getPortal: ({ commit }) => portalService
     .getPortal()
     .then(portal => commit('setPortal', portal)),
+  getWorlds: ({ commit }) => worldsService
+    .getWorlds()
+    .then(worlds => commit('setWorlds', worlds)),
+  getWorld: ({ commit }, slug) => worldsService
+    .getWorld(slug)
+    .then(world => ({
+      ...world,
+      html: world.text ? markdown2html(world.text) : undefined,
+    }))
+    .then(world => commit('setWorld', world)),
 };
 
 export default {
