@@ -11,6 +11,11 @@ export default new Router({
       component: () => import('@/views/Worlds.vue'),
     },
     {
+      path: '/random-world',
+      name: 'RandomWorld',
+      component: () => import('@/views/RandomWorld.vue'),
+    },
+    {
       path: '/world/:slug',
       name: 'world',
       component: () => import('@/views/World.vue'),
