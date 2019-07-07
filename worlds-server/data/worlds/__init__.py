@@ -1,7 +1,5 @@
 from app import app
 from ..utils import Database
-from .alternity import alternity
-from .assassins_creed import assassins_creed
 from ..wikifiles import get_wiki
 
 
@@ -23,22 +21,35 @@ class WorldsDB(Database):
 
 
 WORLDS = WorldsDB([
-    alternity,
-    assassins_creed,
+    {
+        'title': 'Alternity',
+        'image': 'alternity/al-logos.gif',
+        'slug': 'alternity',
+        'wiki': 'alternity/index.md',
+    },
+    {
+        'title': 'Assassin\'s Creed',
+        'image': 'assassins-creed/assassins.jpg',
+        'slug': 'assassins-creed',
+        'wiki': 'assassins-creed/index.md',
+    },
     {
         'title': 'Birthright',
         'image': 'br-logos.gif',
         'slug': 'birthright',
+        'wiki': 'birthright/index.md',
     },
     {
         'title': 'Blackmoor',
         'image': 'Blackmoor_logo.png',
         'slug': 'blackmoor',
+        'wiki': 'blackmoor/index.md',
     },
     {
         'title': 'Council of Wyrms',
         'image': 'Council_of_Wyrms.jpg',
         'slug': 'council-of-wyrms',
+        'wiki': 'council-of-wyrms/index.md',
     },
     {
         'title': 'Creature Crucible',
