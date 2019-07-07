@@ -1,9 +1,27 @@
-import uuid
+from ..utils import Database
 from .alternity import alternity
 from .assassins_creed import assassins_creed
+from ..wikifiles import get_wiki
 
 
-WORLDS_DATA = [
+class WorldsDB(Database):
+    @classmethod
+    def image_url(cls, item):
+        image = item.get('image', 'portal.jpg')
+        return '/media/images/worlds/{}'.format(image)
+
+    @classmethod
+    def world_text(cls, item):
+        wiki = item.get('wiki')
+        if wiki is None:
+            return item.get('text')
+        return get_wiki(wiki)
+
+    def by_slug(self, slug):
+        return next((item for item in self.items if item.get('slug') == slug), None)
+
+
+WORLDS = WorldsDB([
     alternity,
     assassins_creed,
     {
@@ -251,44 +269,10 @@ WORLDS_DATA = [
         'image': 'Spectre.jpg',
         'slug': 'spectre',
     },
-]
+])
 # 'image': '3e-logos.gif',
 # 'image': 'hw-logos.gif',
 # 'image': 'dd-logos.gif',
 # 'image': 'gz-logos.gif',
 # 'image': 'cm-logos.gif',
 # 'image': 'd20-logos.jpg',
-
-
-def make_world(world_data):
-    world = {
-        'id': uuid.uuid4().hex,
-    }
-    world.update(world_data)
-    return world
-
-
-WORLDS = list(map(make_world, WORLDS_DATA))
-
-
-def add(**data):
-    WORLDS.append({
-        'id': uuid.uuid4().hex,
-        'title': data.get('title'),
-        'image': data.get('image'),
-        'slug': data.get('slug')
-    })
-    return True
-
-
-def delete(item_id):
-    for item in WORLDS:
-        if item['id'] == item_id:
-            WORLDS.remove(item)
-            return True
-    return False
-
-
-def edit(item_id, **data):
-    delete(item_id)
-    return add(**data)

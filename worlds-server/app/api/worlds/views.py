@@ -1,20 +1,6 @@
 from flask import jsonify
 from . import blueprint
-from .data import WORLDS
-from .wikifiles import get_wiki
-
-
-def image_url(image):
-    if not image:
-        image = 'portal.jpg'
-    return '/media/images/worlds/{}'.format(image)
-
-
-def world_text(world_data):
-    wiki = world_data.get('wiki')
-    if wiki is None:
-        return world_data.get('text')
-    return get_wiki(wiki)
+from data.worlds import WORLDS
 
 
 @blueprint.route('/', methods=['GET'])
@@ -25,15 +11,15 @@ def worlds():
             'id': world_data.get('id'),
             'slug': world_data.get('slug'),
             'title': world_data.get('title'),
-            'image': image_url(world_data.get('image')),
-        } for world_data in WORLDS],
+            'image': WORLDS.image_url(world_data),
+        } for world_data in WORLDS.all()],
     })
 
 
 @blueprint.route('/<slug>', methods=['GET'])
 def world(slug):
-    world = next((world for world in WORLDS if world.get('slug') == slug), None)
-    if world is None:
+    world_data = WORLDS.by_slug(slug)
+    if world_data is None:
         return jsonify({
             'status': 'fail',
         })
@@ -41,10 +27,10 @@ def world(slug):
     return jsonify({
         'status': 'success',
         'world': {
-            'id': world.get('id'),
-            'slug': world.get('slug'),
-            'title': world.get('title'),
-            'image': image_url(world.get('image')),
-            'text': world_text(world),
+            'id': world_data.get('id'),
+            'slug': world_data.get('slug'),
+            'title': world_data.get('title'),
+            'image': WORLDS.image_url(world_data),
+            'text': WORLDS.world_text(world_data),
         },
     })

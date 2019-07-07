@@ -1,6 +1,6 @@
 from flask import jsonify
 from . import blueprint
-from .data import generate
+from data.portal import generate
 
 
 @blueprint.route('/', methods=['GET'])
