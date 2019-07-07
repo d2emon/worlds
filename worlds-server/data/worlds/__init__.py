@@ -1,3 +1,4 @@
+from app import app
 from ..utils import Database
 from .alternity import alternity
 from .assassins_creed import assassins_creed
@@ -8,7 +9,7 @@ class WorldsDB(Database):
     @classmethod
     def image_url(cls, item):
         image = item.get('image', 'portal.jpg')
-        return '/media/images/worlds/{}'.format(image)
+        return '{}/worlds/{}'.format(app.config.get('RESIZE_URL'), image)
 
     @classmethod
     def world_text(cls, item):

@@ -5,6 +5,8 @@
         Миры
       </v-card-title>
 
+      {{config}}
+
       <v-container>
         <portal v-model="enteringPortal" />
 
@@ -17,8 +19,9 @@
             <v-card>
               <v-card-title class="headline">Случайный мир</v-card-title>
 
+              {{config.worldImage}}
               <v-img
-                src="/media/images/worlds/portal.jpg"
+                :src="config.worldImage"
                 height="200px"
               >
                 <v-btn
@@ -63,13 +66,9 @@ export default {
     Portal: () => import('@/components/Portal.vue'),
     ItemsList: () => import('@/components/ItemsList.vue'),
   },
-  /*
   computed: {
-    ...mapState('worlds', [
-      'worlds',
-    ]),
+    ...mapState(['config']),
   },
-  */
   props: [
     'worlds',
   ],

@@ -1,4 +1,7 @@
+import config from './config';
+
+
 export default {
-  imageUrl: image => (image ? `/images/worlds/${image}` : '/images/portal.jpg'),
+  imageUrl: image => config.url + (image ? image : '/images/portal.jpg'),
   worldUrl: slug => (slug  ? `/world/${slug}` : '/'),
 }
