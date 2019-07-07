@@ -20,6 +20,21 @@ class WorldsDB(Database):
         return next((item for item in self.items if item.get('slug') == slug), None)
 
 
+def world_helper(
+    title,
+    slug,
+    image=None,
+):
+    if image is not None:
+        image = "{}/{}".format(slug, image)
+    return {
+        'title': title,
+        'image': image,
+        'slug': slug,
+        'wiki': "{}/index.md".format(slug),
+    }
+
+
 WORLDS = WorldsDB([
     {
         'title': 'Alternity',
@@ -346,12 +361,11 @@ WORLDS = WorldsDB([
         'slug': 'rick-and-morty',
         'wiki': 'rick-and-morty/index.md',
     },
-    {
-        'title': 'Спектр',
-        'image': 'spectre/Spectre.jpg',
-        'slug': 'spectre',
-        'wiki': 'spectre/index.md',
-    },
+    world_helper(
+        title="Спектр",
+        slug="spectre",
+        image="Spectre.jpg",
+    ),
 ])
 # 'image': '3e-logos.gif',
 # 'image': 'hw-logos.gif',
