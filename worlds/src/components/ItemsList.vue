@@ -69,7 +69,6 @@ export default {
   }),
   watch: {
     items: 'setCards',
-    // (value) { this.setCards(value); },
   },
   methods: {
     getFlex() {
@@ -78,6 +77,7 @@ export default {
       return size * 2;
     },
     setCards(items) {
+      this.row = 6 - this.startOffset;
       this.cards = items.map((item, key) => ({
         key,
         ...item,
@@ -87,7 +87,6 @@ export default {
     },
   },
   mounted() {
-    this.row = 6 - this.startOffset;
     this.setCards(this.items);
   },
 };
