@@ -6,17 +6,46 @@
       </v-card-title>
 
       <v-container>
-        <v-btn
-          color="primary"
-          dark
-          @click.stop="enterPortal"
-        >
-          Случайный Мир
-        </v-btn>
-
         <portal v-model="enteringPortal" />
 
-        <items-list :items="worlds" />
+        <items-list
+          :items="worlds"
+          :start-offset="2"
+        >
+          <template v-slot:before>
+          <v-flex sm4>
+            <v-card>
+              <v-card-title class="headline">Случайный мир</v-card-title>
+
+              <v-img
+                src="/media/images/worlds/portal.jpg"
+                height="200px"
+              >
+                <v-btn
+                  color="primary"
+                  dark
+                  @click.stop="enterPortal"
+                >
+                  Случайный Мир
+                </v-btn>
+              </v-img>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn icon>
+                  <v-icon>favorite</v-icon>
+                </v-btn>
+                <v-btn icon>
+                  <v-icon>bookmark</v-icon>
+                </v-btn>
+                <v-btn icon>
+                  <v-icon>share</v-icon>
+                </v-btn>
+              </v-card-actions>
+             </v-card>
+            </v-flex>
+          </template>
+        </items-list>
       </v-container>
     </v-card>
   </v-container>

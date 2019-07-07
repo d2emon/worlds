@@ -4,6 +4,8 @@
     grid-list-md
   >
     <v-layout row wrap>
+      <slot name="before" />
+
       <v-flex
         v-for="item in cards"
         :key="item.key"
@@ -12,11 +14,16 @@
         <v-card
           :to="item.url"
         >
+          <v-card-title
+            class="headline"
+            v-text="item.title"
+          />
+
           <v-img
             :src="item.image"
             height="200px"
           >
-            <v-container
+            <!-- v-container
               fill-height
               fluid
               pa-2
@@ -26,7 +33,7 @@
                   <span class="headline white--text" v-text="item.title"></span>
                 </v-flex>
               </v-layout>
-            </v-container>
+            </v-container -->
           </v-img>
 
           <v-card-actions>
@@ -43,6 +50,8 @@
           </v-card-actions>
         </v-card>
       </v-flex>
+
+      <slot name="after" />
     </v-layout>
   </v-container>
 </template>
@@ -52,6 +61,7 @@ export default {
   name: 'ItemsList',
   props: [
     'items',
+    'start-offset',
   ],
   data: () => ({
     row: 6,
@@ -77,6 +87,7 @@ export default {
     },
   },
   mounted() {
+    this.row = 6 - this.startOffset;
     this.setCards(this.items);
   },
 };
