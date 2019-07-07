@@ -1,23 +1,27 @@
 import {
-  imageUrl,
+  Api,
+  // imageUrl,
   worldUrl,
 } from '@/helpers';
-import worlds from './data/worlds';
 
 export default {
-  getWorlds: () => Promise
-    .resolve(worlds)
+  getWorlds: () => Api
+    .get('/api/worlds')
+    .then(({ data }) => data.worlds)
     .then(items => items.map(({
       title,
       image,
       slug,
     }) => ({
       title,
-      image: imageUrl(image),
+      slug,
+      image,
+      // image: imageUrl(image),
       url: worldUrl(slug),
     }))),
-  getWorld: world => Promise
-    .resolve(worlds.find(item => item.slug === world))
+  getWorld: world => Api
+    .get(`/api/worlds/${world}`)
+    .then(({ data }) => data.world)
     .then(({
       title,
       image,
@@ -25,7 +29,9 @@ export default {
       text,
     }) => ({
       title,
-      image: imageUrl(image),
+      slug,
+      image,
+      // image: imageUrl(image),
       url: worldUrl(slug),
       text,
     })),
