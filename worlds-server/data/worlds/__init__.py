@@ -2,8 +2,28 @@ from app import app
 from ..utils import Database
 from ..wikifiles import get_wiki
 
+from .spectre import spectre
+
 
 class WorldsDB(Database):
+    @classmethod
+    def get_text_loader(cls, item):
+        loader = item.get('loader')
+        if loader is not None:
+            return loader
+
+        wiki = item.get('wiki')
+        if wiki is not None:
+            def wiki_loader():
+                return get_wiki(wiki)
+
+            return wiki_loader
+
+        def text_loader():
+            text = item.get('text')
+            return text
+        return text_loader
+
     @classmethod
     def image_url(cls, item):
         image = item.get('image', 'portal.jpg')
@@ -11,31 +31,16 @@ class WorldsDB(Database):
 
     @classmethod
     def world_text(cls, item):
-        wiki = item.get('wiki')
-        if wiki is None:
-            return item.get('text')
-        return get_wiki(wiki)
+        text_loader = cls.get_text_loader(item)
+        if text_loader is None:
+            return None
+        return text_loader()
 
     def by_slug(self, slug):
         return next((item for item in self.items if item.get('slug') == slug), None)
 
 
-def world_helper(
-    title,
-    slug,
-    image=None,
-):
-    if image is not None:
-        image = "{}/{}".format(slug, image)
-    return {
-        'title': title,
-        'image': image,
-        'slug': slug,
-        'wiki': "{}/index.md".format(slug),
-    }
-
-
-WORLDS = WorldsDB([
+WORLDS_DATA = [
     {
         'title': 'Assassin\'s Creed',
         'image': 'assassins-creed/assassins.jpg',
@@ -355,15 +360,15 @@ WORLDS = WorldsDB([
         'slug': 'rick-and-morty',
         'wiki': 'rick-and-morty/index.md',
     },
-    world_helper(
-        title="Спектр",
-        slug="spectre",
-        image="Spectre.jpg",
-    ),
-])
+    spectre,
+]
 # 'image': '3e-logos.gif',
 # 'image': 'hw-logos.gif',
 # 'image': 'dd-logos.gif',
 # 'image': 'gz-logos.gif',
 # 'image': 'cm-logos.gif',
 # 'image': 'd20-logos.jpg',
+
+print(WORLDS_DATA)
+
+WORLDS = WorldsDB(WORLDS_DATA)
