@@ -70,3 +70,12 @@ def show_facts(facts):
     return "## Интересные факты\n\n{}\n".format(
         "\n".join(["* {}".format(fact) for fact in facts])
     )
+
+
+def show_planets(planets):
+    if planets is None:
+        return ""
+    return "\n".join([
+        "### {}\n{}\n".format(planet.title, planet.description)
+        for planet in planets
+    ])
