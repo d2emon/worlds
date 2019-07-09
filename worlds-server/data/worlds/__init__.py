@@ -37,12 +37,6 @@ def world_helper(
 
 WORLDS = WorldsDB([
     {
-        'title': 'Alternity',
-        'image': 'alternity/al-logos.gif',
-        'slug': 'alternity',
-        'wiki': 'alternity/index.md',
-    },
-    {
         'title': 'Assassin\'s Creed',
         'image': 'assassins-creed/assassins.jpg',
         'slug': 'assassins-creed',
