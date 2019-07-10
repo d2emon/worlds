@@ -1,24 +1,5 @@
 
 
-def world_helper(
-    title,
-    slug,
-    image=None,
-    loader=None,
-    **data,
-):
-    if image is not None:
-        image = "{}/{}".format(slug, image)
-    return {
-        'title': title,
-        'image': image,
-        'slug': slug,
-        'wiki': "{}/index.md".format(slug),
-        'loader': loader,
-        'data': data,
-    }
-
-
 def table_row(*cols):
     return "|{}|".format("|".join(cols))
 
