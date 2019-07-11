@@ -31,6 +31,9 @@ app.register_blueprint(portal)
 from .api.worlds import blueprint as worlds
 app.register_blueprint(worlds)
 
+from .api.generated import blueprint as generated
+app.register_blueprint(generated)
+
 
 @app.route('/<path:path>')
 @app.route('/', defaults={'path': ''})

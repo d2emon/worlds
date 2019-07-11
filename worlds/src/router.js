@@ -21,6 +21,11 @@ export default new Router({
       component: () => import('@/views/World.vue'),
     },
     {
+      path: '/generated',
+      name: 'Generated',
+      component: () => import('@/views/Geneverse.vue'),
+    },
+    {
       path: '/hello',
       name: 'hello',
       component: () => import('@/views/Home.vue'),

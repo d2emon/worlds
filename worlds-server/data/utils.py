@@ -20,8 +20,10 @@ class Database:
         return item
 
     def by_item_id(self, item_id):
-        # return next((item for item in self.items if item.get('slug') == slug), None)
         return next((item for item in self.items if item.get('id') == item_id), None)
+
+    def by_slug(self, slug):
+        return next((item for item in self.items if item.get('slug') == slug), None)
 
     def delete(self, item_id):
         item = next((item for item in self.items if item['id'] == item_id), None)

@@ -12,11 +12,14 @@
       />
 
       <v-img
+        v-if="world.image"
         :src="world.image"
         height="200px"
       />
 
       <v-container>
+        <slot />
+
         <!-- Object.keys(world) -->
         <!-- world.title -->
         <!-- world.image -->

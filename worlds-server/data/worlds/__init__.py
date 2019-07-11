@@ -11,9 +11,6 @@ class WorldsDB(Database):
     def world(cls, item):
         return World(**item)
 
-    def by_slug(self, slug):
-        return next((item for item in self.items if item.get('slug') == slug), None)
-
 
 WORLDS_DATA = [
     {
