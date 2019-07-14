@@ -18,16 +18,39 @@ import random
 from ..utils import Database
 
 
+class NameGenerator:
+    def __init__(self, *data):
+        self.data = data
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return [random.choice(part) for part in self.data]
+
+
+class ThingName(NameGenerator):
+    def __next__(self):
+        return random.choice(self.data)
+
+
 class ChildrenGenerator:
-    def __init__(self, slug="", count=None):
+    def __init__(self, slug="", count=None, percent=100):
         if count is None:
             count = ()
 
         self.slug = slug
         self.count = count
+        self.percent = percent
 
     def as_array(self):
-        return self.slug, self.count
+        return self.slug, self.count, self.percent
+
+    def chance(self):
+        if self.percent >= 100:
+            return True
+        else:
+            return random.randrange(100) < self.percent
 
     def __iter__(self):
         return self
@@ -42,7 +65,7 @@ class ChildrenGenerator:
         else:
             count = random.randint(*self.count)
 
-        return [self.slug for _ in range(count)]
+        return [self.slug for _ in range(count) if self.chance()]
 
 
 class Thing:
@@ -51,13 +74,16 @@ class Thing:
         self.slug = slug
         self.children_generators = [ChildrenGenerator(*children) for children in children_generators]
         self.name_generator = name_generator
+        self.__name = None
 
     @property
     def name(self):
-        if self.name_generator is None:
-            return self.slug
-
-        return self.name_generator
+        if self.__name is None:
+            if self.name_generator is None:
+                self.__name = self.slug
+            else:
+                self.__name = next(self.name_generator)
+        return self.__name
 
     @property
     def fields(self):
@@ -152,15 +178,63 @@ new Thing("portal",["universe"]);
 new Thing("multiverse",["universe,10-30"],["multiverse","lasagnaverse","doughnutverse","towelverse","baconverse","sharkverse","nestedverse","tastyverse","upverse","downverse","layerverse","clusterverse","metaverse","quantiverse","paraverse","epiverse","alterverse","hypoverse","dimensioverse","planiverse","pluriverse","polyverse","maniverse","stackoverse","antiverse","superverse","upperverse","maxiverse","megaverse","babyverse","tinyverse","retroverse","ultraverse","topoverse","otherverse","bubbleverse","esreverse","versiverse","'verse","cookieverse","grandmaverse"]);
 """
 __GENEVERSE_DATA += [
-    Thing("universe", [["supercluster", (10, 30)]])
+    Thing("universe", [["supercluster", (10, 30)]]),
+    Thing("supercluster", [["galaxy", (10, 30)]], ThingName("galactic supercluster")),
+    Thing("galaxy", [
+        ["galaxy center"],
+        ["galaxy arm", (2, 6)],
+    ]),
+    Thing("galaxy arm", [
+        ["galactic life", None, 5],
+        ["dyson sphere", None, 4],
+        ["dyson sphere", None, 2],
+        ["star system", (20, 50)],
+        ["nebula", (0, 12)],
+        ["black hole", None, 20],
+        ["black hole", None, 20],
+    ], ThingName("arm")),
+    Thing("galaxy center", [
+        ["black hole"],
+        ["galactic life", None, 10],
+        ["dyson sphere", None, 4],
+        ["dyson sphere", None, 2],
+        ["star system", (20, 50)],
+        ["nebula", (0, 12)],
+    ], ThingName("galactic center")),
+    Thing("nebula", [
+        ["galactic life", None, 15],
+        ["star", None, 2],
+        ["star", None, 2],
+        ["star", None, 2],
+        ["interstellar cloud", (1, 6)],
+    ]),
+    Thing("interstellar cloud", [
+        ["helium"],
+        ["hydrogen"],
+        ["carbon", None, 80],
+        ["water", None, 5],
+        ["ammonia", None, 5],
+        ["nitrogen", None, 5],
+        ["iron", None, 5],
+        ["sulfur", None, 5],
+        ["oxygen", None, 15],
+    ], NameGenerator(
+        [
+            "a bright pink", "a faint", "a fading", "a pale", "a fluo", "a glowing", "a green", "a bright green",
+            "a dark brown", "a brooding", "a magenta", "a bright red", "a dark red", "a blueish", "a deep blue",
+            "a turquoise", "a teal", "a golden", "a multicolored", "a silver", "a dramatic", "a luminous",
+            "a colossal", "a purple", "a gold-trimmed", "an opaline", "a silvery", "a shimmering"
+        ],
+        [" "],
+        ["interstellar cloud"],
+    )),
+    # ["galactic life", None, 5],
+    # ["dyson sphere", None, 4],
+    # ["star system", (20, 50)],
+    # ["black hole", None, 20],
+    # ["star", None, 2],
 ]
 """
-new Thing("supercluster",["galaxy,10-30"],"galactic supercluster");
-new Thing("galaxy",["galaxy center","galaxy arm,2-6"]);
-new Thing("galaxy arm",["galactic life,5%","dyson sphere,4%","dyson sphere,2%","star system,20-50","nebula,0-12","black hole,20%","black hole,20%"],"arm");
-new Thing("galaxy center",["black hole","galactic life,10%","dyson sphere,4%","dyson sphere,2%","star system,20-50","nebula,0-12"],"galactic center");
-new Thing("nebula",["galactic life,15%","star,2%","star,2%","star,2%","interstellar cloud,1-6"]);
-new Thing("interstellar cloud",["helium","hydrogen","carbon,80%","water,5%","ammonia,5%","nitrogen,5%","iron,5%","sulfur,5%","oxygen,15%"],[["a bright pink","a faint","a fading","a pale","a fluo","a glowing","a green","a bright green","a dark brown","a brooding","a magenta","a bright red","a dark red","a blueish","a deep blue","a turquoise","a teal","a golden","a multicolored","a silver","a dramatic","a luminous","a colossal","a purple","a gold-trimmed","an opaline","a silvery","a shimmering"],[" "],["interstellar cloud"]]);
 new Thing("star system",["star","star,3%","visitor planet,5%","future planet,10%","future planet,10%","terraformed planet,50%","terraformed planet,20%","terraformed planet,10%","medieval planet,30%","medieval planet,20%","ancient planet,50%","ancient planet,30%","ancient planet,10%","barren planet,60%","barren planet,40%","barren planet,20%","gas giant,60%","gas giant,40%","gas giant,20%","gas giant,10%","asteroid belt,0-2"]);
 new Thing("dyson sphere",["star","star,3%","dyson surface","future planet,1-8","barren planet,60%","barren planet,40%","barren planet,20%","gas giant,60%","gas giant,40%","gas giant,20%","gas giant,10%","asteroid belt,0-2"]);
 new Thing("star",["ghost,0.1%","space monster,0.2%","hydrogen","helium"],[["white","faint","yellow","red","blue","green","purple","bright","double","twin","triple","old","young","dying","small","giant","large","pale","dark","hell","horrific","twisted","spectral"],[" star"]]);
@@ -1249,11 +1323,15 @@ new Thing("pigment",["organic matter"]);
 """
 new Thing("later",["sorry"],"will do later");
 """
-THING_ERROR = Thing("error", [["sorry"]], "Uh oh... It looks like you didn't supply a valid element to create.")
+THING_ERROR = Thing(
+    "error",
+    [["sorry"]],
+    ThingName("Uh oh... It looks like you didn't supply a valid element to create."),
+)
 
 __GENEVERSE_DATA += [
     THING_ERROR,
-    Thing("sorry", [["consolation universe"]], "(Sorry!)"),
+    Thing("sorry", [["consolation universe"]], ThingName("(Sorry!)")),
     Thing("consolation universe", [[".universe"]]),
 ]
 
