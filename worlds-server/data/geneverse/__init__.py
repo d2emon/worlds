@@ -12,105 +12,9 @@ How to add a new Thing :
       It can be either an array containing other arrays (the name will be patched up from an element of each array) or an identifier for the Name function, like *BOOK*.
       A name generator of [["blue ","red "],["frog","toad"]] will produce names such as "blue frog" or "red toad".
 """
-
-
-import random
-from ..utils import Database
-
-
-class NameGenerator:
-    def __init__(self, *data):
-        self.data = data
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return [random.choice(part) for part in self.data]
-
-
-class ThingName(NameGenerator):
-    def __next__(self):
-        return random.choice(self.data)
-
-
-class ChildrenGenerator:
-    def __init__(self, slug="", count=None, percent=100):
-        if count is None:
-            count = ()
-
-        self.slug = slug
-        self.count = count
-        self.percent = percent
-
-    def as_array(self):
-        return self.slug, self.count, self.percent
-
-    def chance(self):
-        if self.percent >= 100:
-            return True
-        else:
-            return random.randrange(100) < self.percent
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if len(self.slug) > 0 and self.slug[0] == ".":
-            data = GENEVERSE.by_slug(self.slug[1:])
-            return Thing(**data).children()
-
-        if len(self.count) != 2:
-            count = 1
-        else:
-            count = random.randint(*self.count)
-
-        return [self.slug for _ in range(count) if self.chance()]
-
-
-class Thing:
-    def __init__(self, slug, children_generators=(), name_generator=None, id=None):
-        self.__id = id
-        self.slug = slug
-        self.children_generators = [ChildrenGenerator(*children) for children in children_generators]
-        self.name_generator = name_generator
-        self.__name = None
-
-    @property
-    def name(self):
-        if self.__name is None:
-            if self.name_generator is None:
-                self.__name = self.slug
-            else:
-                self.__name = next(self.name_generator)
-        return self.__name
-
-    @property
-    def fields(self):
-        return {
-            'slug': self.slug,
-            'children_generators': [children.as_array() for children in self.children_generators],
-            'name_generator': self.name_generator,
-        }
-
-    def children(self):
-        for children_generator in self.children_generators:
-            yield from next(children_generator)
-
-    def as_dict(self):
-        return {
-            'id': self.__id,
-            'slug': self.slug,
-            'name': self.name,
-            'name_generator': self.name_generator,
-            'children': list(self.children())
-        }
-
-
-class GeneverseDB(Database):
-    @classmethod
-    def thing(cls, item):
-        return Thing(**item)
+from .database import GeneverseDB
+from .name_generators import NameGenerator, ThingName
+from .thing import Thing
 
 
 __GENEVERSE_DATA = []
@@ -228,24 +132,146 @@ __GENEVERSE_DATA += [
         [" "],
         ["interstellar cloud"],
     )),
+    Thing("star system", [
+        ["star"],
+        ["star", None, 3],
+        ["visitor planet", None, 5],
+        ["future planet", None, 10],
+        ["future planet", None, 10],
+        ["terraformed planet", None, 50],
+        ["terraformed planet", None, 20],
+        ["terraformed planet", None, 10],
+        ["medieval planet", None, 30],
+        ["medieval planet", None, 20],
+        ["ancient planet", None, 50],
+        ["ancient planet", None, 30],
+        ["ancient planet", None, 10],
+        ["barren planet", None, 60],
+        ["barren planet", None, 40],
+        ["barren planet", None, 20],
+        ["gas giant", None, 60],
+        ["gas giant", None, 40],
+        ["gas giant", None, 20],
+        ["gas giant", None, 10],
+        ["asteroid belt", (0, 2)],
+    ]),
+    Thing("dyson sphere", [
+        ["star"],
+        ["star", None, 3],
+        ["dyson surface"],
+        ["future planet", (1, 8)],
+        ["barren planet", None, 60],
+        ["barren planet", None, 40],
+        ["barren planet", None, 20],
+        ["gas giant", None, 60],
+        ["gas giant", None, 40],
+        ["gas giant", None, 20],
+        ["gas giant", None, 10],
+        ["asteroid belt", (0, 2)],
+    ]),
+    Thing("star", [
+        ["ghost", None, 0.1],
+        ["space monster", None, 0.2],
+        ["hydrogen"],
+        ["helium"],
+    ], NameGenerator(
+        [
+            "white", "faint", "yellow", "red", "blue", "green", "purple", "bright", "double", "twin", "triple", "old",
+            "young", "dying", "small", "giant", "large", "pale", "dark", "hell", "horrific", "twisted", "spectral"
+        ],
+        [" star"]
+    )),
+    # new Thing("planet",[".terraformed planet"],"telluric planet");
+    Thing("barren planet", [
+        ["galactic life", None, 10],
+        ["rock"],
+        ["ice", None, 50],
+        [".planet composition"],
+    ], ThingName("telluric planet")),
+    Thing("visitor planet", [
+        ["visitor city", (1, 8)],
+        ["visitor installation", (2, 6)],
+        ["galactic life"],
+        ["rock"],
+        ["ice", None, 50],
+        [".planet composition"],
+    ], ThingName("telluric planet")),
+    Thing("future planet", [
+        ["future continent", (2, 7)],
+        ["ocean", (1, 7)],
+        ["future sky"],
+        [".future moon", None, 30],
+        [".planet composition"],
+    ], ThingName("telluric planet")),
+    Thing("terraformed planet", [
+        ["continent", (2, 7)],
+        ["ocean", (1, 7)],
+        ["terraformed sky"],
+        [".terraformed moon", None, 30],
+        [".planet composition"],
+    ], ThingName("telluric planet")),
+    Thing("medieval planet", [
+        ["medieval continent", (2, 4)],
+        ["ancient continent", (0, 3)],
+        ["ocean", (1, 7)],
+        ["sky"],
+        [".planet composition"],
+    ], ThingName("telluric planet")),
+    Thing("ancient planet", [
+        ["ancient continent", (2, 7)],
+        ["ocean", (1, 7)],
+        ["sky"],
+        [".planet composition"],
+    ], ThingName("telluric planet")),
+    Thing("planet composition", [
+        ["planet core"],
+        ["moon", None, 40],
+        ["moon", None, 20],
+        ["moon", None, 10],
+    ], ThingName("planet")),
+
     # ["galactic life", None, 5],
-    # ["dyson sphere", None, 4],
     # ["star system", (20, 50)],
     # ["black hole", None, 20],
     # ["star", None, 2],
+    # ["helium"],
+    # ["hydrogen"],
+    # ["carbon", None, 80],
+    # ["water", None, 5],
+    # ["ammonia", None, 5],
+    # ["nitrogen", None, 5],
+    # ["iron", None, 5],
+    # ["sulfur", None, 5],
+    # ["oxygen", None, 15],
+    # ["visitor planet", None, 5],
+    # ["future planet", None, 10],
+    # ["terraformed planet", None, 50],
+    # ["medieval planet", None, 30],
+    # ["ancient planet", None, 50],
+    # ["barren planet", None, 60],
+    # ["gas giant", None, 60],
+    # ["asteroid belt", (0, 2)],
+    # ["dyson surface"],
+    # ["ghost", None, 0.1],
+    # ["space monster", None, 0.2],
+    # ["rock"],
+    # ["ice", None, 50],
+    # ["visitor city", (1, 8)],
+    # ["visitor installation", (2, 6)],
+    # ["future continent", (2, 7)],
+    # ["ocean", (1, 7)],
+    # ["future sky"],
+    # [".future moon", None, 30],
+    # ["continent", (2, 7)],
+    # ["terraformed sky"],
+    # [".terraformed moon", None, 30],
+    # ["medieval continent", (2, 4)],
+    # ["ancient continent", (0, 3)],
+    # ["sky"],
+    # ["planet core"],
+    # ["moon", None, 40],
 ]
 """
-new Thing("star system",["star","star,3%","visitor planet,5%","future planet,10%","future planet,10%","terraformed planet,50%","terraformed planet,20%","terraformed planet,10%","medieval planet,30%","medieval planet,20%","ancient planet,50%","ancient planet,30%","ancient planet,10%","barren planet,60%","barren planet,40%","barren planet,20%","gas giant,60%","gas giant,40%","gas giant,20%","gas giant,10%","asteroid belt,0-2"]);
-new Thing("dyson sphere",["star","star,3%","dyson surface","future planet,1-8","barren planet,60%","barren planet,40%","barren planet,20%","gas giant,60%","gas giant,40%","gas giant,20%","gas giant,10%","asteroid belt,0-2"]);
-new Thing("star",["ghost,0.1%","space monster,0.2%","hydrogen","helium"],[["white","faint","yellow","red","blue","green","purple","bright","double","twin","triple","old","young","dying","small","giant","large","pale","dark","hell","horrific","twisted","spectral"],[" star"]]);
-new Thing("planet",[".terraformed planet"],"telluric planet");
-new Thing("barren planet",["galactic life,10%","rock","ice,50%",".planet composition"],"telluric planet");
-new Thing("visitor planet",["visitor city,1-8","visitor installation,2-6","galactic life","rock","ice,50%",".planet composition"],"telluric planet");
-new Thing("future planet",["future continent,2-7","ocean,1-7","future sky",".future moon,30%",".planet composition"],"telluric planet");
-new Thing("terraformed planet",["continent,2-7","ocean,1-7","terraformed sky",".terraformed moon,30%",".planet composition"],"telluric planet");
-new Thing("medieval planet",["medieval continent,2-4","ancient continent,0-3","ocean,1-7","sky",".planet composition"],"telluric planet");
-new Thing("ancient planet",["ancient continent,2-7","ocean,1-7","sky",".planet composition"],"telluric planet");
-new Thing("planet composition",["planet core","moon,40%","moon,20%","moon,10%"],"planet");
 new Thing("moon",["ghost,0.1%","rock","planet core"],[["young","old","large","small","pale","white","dark","black","old"],[" moon"]]);
 new Thing("terraformed moon",[".planet composition","continent,1-4","ocean,1-4","sky"],[["young","old","large","small","pale","white","dark","black","old","green","lush","blue","city","colonized","life"],[" moon"]]);
 new Thing("asteroid belt",["galactic life,20%","asteroid,10-30"]);
