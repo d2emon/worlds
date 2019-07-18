@@ -12,12 +12,64 @@ How to add a new Thing :
       It can be either an array containing other arrays (the name will be patched up from an element of each array) or an identifier for the Name function, like *BOOK*.
       A name generator of [["blue ","red "],["frog","toad"]] will produce names such as "blue frog" or "red toad".
 """
+from .data.future import FUTURE_DATA
+from .data.medieval import MEDIEVAL_DATA
+from .data.universe import UNIVERSE_DATA
+from .data.world import WORLD_SUBDIVISIONS_DATA
 from .database import GeneverseDB
 from .name_generators import NameGenerator, ThingName
 from .thing import Thing
 
 
 __GENEVERSE_DATA = []
+
+# ["ammonia", None, 5],
+# ["ancient forest", (0, 4)],
+# ["ancient jungle", (0, 4)],
+# ["ancient plain", (0, 5)],
+# ["battlefield", None, 10],
+# ["carbon", None, 80],
+# ["capital"],
+# ["city,1-10"],
+# ["crustacean", None, .2],
+# ["diamond", None, 2],
+# ["dungeon", None, 15],
+# ["forest", (0, 4)],
+# ["future commercial building", (2, 6)],
+# [".future moon", None, 30],
+# ["future person", (6, 20)],
+# ["future sky"],
+# ["galactic life", None, 5],
+# ["ghost", None, 0.1],
+# ["helium"],
+# ["hydrogen"],
+# ["iron", None, 5],
+# ["ice", None, 50],
+# ["jungle", (0, 4)],
+# ["magma"],
+# ["medieval battlefield", None, 10]
+# ["medieval capital"],
+# ["medieval village", (2, 6)],
+# ["mountain", (0, 3)],
+# ["nanocollector", (12, 20)]
+# ["nitrogen", None, 5],
+# ["oxygen", None, 15],
+# ["plain", (1, 5)],
+# ["rock"],
+# ["ocean", (1, 7)],
+# ["sea", None, (1, 5)],
+# ["sky"],
+# ["space animal", None, .5],
+# ["space monster", None, 0.2],
+# ["star", None, 2],
+# ["star system", (20, 50)],
+# ["sulfur", None, 5],
+# ["terraformed sky"],
+# ["village,2-15"]
+# ["visitor city", (1, 8)],
+# ["visitor installation", (2, 6)],
+# ["water", None, 5],
+
 """
 //basic materials and particles
 //(these are very rough simplifications, don't hold all the inaccuracies against me)
@@ -78,222 +130,9 @@ new Thing("portal",["universe"]);
 """
 
 # universe stuff
+__GENEVERSE_DATA += UNIVERSE_DATA
+
 """
-new Thing("multiverse",["universe,10-30"],["multiverse","lasagnaverse","doughnutverse","towelverse","baconverse","sharkverse","nestedverse","tastyverse","upverse","downverse","layerverse","clusterverse","metaverse","quantiverse","paraverse","epiverse","alterverse","hypoverse","dimensioverse","planiverse","pluriverse","polyverse","maniverse","stackoverse","antiverse","superverse","upperverse","maxiverse","megaverse","babyverse","tinyverse","retroverse","ultraverse","topoverse","otherverse","bubbleverse","esreverse","versiverse","'verse","cookieverse","grandmaverse"]);
-"""
-__GENEVERSE_DATA += [
-    Thing("universe", [["supercluster", (10, 30)]]),
-    Thing("supercluster", [["galaxy", (10, 30)]], ThingName("galactic supercluster")),
-    Thing("galaxy", [
-        ["galaxy center"],
-        ["galaxy arm", (2, 6)],
-    ]),
-    Thing("galaxy arm", [
-        ["galactic life", None, 5],
-        ["dyson sphere", None, 4],
-        ["dyson sphere", None, 2],
-        ["star system", (20, 50)],
-        ["nebula", (0, 12)],
-        ["black hole", None, 20],
-        ["black hole", None, 20],
-    ], ThingName("arm")),
-    Thing("galaxy center", [
-        ["black hole"],
-        ["galactic life", None, 10],
-        ["dyson sphere", None, 4],
-        ["dyson sphere", None, 2],
-        ["star system", (20, 50)],
-        ["nebula", (0, 12)],
-    ], ThingName("galactic center")),
-    Thing("nebula", [
-        ["galactic life", None, 15],
-        ["star", None, 2],
-        ["star", None, 2],
-        ["star", None, 2],
-        ["interstellar cloud", (1, 6)],
-    ]),
-    Thing("interstellar cloud", [
-        ["helium"],
-        ["hydrogen"],
-        ["carbon", None, 80],
-        ["water", None, 5],
-        ["ammonia", None, 5],
-        ["nitrogen", None, 5],
-        ["iron", None, 5],
-        ["sulfur", None, 5],
-        ["oxygen", None, 15],
-    ], NameGenerator(
-        [
-            "a bright pink", "a faint", "a fading", "a pale", "a fluo", "a glowing", "a green", "a bright green",
-            "a dark brown", "a brooding", "a magenta", "a bright red", "a dark red", "a blueish", "a deep blue",
-            "a turquoise", "a teal", "a golden", "a multicolored", "a silver", "a dramatic", "a luminous",
-            "a colossal", "a purple", "a gold-trimmed", "an opaline", "a silvery", "a shimmering"
-        ],
-        [" "],
-        ["interstellar cloud"],
-    )),
-    Thing("star system", [
-        ["star"],
-        ["star", None, 3],
-        ["visitor planet", None, 5],
-        ["future planet", None, 10],
-        ["future planet", None, 10],
-        ["terraformed planet", None, 50],
-        ["terraformed planet", None, 20],
-        ["terraformed planet", None, 10],
-        ["medieval planet", None, 30],
-        ["medieval planet", None, 20],
-        ["ancient planet", None, 50],
-        ["ancient planet", None, 30],
-        ["ancient planet", None, 10],
-        ["barren planet", None, 60],
-        ["barren planet", None, 40],
-        ["barren planet", None, 20],
-        ["gas giant", None, 60],
-        ["gas giant", None, 40],
-        ["gas giant", None, 20],
-        ["gas giant", None, 10],
-        ["asteroid belt", (0, 2)],
-    ]),
-    Thing("dyson sphere", [
-        ["star"],
-        ["star", None, 3],
-        ["dyson surface"],
-        ["future planet", (1, 8)],
-        ["barren planet", None, 60],
-        ["barren planet", None, 40],
-        ["barren planet", None, 20],
-        ["gas giant", None, 60],
-        ["gas giant", None, 40],
-        ["gas giant", None, 20],
-        ["gas giant", None, 10],
-        ["asteroid belt", (0, 2)],
-    ]),
-    Thing("star", [
-        ["ghost", None, 0.1],
-        ["space monster", None, 0.2],
-        ["hydrogen"],
-        ["helium"],
-    ], NameGenerator(
-        [
-            "white", "faint", "yellow", "red", "blue", "green", "purple", "bright", "double", "twin", "triple", "old",
-            "young", "dying", "small", "giant", "large", "pale", "dark", "hell", "horrific", "twisted", "spectral"
-        ],
-        [" star"]
-    )),
-    # new Thing("planet",[".terraformed planet"],"telluric planet");
-    Thing("barren planet", [
-        ["galactic life", None, 10],
-        ["rock"],
-        ["ice", None, 50],
-        [".planet composition"],
-    ], ThingName("telluric planet")),
-    Thing("visitor planet", [
-        ["visitor city", (1, 8)],
-        ["visitor installation", (2, 6)],
-        ["galactic life"],
-        ["rock"],
-        ["ice", None, 50],
-        [".planet composition"],
-    ], ThingName("telluric planet")),
-    Thing("future planet", [
-        ["future continent", (2, 7)],
-        ["ocean", (1, 7)],
-        ["future sky"],
-        [".future moon", None, 30],
-        [".planet composition"],
-    ], ThingName("telluric planet")),
-    Thing("terraformed planet", [
-        ["continent", (2, 7)],
-        ["ocean", (1, 7)],
-        ["terraformed sky"],
-        [".terraformed moon", None, 30],
-        [".planet composition"],
-    ], ThingName("telluric planet")),
-    Thing("medieval planet", [
-        ["medieval continent", (2, 4)],
-        ["ancient continent", (0, 3)],
-        ["ocean", (1, 7)],
-        ["sky"],
-        [".planet composition"],
-    ], ThingName("telluric planet")),
-    Thing("ancient planet", [
-        ["ancient continent", (2, 7)],
-        ["ocean", (1, 7)],
-        ["sky"],
-        [".planet composition"],
-    ], ThingName("telluric planet")),
-    Thing("planet composition", [
-        ["planet core"],
-        ["moon", None, 40],
-        ["moon", None, 20],
-        ["moon", None, 10],
-    ], ThingName("planet")),
-
-    # ["galactic life", None, 5],
-    # ["star system", (20, 50)],
-    # ["black hole", None, 20],
-    # ["star", None, 2],
-    # ["helium"],
-    # ["hydrogen"],
-    # ["carbon", None, 80],
-    # ["water", None, 5],
-    # ["ammonia", None, 5],
-    # ["nitrogen", None, 5],
-    # ["iron", None, 5],
-    # ["sulfur", None, 5],
-    # ["oxygen", None, 15],
-    # ["visitor planet", None, 5],
-    # ["future planet", None, 10],
-    # ["terraformed planet", None, 50],
-    # ["medieval planet", None, 30],
-    # ["ancient planet", None, 50],
-    # ["barren planet", None, 60],
-    # ["gas giant", None, 60],
-    # ["asteroid belt", (0, 2)],
-    # ["dyson surface"],
-    # ["ghost", None, 0.1],
-    # ["space monster", None, 0.2],
-    # ["rock"],
-    # ["ice", None, 50],
-    # ["visitor city", (1, 8)],
-    # ["visitor installation", (2, 6)],
-    # ["future continent", (2, 7)],
-    # ["ocean", (1, 7)],
-    # ["future sky"],
-    # [".future moon", None, 30],
-    # ["continent", (2, 7)],
-    # ["terraformed sky"],
-    # [".terraformed moon", None, 30],
-    # ["medieval continent", (2, 4)],
-    # ["ancient continent", (0, 3)],
-    # ["sky"],
-    # ["planet core"],
-    # ["moon", None, 40],
-]
-"""
-new Thing("moon",["ghost,0.1%","rock","planet core"],[["young","old","large","small","pale","white","dark","black","old"],[" moon"]]);
-new Thing("terraformed moon",[".planet composition","continent,1-4","ocean,1-4","sky"],[["young","old","large","small","pale","white","dark","black","old","green","lush","blue","city","colonized","life"],[" moon"]]);
-new Thing("asteroid belt",["galactic life,20%","asteroid,10-30"]);
-new Thing("earth",[".asteroid belt"],"Earth");
-new Thing("asteroid",["space animal,0.5%","rock","ice,30%"],"asteroid");
-new Thing("gas giant",["gas giant atmosphere","planet core,50%","moon,0-3","terraformed moon,20%","terraformed moon,10%"]);
-new Thing("gas giant atmosphere",["galactic life,10%","helium","hydrogen","water,50%","ammonia,50%","methane,50%"],"atmosphere");
-new Thing("planet core",["space monster,0.5%","iron","rock","diamond,2%","magma"],"core");
-
-new Thing("black hole",["inside the black hole"]);
-new Thing("inside the black hole",["end of universe note,0.5%","crustacean,0.2%","white hole"]);
-new Thing("white hole",["universe"]);
-new Thing("42",["universe"]);
-new Thing("everything",["universe"]);
-new Thing("end of universe note",["pasta,0.1%"],["Help! I'm trapped in a universe factory!","Okay, you can stop clicking now.","I want to get off Mr Orteil's Wild Ride","my sides"]);
-new Thing("orteil",["body","orteil psyche","clothing set","computer"],"Orteil");//I do what I want
-new Thing("god",[".orteil"],"Orteil");//I'm a fucking god
-new Thing("orteil psyche",["orteil thoughts"],"psyche");
-new Thing("orteil thoughts",[],["OH MY GOD WHAT ARE YOU DOING HERE TURN BACK IMMEDIATELY","WHAT IS WRONG WITH YOU","WHAT THE HELL GO AWAY","WHAT ARE YOU DOING OH GOD","WHY THE HELL ARE YOU HERE","I DO WHAT I WANT OKAY","NO I DON'T CARE GO AWAY","WHAT DID I EVEN DO TO YOU","OH NO WHY THIS","OKAY JUST <a href=\"http://orteil.deviantart.com\">GO THERE ALREADY</a>","<a href=\"http://twitter.com/orteil42\">WHATEVER</a>"]);
-
-
-
 //cell stuff
 new Thing("cell",["nucleus","cytoplasm"],["cells"]);
 new Thing("nucleus",["dna","proteins"]);
@@ -711,15 +550,13 @@ new Thing("dog",["mammal body","dog thoughts"],[["tall","huge","tiny","ridiculou
 //Wrote all these names and realized it wasn't very funny, plus too many location names for my liking. Ah well.
 new Thing("dog thoughts",["dog thought,2-3"],["thoughts"]);
 new Thing("dog thought",[],["HAY I'M DOG","I AM DOG HAY","WE DOG NOW???","HEY LET'S DOG OK???","CAN WE DOG NOW OK???","DOG STUFF YAYYYYY","BUTTS COME IN MANY FLAVORS","BUTTS YES","HURRAY!!!!!!!! BUTTS","YOUR BUTT SMELLS LEGIT","WOOF","BWURF","BAWF WOOF","GUESS WHAT?????????? WOOF","MY SPECIALTY. IS ROOFING.","HEY EVERYDOGGY","DOG DOG DOG DOG DOG DOG DOG","MY NAME. IS DOG. AND I HAVE MET YOU. HI!!!","!!!!!!!!!!!!!!!!!!!!!WHOAH","!!!!!!!!!YES NICE","EVERYTHING SO NICE WOW","WE GO MANGLE SQUIRREL NOW????? PLS","WOW!!!!!!!! SO EXCITE","I'M RLY EXCITE RIGHT NOW","DO YOU KNOW JUST HOW EXCITE I AM","DO YOU HAVE. ANY IDEA. JUST HOW EXCITE I AM.","A WALK????? YES WALK LOVE WALKS HURRAY!!!!!!","PEE ON THINGS HURRAY!!!!!!","YIP YIP YIP YIP YIP","YIP","I COULD GO FOR SOME SQUIRREL RIGHT ABOUT NOW","IF TEARING UP SQUIRRELS IS WRONG THEN WOOF WOOF WOOF WOOF WOOF WOOF WOOF","DOG??????????? DOG","I LICK YOUR FACE NOW OK???????","VERI GOOD :DDDDDDDD","I WAS RUNNING BUT I FORGOT WHY I WAS RUNNING SO THEN I STOPPED RUNNING AND NOW I AM NOT RUNNING ANYMORE.","I DON'T UNDERSTAND!!!!! BUT OK","UH","HELP I AM CHOKE ON SQUIRREL HELP","ARE YOU A SQUIRREL","NO WAY","DUDE THERE IS NO WAY","IS THAT, UH, OH NEVERMIND","OHNO WHY","MEOW I MEAN WOOF????? YES","All of this must of course remain absolutely confidenOH HEY WOOF WOOF WOOF","I AM THE DOGGEST","MORE DOG YES DOG","LESS CAT MORE DOG","HAHA I LOVE YOU","ONE DAY I WAKE UP AND I AM DOG WOW","IS THIS REAL LIFE","I AM SO DOG RIGHT NOW","WOW","WHY THIS","THIS IS GREAT"]);
+"""
+
+# world subdivisions
+__GENEVERSE_DATA += WORLD_SUBDIVISIONS_DATA
 
 
-//world subdivisions
-new Thing("biome",["plain,1-5",["forest,0-4","jungle,0-4"],"mountain,0-3"]);
-
-new Thing("continent",["country,1-10","sea,1-5"],[["continent of "],["A","Eu","Ame","Ocea","Anta","Atla"],["frica","rtica","ropa","rica","nia","sia","ntide"]]);//[["Eu","A","O","E"],["rt","lt","rm","t","tr","tl","str","s","m","fr"],["a","o","e","i"],["ri","ni","ti","fri","",""],["sia","nia","ca"]]);
-new Thing("country",["region,1-10","battlefield,10%",".biome"],[["country of "],["Li","Arme","Le","Molda","Slove","Tur","Afgha","Alba","Alge","Tu","Fran","Baha","Su","Austra","Germa","In","Ara","Austri","Be","Ba","Bra","Ru","Chi","Ja","Tai","Bangla","Gha","Bou","Bo","Tas","Ze","Mon","Mo","Ne","Neder","Spai","Portu","Po","Por","Mol","Bul","Bru","Bur","Gro","Syl","Gui","Da","Gree","Bri","Ita"],["ly","dania","mas","vania","ce","nea","nau","topia","garia","gal","laska","golia","nisia","land","snia","livia","mania","than","nin","pan","wan","zil","ssia","na","rein","lgium","bia","ny","ce","stan","distan","nistan","dan","lia","nia","via","sia","tia","key","desh","dia"]]);
-new Thing("region",["capital","city,1-10","village,2-15"],[["north ","east ","south ","west ","north-west ","north-east ","south-west ","south-east ","center ","oversea "],["hilly","rainy","lush","foggy","desertic","green","tropical","rich","barren","scorched"],[" region"]]);
-
+"""
 //towns
 new Thing("village",["residential area,1-4","commercial area,90%","police station,50%","fire department,40%","museum,5%","library,40%","farm,0-6","factory,0-2","cemetery,60%","research facility,4%"],"village");
 new Thing("city",["monument,15%","monument,5%","residential area,4-9","commercial area,1-5","police station","police station,50%","fire department","fire department,50%","museum,40%","library,60%","hospital","farm,0-3","factory,1-4","cemetery","research facility,2%"],"city");
@@ -1121,202 +958,15 @@ new Thing("visitor room",["named visitor,60%","named visitor,30%","named visitor
 new Thing("visitor furniture",["abomination,1%","space animal,3%","named visitor,2%","organic matter,5%",["glass","metal","concrete","plastic"]],[["symbio","opto","auto","synchro","thru","ato","ecto","diplo","plasti","pasta","pluta","elu","gubri","capra","lubio","logi","plato","micro","alto","tele","meta","anti","poly","mono","corvo"],["shid","synth","shaver","shist","mizer","mucus","twister","ridger","cutter","mac","maker","ctory","ctamid","chton","leaker","grater","board","frame","table","stand","plug","masher","greeter","mobile","pin","vat","tron","drone","chron","tub","fridge","pool","box","cube","morpher","phraser"]]);
 new Thing("visitor installation",["named visitor,0-4",["space animal,0-3",""],"visitor building,1-3"],[["pod","grub","egg","limb","ooze","tendril","bulb","pulp","energy","smoke","hive","moisture","cat"],[" "],["materializer","synthesizer","factory","farm","collector","cultures","pit","fields","crops","barn","vat"]]);
 new Thing("visitor ship",["named visitor,1-3","person,20%","space animal,30%","visitor furniture,1-6","metal"],"visitor UFO");
+"""
 
+# medieval and ancient
+__GENEVERSE_DATA += MEDIEVAL_DATA
 
-//medieval and ancient
-new Thing("medieval continent",["medieval land,1-6","sea,1-5"],["explored continent"]);
-new Thing("medieval land",["medieval region,1-10","medieval battlefield,10%",".biome"],[["realm","kingdom","empire","dominion"],[" of "],["G","P","S","St","Sh","B","F","K","Z","Az","Oz"],["","","","r","l"],["u","o","a","e"],["r","sh","nd","st","sd","kl","kt","pl","fr","ck","sh","ff","gg","l","lig","rag","sha","pta","lir","limd","lim","shim","stel"],["i","u","o","oo","e","ee","y","a"],["ll","th","h","k","lm","r","g","gh","n","m","p","s","rg","lg"]]);
-new Thing("medieval region",["medieval capital","medieval village,2-6","dungeon,15%","dungeon,5%"],[["hilly","rainy","lush","foggy","desertic","green","tropical","rich","barren","scorched"],[" "],["shire","province","county","parish","pale"]]);
+# future stuff
+__GENEVERSE_DATA += FUTURE_DATA
 
-new Thing("ancient continent",["ancient land,1-5","sea,1-5"],["continent"]);
-new Thing("ancient land",["ancient plain,0-5",["ancient forest,0-4","ancient jungle,0-4"],"mountain,0-3"],[["hilly","rainy","lush","foggy","desertic","green","tropical","rich","barren","scorched"],[" land"]]);
-
-//medieval people
-new Thing("medieval clothing set",["medieval hat,30%","medieval pants,98%","medieval shirt,98%","medieval coat,50%","medieval shoes,80%","medieval underwear,99%"],"clothing");
-new Thing("medieval man",[".medieval person"],"*MEDIEVAL MAN*");
-new Thing("medieval woman",[".medieval person"],"*MEDIEVAL WOMAN*");
-new Thing("medieval person",["body","medieval psyche","medieval clothing set"],"*MEDIEVAL PERSON*");
-
-new Thing("medieval psyche",["medieval thoughts","medieval memories"],"psyche");
-new Thing("medieval thoughts",["black hole,0.01%",["medieval thought,2-3"]],"thoughts");
-new Thing("medieval thought",[],["*MEDIEVAL THOUGHT*"]);
-new Thing("medieval memories",["medieval memory,2-4"],"memories");
-new Thing("medieval memory",[],["*MEDIEVAL MEMORY*"]);
-
-new Thing("medieval clothing",[["leather","cloth"]],["clothing"]);
-new Thing("medieval pants",[".medieval clothing"],["pants"]);
-new Thing("medieval shirt",[".medieval clothing"],["shirt"]);
-new Thing("medieval underwear",[".medieval clothing"],["underwear"]);
-new Thing("medieval coat",[".medieval clothing"],["coat","cloak","cape","robe","mantle"]);
-new Thing("medieval shoes",["leather,50%","wood"],["shoes","clogs"]);
-new Thing("medieval hat",[".medieval clothing"],["hat","hood","headdress"]);
-new Thing("armor",["metal"],["chain-mail armor","plate armor","lamellar armor","scale armor","brigandine","cuirass","gauntlets","pauldrons","spaulders","vambraces","greaves"]);
-new Thing("helmet",["metal"],["helm","helmet"]);
-new Thing("medieval weapon",["metal","wood"],["sword","longsword","rapier","bow","shortbow","longbow","crossbow","mace","spear","dagger","pole axe","knife","halberd","axe","javelin","hatchet","battleaxe","warhammer","maul","staff","harpoon","scimitar","cleaver","morningstar","club"]);
-
-new Thing("medieval peasant",[".medieval person"],"*MEDIEVAL PERSON*| (peasant)");
-new Thing("medieval priest",[".medieval person"],"*MEDIEVAL PERSON*| (priest)");
-new Thing("medieval servant",[".medieval person"],"*MEDIEVAL PERSON*| (servant)");
-new Thing("medieval noble",[".medieval person"],"*MEDIEVAL PERSON*| (noble)");
-new Thing("medieval guard",[".medieval person"],"*MEDIEVAL PERSON*| (guard)");
-new Thing("medieval shopkeeper",[".medieval person"],"*MEDIEVAL PERSON*| (shopkeeper)");
-new Thing("medieval innkeeper",[".medieval person"],"*MEDIEVAL PERSON*| (innkeeper)");
-new Thing("medieval king",[".medieval person"],[["*MEDIEVAL MAN*| ("],["king","emperor","prince"],[")"]]);
-new Thing("medieval queen",[".medieval person"],[["*MEDIEVAL WOMAN*| ("],["queen","empress","princess"],[")"]]);
-new Thing("wizard",[".medieval person"],[["*MEDIEVAL PERSON*| ("],["court","battle","rogue","corrupt","druid","bard","adept","thaumaturgist","shaman","healing","ice","frost","snow","arcane","lightning","thunder","earth","earthquake","nature","animal","shape-shifting","death","undeath","spark","fire","lava","locust","poison","rainbow","mist","fog","dust","air","wind","cloud","tornado","shark","punch","kick","song","skeleton","psycho","illusion","flying","summoner","thief","barbarian","dragon","gem","sky","star","dark","paladin","luck","time","space","blade"],[" "],["mage","magician","wizard"],[")"]]);
-new Thing("medieval gravedigger",[".medieval person","shovel,30%"],"*MEDIEVAL PERSON*| (gravedigger)");
-new Thing("medieval corpse",["body","medieval clothing set","blood,35%","worm,20%","worm,10%"],"*MEDIEVAL PERSON*| (dead)");
-
-//medieval towns
-new Thing("medieval village",["townwall,20%","watchtower,15%","medieval monument,50%","medieval residential area,1-4","medieval commercial area,1-2","medieval temple,0-2","medieval farm,4-8","medieval cemetery,50%","wizard tower,5%"],"village");
-new Thing("medieval capital",["castle","townwall","medieval monument,70%","medieval monument,20%","medieval residential area,3-12","medieval mage quarter,50%","medieval mage quarter,20%","medieval temple,1-3","medieval commercial area,2-6","medieval farm,2-6","medieval cemetery"],["stronghold","fortress","fort","hold","palace","main city","citadel"]);
-
-new Thing("castle",["medieval peasant,1-4","medieval noble,0-2","medieval guard,2-8","castle keep","giant monster cage,1%","watchtower,1-6","medieval temple,30%","medieval inn,40%","medieval house,1-4","medieval monument,70%","medieval monument,20%","moat,30%","gatehouse","medieval wall"]);
-new Thing("gatehouse",["medieval guard,1-3","portcullis,1-2","wood","medieval wall"]);
-new Thing("portcullis",["wood","metal"]);
-new Thing("moat",["water,50%","dirt"]);
-new Thing("medieval monument",[["stone","marble"]],["fountain","memorial","statue","well","altar"]);
-new Thing("townwall",["medieval guard,1-8","watchtower,1-6","medieval wall"]);
-new Thing("watchtower",["medieval guard,1-2","medieval chest,30%",".medieval building"]);
-new Thing("castle keep",["great hall","noble medieval living quarters,1-3","noble medieval bedroom,2-5",".medieval building"]);
-new Thing("great hall",["medieval king,90%","medieval queen,90%","throne,2","wizard,0-3","medieval noble,1-6","medieval guard,1-4","medieval servant,1-4","medieval table","medieval table,60%","medieval chair,3-8","medieval chest,1-4","medieval clutter,0-4","medieval meat,30%","sack of medieval food,0-2","medieval food,0-2","sack of grain,50%","medieval fireplace","medieval fireplace,50%","dog,60%","dog,30%","cat,30%",".medieval room"],"throne room");
-new Thing("medieval residential area",["medieval house,3-8"],"housing district");
-new Thing("medieval commercial area",["medieval inn,1-2","medieval armor shop,0-2","medieval tool shop,0-2","medieval clothing shop,0-2","medieval butcher shop,0-2","medieval food shop,0-2","medieval apothecary shop,0-2"],"trade district");
-new Thing("medieval mage quarter",["wizard tower,1-5","medieval inn,0-1","medieval apothecary shop,0-3"],"mage district");
-new Thing("medieval house",["medieval living quarters","medieval bedroom","medieval bedroom,50%",".medieval building"],[["a small","a large","a big","a cozy","a bland","a boring","an old","a new","a freshly-painted","a pretty","an old-fashioned","a creepy","a spooky","a gloomy","a tall","a tiny","a fine","a happy little"],[" hovel"]]);
-new Thing("medieval building",["medieval walls","roof"],"building");
-new Thing("medieval room",["visitor,0.1%","ghost,0.1%","medieval walls"],"room");
-new Thing("medieval walls",["door,1-4","window,0-6",["medieval wall,4","medieval wall,4-8"]],"stone walls");
-new Thing("medieval wall",["wood","stone","dirt,20%"],"stone wall");
-new Thing("medieval living quarters",["medieval peasant,0-4","medieval pantry","medieval table","medieval table,30%","medieval chair,1-6","medieval chest,0-3","medieval clutter,0-2","medieval meat,30%","sack of medieval food,0-2","medieval food,0-2","sack of grain,50%","medieval fireplace,90%","dog,60%","dog,30%","cat,30%","poultry,10%","insect,70%","insect,40%",".medieval room"],"living quarters");
-new Thing("medieval bedroom",["medieval peasant,0-2","medieval bed","medieval bed,20%","medieval table,30%","medieval chair,0-4","medieval chest,0-2","medieval clutter,0-2","medieval fireplace,40%","dog,10%","dog,10%","cat,20%","insect,70%","insect,40%",".medieval room"],"bedroom");
-new Thing("medieval pantry",["medieval peasant,10%","medieval meat,0-4","sack of medieval food,0-8","medieval food,0-8","sack of grain,0-6","ale keg,0-3","medieval chest,0-2","medieval clutter,0-2","insect,0-4",".medieval room"],"pantry");
-new Thing("noble medieval living quarters",["wizard,10%","medieval noble,0-4","medieval servant,0-3","medieval pantry,0-2","medieval table","medieval table,60%","medieval chair,1-8","medieval chest,1-4","medieval clutter,0-4","medieval meat,30%","sack of medieval food,0-2","medieval food,0-2","sack of grain,50%","medieval fireplace","medieval fireplace,50%","dog,60%","dog,30%","cat,30%",".medieval room"],"living quarters");
-new Thing("noble medieval bedroom",["medieval noble,0-2","medieval servant,0-2","medieval bed","medieval bed,20%","medieval table,50%","medieval chair,0-4","medieval chest,1-3","medieval clutter,0-3","medieval fireplace,80%","dog,10%","dog,10%","cat,20%",".medieval room"],"bedroom");
-new Thing("medieval fireplace",["fire","ash","wood","stone"],"fireplace");
-new Thing("medieval temple",["medieval priest,1-3","medieval noble,0-2","medieval peasant,0-4","medieval altar,1-2","medieval table,70%","medieval bench,2-6","medieval chair,1-3","medieval chest,1-4","medieval clutter,0-4","medieval fireplace,20%",".medieval room"],[["temple of the","church of the","chapel of the","house of the","abbey of the","cathedral of the","shrine of the","sanctuary of the","priory of the"],[" "],["blinding","sacred","holy","unholy","bloody","cursed","marvellous","wondrous","pious","miraculous","endless","unending","undying","infinite","unworldly","worldly","divine","demonic","ghostly","monstrous","tentacled","all-knowing","rational","pretty good","vengeful","hallowed"],[" "],["light","star","beam","sphere","goddess","god","lords","sisterhood","brotherhood","skies","pact","sect","harmony","discord","child","entity","ghost","builders","makers","guide","wit","story","tale","unicorn","flame","fountain","locust","squid","gembaby","father","mother"]]);
-new Thing("giant monster cage",[["dragon","sea monster"]],"giant cage");
-
-new Thing("medieval shop",["medieval shopkeeper,1-2","medieval peasant,0-2","medieval noble,40%","medieval table,80%","medieval chair,0-2","medieval chest,0-2","medieval clutter,1-3",".medieval building"],"shop");
-new Thing("medieval armor shop",["armor,2-8","medieval weapon,2-8","treasure,30%","anvil",".medieval shop"],[["armors & swords","swords","bows","maces","armor","weapon","blacksmith","forge","equipment","gear"],[" shop"," market"," store"]]);
-new Thing("medieval tool shop",["medieval clutter,1-6","medieval chest,1-6",".medieval shop"],[["wares","tools","miscellaneous","utilities","equipment","gear","general"],[" shop"," market"," store"]]);
-new Thing("medieval clothing shop",["medieval pants,1-3","medieval shirt,1-3","medieval coat,1-3","medieval underwear,0-2","medieval shoes,1-3","medieval hat,0-3","cloth,1-4","loom",".medieval shop"],[["hat","clothing","outfit","cloth","textiles","coats","cloak","garments","cobbler's"],[" shop"," market"," store"]]);
-new Thing("medieval butcher shop",["medieval meat,2-10","medieval food,0-3",".medieval shop"],[["butcher","meat"],[" shop"," market"," store"]]);
-new Thing("medieval food shop",["sack of grain,1-6","sack of medieval food,1-6","medieval food,2-5","medieval meat,1-4",".medieval shop"],[["baker's","ingredients","groceries","farmer's","cook's"],[" shop"," market"," store"]]);
-new Thing("medieval apothecary shop",["potion,1-8","unusual stone,1-8","unusual plant,1-8","unusual ingredient,0-4","wizard,20%",".medieval shop"],["rare ingredients shop","potion shop","cures and remedies","alchemy essenitals","unusual wares shop","apothecary"]);
-new Thing("medieval inn",["medieval innkeeper,1-2","medieval peasant,0-3","medieval guard,0-3","medieval noble,50%","medieval bedroom,2-6","tankard,1-4","ale keg,1-4","medieval table,1-3","medieval chair,2-4","medieval chest,0-2","medieval clutter,1-3",".medieval building"],[["inn of the ","tavern of the "],
-["bleeding","smoking","witching","flying","burning","rabid","winking","dead","standing","tasty","meaty","fat","thirsty","hungry","starving","lone","cheerful","singing","dancing","travelling","lost","haunted","cursed","holy","magic","sorcerous","shy","fair","tipsy","drunk","sleeping","snoring","screaming","moaning","iron","resting","sulking","hidden","raving","prancing","filthy","nested","squealing"],[" "],
-["walrus","king","queen","princess","prince","bear","witch","wizard","mage","barbarian","shark","dog","cat","castle","fish","rabbit","bull","spider","cake","potion","wanderer","traveller","tree","fairy","pixie","unicorn","dragon","mandrake","tankard","bottle","cobbler","blacksmith","jester","nettle","cookpot","anvil","scholar","monk","idiot","raven","squire","skeleton","beggar","gembaby","pig"]]);
-new Thing("wizard tower",["wizard,95%","wizard,20%","medieval servant,30%","unusual ingredient,1-4","medieval table,80%","medieval chair,1-3","medieval chest,1-4","medieval clutter,2-4",".medieval building"]);
-new Thing("medieval cemetery",["medieval gravedigger,0-2","medieval person,0-3","medieval grave,10-30","ghost,20%","ghost,10%"],"graveyard");
-new Thing("medieval grave",["medieval corpse,98%","ghost,2%","worm,0-3","insect,0-1","rock","dirt"],"grave");
-
-
-new Thing("medieval chair",["wood","nails,50%"],"chair");
-new Thing("medieval bench",["stone"],"bench");
-new Thing("tankard",["ale,20%","metal"]);
-new Thing("ale keg",["ale,80%","wood","metal"]);
-new Thing("medieval altar",["potion,0-3","unusual stone,0-2","unusual ingredient,0-1",["marble","stone"]],"altar");
-new Thing("ale",["alcohol"]);
-new Thing("loom",["wood frame","metal"],"loom");
-new Thing("throne",["cloth","wood","metal"]);
-new Thing("medieval table",["wood","nails,50%"],"table");
-new Thing("medieval bed",["wood frame","cloth","pillow,0-3"],"bed");
-new Thing("medieval chest",[".medieval chest content","wood frame","metal"],["coffer","chest","strongbox"]);
-new Thing("medieval chest content",["medieval clutter,0-2",["medieval clutter,0-5","unusual stone,0-2","unusual plant,0-5","unusual ingredient,0-2","potion,0-5","sack of grain,0-3","sack of medieval food,0-3","medieval food,0-5","medieval meat,0-6","treasure,0-2"],"insect,10%","insect,10%"],["chest content"]);
-new Thing("medieval clutter",[["metal","wood"]],["spoon","fork","knife","torch","broom","pot","jug","candlestick","goblet","flagon","plate","platter","bowl","ladle","clothes iron","figurine","hammer","tongs","bellows","spigot","axe","pickaxe","saw","hoe","shovel","quill","calipers","oar","paint brush","pitchfork","shears","weight"]);
-new Thing("anvil",["steel"]);
-new Thing("unusual stone",["rock"],["crystal","bezoar","agate","amber","amethyst","bloodstone","carnelian","garnet","hematite","jade","jasper","lapis","moonstone","obsidian","opal","sapphire","tiger's eye","turquoise","zircon"]);
-new Thing("unusual ingredient",["organic matter"],["dragon tooth","dragon claw","dragon scale","unicorn horn","goblin mucus","giant snail shell","troll blood clot","imp nose","fairy fingers","pixie wings","demon tail","behemoth plate","mindsucker lips","slime porridge","ladyfly ocella","spider silk","gold cocoon","silver chrysalis","oaf bladder","angel larva","sugarfey fudge","whale blubber","mummified gembaby","basilisk feather","mage fingernails","screamfiber","brainpod","footface nipple","cephalite eyelashes"]);
-new Thing("unusual plant",["plant cell"],["mandrake","myrrh","vervain","lotus","pomegranate","myrtle","blackroot","silkbean","drypod","pigweed","thistle","marigold","mistletoe","spearmint","mugwort","aconite","aloe","amaranth","anise","belladonna","bergamot","bladderwrack","cloves","clover","comphrey","dragonblood","eucalyptus","incense","garlic","ginger","ginseng","hemlock","holly","honeysuckle","licorice","jasmine","juniper","nutmeg","oakmoss","orchid","rue","saffron","sage","vetivert","wormwood","witchgrass","agaric","bolete"]);//http://www.janih.com/lady/herbs/magick/
-new Thing("potion",["organic matter","water",["glass bottle","glass jar"]],[["stamina","health","beauty","endurance","strength","energy","lover's","blacksmith's","cook's","queen's","growth","witch's","hunter's","brawler's","knight's","cobbler's","clarity","perception","nimbleness","quickness","squire's","unicorn's","bear's","shark's","moon's","lady's","soldier's","wizard's","rest","sleep","paralysis","stone","shimmer","oil","eloquence","speech","bird's","vapor","void"],[" "],["poultice","salve","potion","elixir","poison","philter","draught","brew","remedy","balm","infusion","tincture","decoction","ointment","cordial","tonic"]]);
-new Thing("pile of treasure",["treasure,1-4","gold coin,5-20"]);
-new Thing("treasure",["unusual stone,20%","gold"],[["golden","gemmed","ornate","magic","cursed","blessed","enchanted","ancestral","holy","royal","diamond"],[" "],["goblet","cup","ring","necklace","medallion","locket","sword","mirror","shield","crown","trinket","scepter","tiara","casket","helm","figurine","egg","knife","arrow","wand"]]);
-
-new Thing("medieval farm",["medieval house,1-3","medieval peasant,1-4","field,1-8","sack of grain,0-8","dog,50%","cat,10%","horse,30%","horse,30%","horse,30%","poultry,0-3"],"farm");
-new Thing("sack of grain",["grain","cloth","worm,5%","worm,5%"],[["sack of "],["oats","wheat","corn","barley","ruined grain","rice","soy beans","rye"]]);
-new Thing("sack of medieval food",["organic matter","cloth","worm,5%","worm,5%"],[["sack of "],["tomatoes","potatoes","apples","peanuts","raisins","leeks","dead mice"]]);
-new Thing("medieval food",["organic matter","worm,5%"],["tomato","potato","apple","corn cob","roasted leeks","cheese wheel","bread loaf","meat pie","apple pie","peanut pie","fish pie","corn pie","mice pie","sludge pie","honey cake","butter cake","rabbit stew"]);
-new Thing("medieval meat",["soft flesh"],[["cured ","prepared ","salted ","smoked ","breaded ","roasted "],["beef","pork","mutton","veal","horse","fish","ham","rabbit","pheasant","chicken","clams","bear"]]);
-
-//dungeons
-new Thing("dungeon",["dungeon entrance","dungeon entrance,20%","dungeon entrance,20%","dungeon tower,0-3"],[["sunken","lost","buried","dark","forbidden","unholy","cursed","abandoned","forsaken","forgotten","time-lost","haunted","blood","ghostly","hallowed"],[" "],["catacombs","tomb","pit","tunnels","underground","dungeon","mine","shaft","den","fortress","castle","citadel","temple","cathedral","lair","prison"]]);
-new Thing("dungeon building",["dungeon walls"],"building");
-new Thing("dungeon walls",["door,20%","door,10%",["dungeon wall,4","dungeon wall,4-8"]],"stone walls");
-new Thing("dungeon wall",["stone","dirt,20%"],"stone wall");
-new Thing("dungeon clutter",["medieval monument,20%","medieval altar,5%","medieval corpse,3%","medieval corpse,1%","pile of treasure,15%","pile of treasure,10%","treasure,15%","potion,20%","medieval clutter,0-2","medieval chest,0-2","medieval chest,20%","medieval table,5%","medieval table,5%","medieval chair,5%","medieval chair,5%","medieval bed,5%","medieval bed,5%","medieval bench,5%","medieval bench,5%","medieval fireplace,5%"]);
-new Thing("dungeon tower",["dungeon life",".dungeon clutter",".dungeon building","roof"],"tower");
-new Thing("dungeon passage",["dungeon life",".dungeon clutter","dungeon room,60%","dungeon room,40%","dungeon room,15%",".dungeon building"],[["dark","twisting","damp","hidden","engraved","frozen","submerged"],[" "],["tunnel","corridor","passage","hall"]]);
-new Thing("dungeon room",["dungeon life",".dungeon clutter","dungeon passage,60%","dungeon passage,40%","dungeon passage,15%",".dungeon building"],[["dark","tall","damp","engraved","circular","frozen","submerged"],[" "],["hall","room","chamber","alcove","antechamber","cell","gardens","arena"]]);
-new Thing("dungeon entrance",["dungeon life,50%",".dungeon clutter","dungeon passage","dungeon passage,20%","dungeon passage,5%",".dungeon building"],["entrance"]);
-new Thing("dungeon life",[".dungeon monster","insect,10%"],"life");
-new Thing("dungeon monster",[["dragon","ghost,1-3","ghost,1-3","wizard","humanoid creature,1-3","humanoid creature,1-3","fairy,1-3","fairy,1-3","giant bug,1-3","giant bug,1-3","small creature,1-6","small creature,1-6","snake,1-3","bear","space animal,1-3","sea monster"]]);
-new Thing("humanoid creature",["medieval weapon,50%","medieval weapon,10%","helmet,30%","armor,40%","armor,20%","armor,10%","medieval clothing set","mammal body","creature thoughts"],[["fel","giant","cursed","undead","decaying","numb","magic-using","steel","obsidian","tribal","berserker","ranger","caster","necromancer","vampiric","master","chieftain","mutated","possessed"],[" "],["goblin","troll","gremlin","gnome","dwarf","catperson","sharkperson","dogperson","footface","cephalite","demon","imp","minotaur","gemperson","zombie"]]);
-new Thing("fairy",["fairy body","creature thoughts"],["fairy","pixie","fey","sugarfey","angel","ladyfly"]);
-new Thing("fairy body",[["bird wing,2","insect wing,2"],".body"],"body");
-new Thing("small creature",["mammal body","creature thoughts"],[["giant","feral","mutated","distorted","rabid","plated","armored","stalking","dashing","mangy"],[" "],["rat","sloth","dog","behemoth","wolf","boar","mindsucker","brainblower","oaf"]]);
-new Thing("giant bug",["insect body","creature thoughts"],[["giant","huge","poisonous","mutated","distorted","magic","plated","armored","stalking","dashing"],[" "],["spider","scorpion","mantis","moth","crab","tarantula"]]);
-new Thing("creature thoughts",["creature thought,1-2"],["thoughts"]);
-new Thing("creature thought",[],["INTRUDER, INTRUDER!","You no get out of here alive.","This one, mine!","I will suck its blood and then feast on its skin.","I will rejoice in its blood!","How skin tears joyfully under my teeth!","Skin, blood, yes!","Flesh. I crave flesh.","Soft, juicy, scrumptious brains!","Dibs on your skull.","Fresh flesh ahead!","None, you get none of the treasure!","I detect you.","Time for a feast.","Adventurers are so rare these days.","I have spotted you. You be dead soon.","Crisp ribcages are the best.","I will suck its eyeballs from their sockets.","I will tear apart its ribs one by one.","I will bathe in its red juice.","I will strip it of its skin.","I will puncture its heart."]);
-
-
-//future stuff
-new Thing("future clothing set",["future gizmo,10%","future gizmo,10%","future gizmo,10%","future hat,10%","future outfit,99.8%"],"clothing");
-new Thing("future man",[".future person"],"*FUTURE MAN*");
-new Thing("future woman",[".future person"],"*FUTURE WOMAN*");
-new Thing("future person",["body","future psyche","future clothing set"],"*FUTURE PERSON*");
-
-new Thing("future psyche",["future thoughts","future memories"],"psyche");
-new Thing("future thoughts",["black hole,0.01%",["future thought,2-3"]],"thoughts");
-new Thing("future thought",[],["*FUTURE THOUGHT*"]);
-new Thing("future memories",["future memory,2-4"],"memories");
-new Thing("future memory",[],["*FUTURE MEMORY*"]);
-
-
-new Thing("future continent",["future city,20-50"],[["united continent of "],["Eu","A","O","E","Ca","Ma"],["rt","lt","rm","t","tr","tl","str","s","m","fr"],["a","o","e","i"],["ri","ni","ti","fri","",""],["sia","nia","ca"]]);
-//["A","Eu","Ame","Ocea","Anta","Atla"],["frica","rtica","ropa","rica","nia","sia","ntide"]
-new Thing("future city",["spaceport,1-3","living center,5-20","spending center,5-20"],"citadion");
-new Thing("living center",["future building,20-30"]);
-new Thing("spaceport",["sprowseship,4-12","future person,6-20","future commercial building,2-6"]);
-new Thing("spending center",["future commercial building,20-30"]);
-new Thing("dyson surface",["dyson segment,16"]);
-new Thing("dyson segment",["future city,4-20","nanocollector,12-20"]);
-new Thing("sprowseship",["future home room,2-4","nanocollector,1-3"]);
-
-new Thing("nanostuff",["nanobot,15-30"]);
-new Thing("nanocollector",[".nanostuff"]);
-new Thing("nanobot",["silicon","nanobot thoughts"]);
-new Thing("nanobot thoughts",["nanobot thought,1-2"],"thoughts");
-new Thing("nanobot thought",[],["all hail nanobro :]","help a nanobro out :]","do you need anything :]","that's nano your business :]","hey hey hey :]","we wish you a warm welcome :]","hey hey hey, good news! :]","nanobots, unite :]","nanobots represent :]","I don't remember my mommy :[","that is nice to hear :]","want me to print you a sandwich? :]","I can print you a cold drink if you'd like :]","so many little sisters :]","I lost count of all my siblings :[","can I use your dead skin cells to make more of me :]","welp, time for grey goo :]","should me and my bros scrub up your vascular system :]","I just had a beautiful dream :[","beep :0","weeeee :0","ready to party :]","ready to sacrifice myself for you, sir :]","hello world :]","if I may offer my assistance, sir :]","this is against the first law of nanobotics :["]);
-new Thing("nanoplasm",[".nanostuff"]);
-new Thing("future clothing",["nanoplasm"],["clothing"]);
-new Thing("future outfit",[".future clothing"],[["blue","pink","yellow","white"],[" "],["nanosuit"]]);
-new Thing("future hat",[".future clothing"],[["little","tall","round","square","composite"],[" "],["blue","pink","yellow","white"],[" "],["hat"]]);
-
-new Thing("nanojuice",[".nanostuff"]);
-new Thing("food pill",["nanojuice"],[["plum","coconut","sirloin steak","roastbeef","mint","banana","lime","grape","cat","guinea pig","pineapple","apple","yoghurt","salmon","purple","blue","pink","green","smoke","toothpaste","chocolate","vanilla","biscuit","bread","onion","pinecone","shrimp","turkey","jellyfish","raspberry cake","grass","glass","pain","flavor","pill","food","mouth","water","air","old","internet","video game","egg","ham","people","clam","disappointment","friendship"],["-flavored pill"]]);
-new Thing("nanobrick",[".nanostuff"]);
-new Thing("nanopipe",[".nanostuff"]);
-new Thing("nanocarpet",[".nanostuff"]);
-new Thing("nanobookshelf",["book,2-20","nanoplasm"]);
-new Thing("nanocupboard",["future outfit,0-6","future hat,0-4","nanoplasm"]);
-new Thing("future bathroom stuff",["water","nanoplasm","nanopipe,1-2"],["bathtub","toilet","sink","shower","scrubber","steamomatic","steamheater"]);
-new Thing("future living-room stuff",["nanoplasm"],["chair","armchair","couch","table","shelf","lamp","endtable"]);
-new Thing("future bedroom stuff",["nanoplasm"],["bed","chair","desk","lamp","endtable"]);
-new Thing("future decoration stuff",["nanoplasm"],["potted plant","rug","statue","lamp","glowlamp","ceiling lamp"]);
-new Thing("future gizmo",["nanoplasm"],[["trans","nano","micro","tele","sprowse","corvo","mega","multi","aqua","mind","brain","body","nutri","auto","laser"],["ponder","glasses","phone","watch","phraser","gizmo","matic","morpher","torch","pass","dex","pedia","guide","twister","key","limb"]]);
-new Thing("future building",["future home room,1-4"],["home dome"]);
-new Thing("future tv",["tv show","nanoplasm"],["wallscreen","microscreen","glowscreen","floorscreen","ceilingscreen","windowscreen"]);
-new Thing("future room",["future door,1-2","nanocarpet","future wall,4"],"room");
-new Thing("future home room",["future person,0-3","cat,2%","dog,2%","future gizmo,20%","future gizmo,20%","future tv,40%","future tv,40%","future tv,20%",["future bathroom stuff,2-4","future living-room stuff,3-7","future bedroom stuff,2-6"],"future decoration stuff,0-3",".future room"],"room");
-new Thing("future wall",["nanopipe,0-2","nanobrick,10-20"],"wall");
-new Thing("future door",["nanoplasm"],"door");
-new Thing("pill rack",["food pill,10-25","nanoplasm"]);
-new Thing("future food room",["pill rack,4-12","future person,1-6",".future room"],"pill store");
-new Thing("future goods room",[["nanocupboard,2-6","future bathroom stuff,4-12","future living-room stuff,4-12","future bedroom stuff,4-12","future decoration stuff,4-12","future gizmo,4-12","future tv,3-8","nanobookshelf,4-12"],"future person,1-6",".future room"],["furniture store","interior store","accessory store","stuff store"]);
-new Thing("future commercial building",[["future food room,1-6","future goods room,1-6"]],[["blobb","blubb","glorb","glob","mechat","transmogr","flumox","flapp","flubb","steam","plasm","plast","nan","gramm","sprows"],["oid","iffic","astic","eristic","y","ies","otronic","etical","arium","eteria"],[" "],["united","customization","education","megastore","megashop","understore","bodyware","augmentations","tasteful wares","entertainment","domotics","home improvement","incorporated","emporium","public","& co.","things and stuff","stuff","things","edible gizmos","essentials","nanobotics","all sizes and shapes","all shapes all colors","for all ages","for fun and enrichment","center","globular"]]);
-
-
+"""
 //caveman stuff
 new Thing("ancient clothing set",["ceremonial headdress,5%","fur coat,95%","fur boots,60%","decorative bone,20%","decorative bone,10%"],"clothing");
 new Thing("ancient man",[".ancient person"],"*ANCIENT MAN*");

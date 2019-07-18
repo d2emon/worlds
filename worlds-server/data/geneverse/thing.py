@@ -43,7 +43,7 @@ class Thing:
     def __init__(self, slug, children=(), name_generator=None, id=None):
         self.__id = id
         self.slug = slug
-        self.children_generators = [ChildrenGenerator(*children_group) for children_group in children]
+        self.children_generators = [self.get_child_generator(children_group) for children_group in children]
         self.name_generator = name_generator
         self.__name = None
 
@@ -60,13 +60,29 @@ class Thing:
     def fields(self):
         return {
             'slug': self.slug,
-            'children': [children.as_array() for children in self.children_generators],
+            'children': [self.get_child_generator_data(children) for children in self.children_generators],
             'name_generator': self.name_generator,
         }
 
+    @classmethod
+    def get_child_generator(cls, children_group):
+        if isinstance(children_group[0], str):
+            return ChildrenGenerator(*children_group)
+        return [ChildrenGenerator(*group) for group in children_group]
+
+    @classmethod
+    def get_child_generator_data(cls, children):
+        if isinstance(children, (list, tuple)):
+            return [c.as_array() for c in children]
+        return children.as_array()
+
     def children(self):
         for children_generator in self.children_generators:
-            yield from next(children_generator)
+            if isinstance(children_generator, (list, tuple)):
+                children = random.choice(children_generator)
+            else:
+                children = children_generator
+            yield from next(children)
 
     def as_dict(self):
         return {
