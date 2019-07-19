@@ -1,7 +1,5 @@
-from app import app
 from ..utils import Database
-from ..wikifiles import get_wiki
-from .world import World
+from .world import World, SluggedWorld
 
 from .spectre import spectre
 
@@ -327,18 +325,18 @@ WORLDS_DATA = [
         'slug': 'putevoditel-po-koridoram-ada',
         'wiki': 'putevoditel-po-koridoram-ada/index.md',
     },
-    {
-        'title': 'Рик и Морти',
-        'slug': 'rick-and-morty',
-        'wiki': 'rick-and-morty/index.md',
-        'pages': {
+    SluggedWorld(
+        title='Рик и Морти',
+        slug='rick-and-morty',
+        image='LabRick.png',
+        pages={
             'science': '«Рик и Морти» с точки зрения науки',
             'references': 'Obscure Pop Culture References From Rick And Morty, Explained',
             'easter-eggs': '13 Important "Rick And Morty" Easter Eggs That Prove '
                            'It\'s The Smartest Show On Television',
             'universes': 'Вселенные',
         }
-    },
+    ).fields,
 ] + [
     spectre.fields,
 ]
