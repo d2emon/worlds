@@ -1,31 +1,28 @@
 <template>
   <world :world="{title: generated ? generated.name : 'Unknown'}">
-    {{generated}}
-    <h1>{{generated.name}}</h1>
     <v-container
       v-if="generated"
       fluid
       grid-list-md
     >
-      <v-layout row wrap>
-        <v-flex
-          v-for="(item, id) in generated.children"
-          :key="id"
-          sm3
-        >
-          <v-card
+      <v-card>
+        <v-card-title
+          class="headline"
+          v-text="generated.name"
+        />
+        <v-list>
+          <v-list-tile
+            v-for="(item, id) in generated.children"
+            :key="`item-${id}`"
             @click="generateChild(item)"
           >
-            <v-card-title
-              class="headline"
-              v-text="item"
-            />
-
-            {{item}}
-
-          </v-card>
-        </v-flex>
-      </v-layout>
+            <v-list-tile-content>
+              <v-list-tile-title v-text="item" />
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+      </v-card>
+      {{generated}}
     </v-container>
   </world>
 </template>
