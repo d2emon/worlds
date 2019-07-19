@@ -314,17 +314,16 @@ WORLDS_DATA = [
         'slug': 'moskva-budushego',
         'wiki': 'moskva-budushego/index.md',
     },
-    {
-        'title': 'Плоский мир',
-        'slug': 'discworld',
-        'wiki': 'discworld/index.md',
-    },
-    {
-        'title': 'Путеводитель по коридорам Ада',
-        'image': 'putevoditel-po-koridoram-ada/Hell.jpg',
-        'slug': 'putevoditel-po-koridoram-ada',
-        'wiki': 'putevoditel-po-koridoram-ada/index.md',
-    },
+    SluggedWorld(
+        title='Плоский мир',
+        slug='discworld',
+        image='discworld-wallpaper-768x480.jpg',
+    ).fields,
+    SluggedWorld(
+        title='Путеводитель по коридорам Ада',
+        slug='putevoditel-po-koridoram-ada',
+        image='Hell.jpg',
+    ).fields,
     SluggedWorld(
         title='Рик и Морти',
         slug='rick-and-morty',
@@ -337,7 +336,6 @@ WORLDS_DATA = [
             'universes': 'Вселенные',
         }
     ).fields,
-] + [
     spectre.fields,
 ]
 # 'image': '3e-logos.gif',
