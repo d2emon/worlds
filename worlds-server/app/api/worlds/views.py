@@ -11,7 +11,7 @@ def worlds():
     })
 
 
-@blueprint.route('/<slug>', methods=['GET'])
+@blueprint.route('/world/<slug>', methods=['GET'])
 def world(slug):
     data = WORLDS.by_slug(slug)
     if data is None:
@@ -22,4 +22,18 @@ def world(slug):
     return jsonify({
         'status': 'success',
         'world': World(**data).as_dict(full=True),
+    })
+
+
+@blueprint.route('/wiki/<slug>/<path:page>', methods=['GET'])
+def wiki(slug, page):
+    data = WORLDS.by_slug(slug)
+    if data is None:
+        return jsonify({
+            'status': 'fail',
+        })
+
+    return jsonify({
+        'status': 'success',
+        'wiki': World(**data).get_wiki(page),
     })

@@ -1,7 +1,10 @@
 <template>
   <v-layout justify-center>
     <v-flex xs12 sm9>
-      <world-card :world="world" />
+      <world-card
+        :world="world"
+        :wiki="wiki"
+      />
     </v-flex>
   </v-layout>
 </template>
@@ -20,17 +23,30 @@ export default {
   computed: {
     ...mapState('worlds', [
       'world',
+      'wiki',
     ]),
   },
   methods: {
     ...mapActions('worlds', [
       'getWorld',
+      'getWiki',
     ]),
+    fetchAll() {
+      const {
+        slug,
+        wiki,
+      } = this.$route.params;
+      this.getWiki({
+        slug,
+        filename: wiki,
+      });
+      this.getWorld(slug);
+    },
   },
-  mounted() {
-    const { slug } = this.$route.params;
-    this.getWorld(slug);
+  watch: {
+    $route() { this.fetchAll(); },
   },
+  mounted() { this.fetchAll(); },
 };
 </script>
 

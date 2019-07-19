@@ -21,6 +21,11 @@ export default new Router({
       component: () => import('@/views/World.vue'),
     },
     {
+      path: '/wiki/:slug/:wiki',
+      name: 'wiki',
+      component: () => import('@/views/World.vue'),
+    },
+    {
       path: '/generated',
       name: 'Generated',
       component: () => import('@/views/Geneverse.vue'),

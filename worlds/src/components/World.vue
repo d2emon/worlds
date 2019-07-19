@@ -20,6 +20,30 @@
       <v-container>
         <v-layout row wrap>
           <v-flex xs3>
+            <v-card>
+              <v-list>
+                <v-list-tile
+                  :to="world.url"
+                >
+                  <v-list-tile-content>
+                    <v-list-tile-title>
+                      Главная
+                    </v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile
+                  v-for="(page, id) in world.wiki"
+                  :key="`page-${id}`"
+                  :to="`/wiki/${page.url}`"
+                >
+                  <v-list-tile-content>
+                    <v-list-tile-title v-text="page.filename" />
+                  </v-list-tile-content>
+                </v-list-tile>
+              </v-list>
+            </v-card>
+            <br />
+
             <template
               v-for="(v, id) in encyclo.child"
             >
@@ -41,7 +65,6 @@
                   </v-list-tile>
                 </v-list>
               </v-card>
-
               <br />
             </template>
           </v-flex>
@@ -55,7 +78,14 @@
             <!-- world.text -->
             <!-- world.html -->
 
-            <v-card-text v-html="world.html" />
+            <v-card-text
+              v-if="wiki"
+              v-html="wiki"
+            />
+            <v-card-text
+              v-else
+              v-html="world.html"
+            />
           </v-flex>
         </v-layout>
 
@@ -85,6 +115,7 @@ export default {
   },
   props: [
     'world',
+    'wiki',
   ],
   data: () => ({
     enteringPortal: true,

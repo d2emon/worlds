@@ -331,6 +331,13 @@ WORLDS_DATA = [
         'title': 'Рик и Морти',
         'slug': 'rick-and-morty',
         'wiki': 'rick-and-morty/index.md',
+        'pages': {
+            'science': '«Рик и Морти» с точки зрения науки',
+            'references': 'Obscure Pop Culture References From Rick And Morty, Explained',
+            'easter-eggs': '13 Important "Rick And Morty" Easter Eggs That Prove '
+                           'It\'s The Smartest Show On Television',
+            'universes': 'Вселенные',
+        }
     },
 ] + [
     spectre.fields,

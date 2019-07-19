@@ -20,12 +20,13 @@ export default {
       url: worldUrl(slug),
     }))),
   getWorld: world => Api
-    .get(`/api/worlds/${world}`)
+    .get(`/api/worlds/world/${world}`)
     .then(({ data }) => data.world)
     .then(({
       title,
       image,
       slug,
+      wiki,
       text,
     }) => ({
       title,
@@ -33,6 +34,10 @@ export default {
       image,
       // image: imageUrl(image),
       url: worldUrl(slug),
+      wiki,
       text,
     })),
+  getWiki: (world, page) => Api
+    .get(`/api/worlds/wiki/${world}/${page}`)
+    .then(({ data }) => data.wiki),
 };

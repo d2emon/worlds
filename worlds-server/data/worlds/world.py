@@ -1,5 +1,5 @@
 from app import app
-from ..wikifiles import get_wiki
+from ..wikifiles import get_wiki, list_wiki
 
 
 class World:
@@ -8,6 +8,7 @@ class World:
         id=None,
         image='portal.jpg',
         loader=None,
+        pages=None,
         slug=None,
         title='',
         text=None,
@@ -17,6 +18,7 @@ class World:
         self.__id = id
         self.__image = image
         self.__loader = loader
+        self.pages = pages or {}
         self.slug = slug
         self.title = title
         self.__text = text
@@ -25,7 +27,7 @@ class World:
         self.data = data
 
     def wiki_loader(self):
-        return get_wiki(self.wiki)
+        return self.get_wiki()
 
     def __text_loader(self):
         return self.__text
@@ -35,6 +37,7 @@ class World:
         result = {
             'image': self.__image,
             'loader': self.__loader,
+            'pages': self.pages,
             'slug': self.slug,
             'title': self.title,
             'text': self.__text,
@@ -59,6 +62,20 @@ class World:
     def text(self):
         return self.loader and self.loader()
 
+    @property
+    def wiki_pages(self):
+        return [{
+            'filename': self.pages.get(file) or file,
+            'url': "{}/{}".format(self.slug, file),
+        } for file in list_wiki(self.slug)]
+
+    def get_wiki(self, filename=None):
+        if filename is None:
+            filename = self.wiki
+        else:
+            filename = "{}/{}.md".format(self.slug, filename)
+        return get_wiki(filename)
+
     def as_dict(self, full=False):
         result = {
             'id': self.__id,
@@ -71,6 +88,7 @@ class World:
 
         result.update({
             'text': self.text,
+            'wiki': self.wiki_pages,
         })
         return result
 
