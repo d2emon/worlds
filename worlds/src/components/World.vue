@@ -71,6 +71,7 @@
                   v-for="(page, id) in world.pages"
                   :key="`page-${id}`"
                   :to="`/wiki/${page.url}`"
+                  :title="page.filename"
                 >
                   <v-list-tile-content>
                     <v-list-tile-title v-text="page.filename" />
@@ -125,9 +126,21 @@
               v-html="wiki"
             />
             <v-card-text
-              v-else
+              v-else-if="world.html"
               v-html="world.html"
             />
+            <v-list v-else>
+              <v-list-tile
+                v-for="(page, id) in world.pages"
+                :key="`page-${id}`"
+                :to="`/wiki/${page.url}`"
+                :title="page.filename"
+              >
+                <v-list-tile-content>
+                  <v-list-tile-title v-text="page.filename" />
+                </v-list-tile-content>
+              </v-list-tile>
+            </v-list>
           </v-flex>
         </v-layout>
 

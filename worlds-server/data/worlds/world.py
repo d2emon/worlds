@@ -67,10 +67,13 @@ class World:
 
     @property
     def pages(self):
-        return [{
-            'filename': self.__pages.get(file) or file,
-            'url': "{}/{}".format(self.slug, file),
-        } for file in list_wiki(self.slug)]
+        return sorted(
+            [{
+                'filename': self.__pages.get(file) or file,
+                'url': "{}/{}".format(self.slug, file),
+            } for file in list_wiki(self.slug)],
+            key=lambda item: item['filename'],
+        )
 
     def get_wiki(self, filename=None):
         if filename is None:
