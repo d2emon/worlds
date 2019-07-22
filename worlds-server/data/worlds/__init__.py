@@ -319,7 +319,7 @@ WORLDS_DATA = [
             'russia2017': "А.Лиговский: Россия в 2017 году. Новогодняя фантазия",
         },
         wiki={},
-    ).fields,
+    ),
     SluggedWorld(
         title='Плоский мир',
         slug='discworld',
@@ -330,7 +330,7 @@ WORLDS_DATA = [
             ru="https://discworld.fandom.com/ru/",
             disc="https://disc.fandom.com/ru/",
         ),
-    ).fields,
+    ),
     SluggedWorld(
         title='Путеводитель по коридорам Ада',
         slug='putevoditel-po-koridoram-ada',
@@ -338,7 +338,7 @@ WORLDS_DATA = [
         wiki={
             'lurkmore': "http://lurkmore.to/Путеводитель по коридорам Ада"
         },
-    ).fields,
+    ),
     SluggedWorld(
         title='Рик и Морти',
         slug='rick-and-morty',
@@ -355,8 +355,8 @@ WORLDS_DATA = [
                            'It\'s The Smartest Show On Television',
             'universes': 'Вселенные',
         },
-    ).fields,
-    spectre.fields,
+    ),
+    spectre,
 ]
 # 'image': '3e-logos.gif',
 # 'image': 'hw-logos.gif',
@@ -365,4 +365,4 @@ WORLDS_DATA = [
 # 'image': 'cm-logos.gif',
 # 'image': 'd20-logos.jpg',
 
-WORLDS = WorldsDB(WORLDS_DATA)
+WORLDS = WorldsDB([world.fields if isinstance(world, World) else world for world in WORLDS_DATA])
