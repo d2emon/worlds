@@ -89,17 +89,77 @@ new Thing("medieval queen",[".medieval person"],[["*MEDIEVAL WOMAN*| ("],["queen
 new Thing("wizard",[".medieval person"],[["*MEDIEVAL PERSON*| ("],["court","battle","rogue","corrupt","druid","bard","adept","thaumaturgist","shaman","healing","ice","frost","snow","arcane","lightning","thunder","earth","earthquake","nature","animal","shape-shifting","death","undeath","spark","fire","lava","locust","poison","rainbow","mist","fog","dust","air","wind","cloud","tornado","shark","punch","kick","song","skeleton","psycho","illusion","flying","summoner","thief","barbarian","dragon","gem","sky","star","dark","paladin","luck","time","space","blade"],[" "],["mage","magician","wizard"],[")"]]);
 new Thing("medieval gravedigger",[".medieval person","shovel,30%"],"*MEDIEVAL PERSON*| (gravedigger)");
 new Thing("medieval corpse",["body","medieval clothing set","blood,35%","worm,20%","worm,10%"],"*MEDIEVAL PERSON*| (dead)");
+"""
 
-//medieval towns
-new Thing("medieval village",["townwall,20%","watchtower,15%","medieval monument,50%","medieval residential area,1-4","medieval commercial area,1-2","medieval temple,0-2","medieval farm,4-8","medieval cemetery,50%","wizard tower,5%"],"village");
-new Thing("medieval capital",["castle","townwall","medieval monument,70%","medieval monument,20%","medieval residential area,3-12","medieval mage quarter,50%","medieval mage quarter,20%","medieval temple,1-3","medieval commercial area,2-6","medieval farm,2-6","medieval cemetery"],["stronghold","fortress","fort","hold","palace","main city","citadel"]);
+# medieval towns
+MEDIEVAL_DATA += [
+    Thing("medieval village", [
+        ["townwall", None, 20],
+        ["watchtower", None, 15],
+        ["medieval monument", None, 50],
+        ["medieval residential area", (1, 4)],
+        ["medieval commercial area", (1, 2)],
+        ["medieval temple", (0, 2)],
+        ["medieval farm", (4, 8)],
+        ["medieval cemetery", None, 50],
+        ["wizard tower", None, 5]
+    ], ThingName("village")),
+    Thing("medieval capital", [
+        ["castle"],
+        ["townwall"],
+        ["medieval monument", None, 70],
+        ["medieval monument", None, 20],
+        ["medieval residential area", (3, 12)],
+        ["medieval mage quarter", None, 50],
+        ["medieval mage quarter", None, 20],
+        ["medieval temple", (1, 3)],
+        ["medieval commercial area", (2, 6)],
+        ["medieval farm", (2, 6)],
+        ["medieval cemetery"]
+    ], NameGenerator(["stronghold", "fortress", "fort", "hold", "palace", "main city", "citadel"])),
 
-new Thing("castle",["medieval peasant,1-4","medieval noble,0-2","medieval guard,2-8","castle keep","giant monster cage,1%","watchtower,1-6","medieval temple,30%","medieval inn,40%","medieval house,1-4","medieval monument,70%","medieval monument,20%","moat,30%","gatehouse","medieval wall"]);
-new Thing("gatehouse",["medieval guard,1-3","portcullis,1-2","wood","medieval wall"]);
-new Thing("portcullis",["wood","metal"]);
-new Thing("moat",["water,50%","dirt"]);
-new Thing("medieval monument",[["stone","marble"]],["fountain","memorial","statue","well","altar"]);
-new Thing("townwall",["medieval guard,1-8","watchtower,1-6","medieval wall"]);
+    Thing("castle", [
+        ["medieval peasant", (1, 4)],
+        ["medieval noble", (0, 2)],
+        ["medieval guard", (2, 8)],
+        ["castle keep"],
+        ["giant monster cage", None, 1],
+        ["watchtower", (1, 6)],
+        ["medieval temple", None, 30],
+        ["medieval inn,40%"],
+        ["medieval house", (1, 4)],
+        ["medieval monument", None, 70],
+        ["medieval monument", None, 20],
+        ["moat", None, 30],
+        ["gatehouse"],
+        ["medieval wall"],
+    ]),
+    Thing("gatehouse", [
+        ["medieval guard", (1, 3)],
+        ["portcullis", (1, 2)],
+        ["wood"],
+        ["medieval wall"]
+    ]),
+    Thing("portcullis", [
+        ["wood"],
+        ["metal"],
+    ]),
+    Thing("moat", [
+        ["water", None, 50],
+        ["dirt"],
+    ]),
+    Thing("medieval monument", [[
+        ["stone"],
+        ["marble"],
+    ]], NameGenerator(["fountain", "memorial", "statue", "well", "altar"])),
+    Thing("townwall", [
+        ["medieval guard", (1, 8)],
+        ["watchtower", (1, 6)],
+        ["medieval wall"]
+    ])
+]
+
+"""
 new Thing("watchtower",["medieval guard,1-2","medieval chest,30%",".medieval building"]);
 new Thing("castle keep",["great hall","noble medieval living quarters,1-3","noble medieval bedroom,2-5",".medieval building"]);
 new Thing("great hall",["medieval king,90%","medieval queen,90%","throne,2","wizard,0-3","medieval noble,1-6","medieval guard,1-4","medieval servant,1-4","medieval table","medieval table,60%","medieval chair,3-8","medieval chest,1-4","medieval clutter,0-4","medieval meat,30%","sack of medieval food,0-2","medieval food,0-2","sack of grain,50%","medieval fireplace","medieval fireplace,50%","dog,60%","dog,30%","cat,30%",".medieval room"],"throne room");
