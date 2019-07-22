@@ -156,15 +156,57 @@ MEDIEVAL_DATA += [
         ["medieval guard", (1, 8)],
         ["watchtower", (1, 6)],
         ["medieval wall"]
-    ])
+    ]),
+    Thing("watchtower", [
+        ["medieval guard", (1, 2)],
+        ["medieval chest", None, 30],
+        [".medieval building"],
+    ]),
+    Thing("castle keep", [
+        ["great hall"],
+        ["noble medieval living quarters", (1, 3)],
+        ["noble medieval bedroom", (2, 5)],
+        [".medieval building"],
+    ]),
+    Thing("great hall", [
+        ["medieval king", None, 90],
+        ["medieval queen", None, 90],
+        ["throne", [2]],
+        ["wizard", (0, 3)],
+        ["medieval noble", (1, 6)],
+        ["medieval guard", (1, 4)],
+        ["medieval servant", (1, 4)],
+        ["medieval table"],
+        ["medieval table", None, 60],
+        ["medieval chair", (3, 8)],
+        ["medieval chest", (1, 4)],
+        ["medieval clutter", (0, 4)],
+        ["medieval meat", None, 30],
+        ["sack of medieval food", (0, 2)],
+        ["medieval food", (0, 2)],
+        ["sack of grain", None, 50],
+        ["medieval fireplace"],
+        ["medieval fireplace", None, 50],
+        ["dog", None, 60],
+        ["dog", None, 30],
+        ["cat", None, 30],
+        [".medieval room"],
+    ], "throne room"),
+    Thing("medieval residential area", [
+        ["medieval house", (3, 8)],
+    ], "housing district"),
+    Thing("medieval commercial area", [
+        ["medieval inn", (1, 2)],
+        ["medieval armor shop", (0, 2)],
+        ["medieval tool shop", (0, 2)],
+        ["medieval clothing shop", (0, 2)],
+        ["medieval butcher shop", (0, 2)],
+        ["medieval food shop", (0, 2)],
+        ["medieval apothecary shop", (0, 2)]
+    ],  ThingName("trade district")),
 ]
 
 """
-new Thing("watchtower",["medieval guard,1-2","medieval chest,30%",".medieval building"]);
-new Thing("castle keep",["great hall","noble medieval living quarters,1-3","noble medieval bedroom,2-5",".medieval building"]);
-new Thing("great hall",["medieval king,90%","medieval queen,90%","throne,2","wizard,0-3","medieval noble,1-6","medieval guard,1-4","medieval servant,1-4","medieval table","medieval table,60%","medieval chair,3-8","medieval chest,1-4","medieval clutter,0-4","medieval meat,30%","sack of medieval food,0-2","medieval food,0-2","sack of grain,50%","medieval fireplace","medieval fireplace,50%","dog,60%","dog,30%","cat,30%",".medieval room"],"throne room");
-new Thing("medieval residential area",["medieval house,3-8"],"housing district");
-new Thing("medieval commercial area",["medieval inn,1-2","medieval armor shop,0-2","medieval tool shop,0-2","medieval clothing shop,0-2","medieval butcher shop,0-2","medieval food shop,0-2","medieval apothecary shop,0-2"],"trade district");
 new Thing("medieval mage quarter",["wizard tower,1-5","medieval inn,0-1","medieval apothecary shop,0-3"],"mage district");
 new Thing("medieval house",["medieval living quarters","medieval bedroom","medieval bedroom,50%",".medieval building"],[["a small","a large","a big","a cozy","a bland","a boring","an old","a new","a freshly-painted","a pretty","an old-fashioned","a creepy","a spooky","a gloomy","a tall","a tiny","a fine","a happy little"],[" hovel"]]);
 new Thing("medieval building",["medieval walls","roof"],"building");

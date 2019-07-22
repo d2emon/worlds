@@ -29,13 +29,17 @@ __GENEVERSE_DATA = []
 # ["ancient plain", (0, 5)],
 # ["battlefield", None, 10],
 # ["carbon", None, 80],
-# ["capital"],
-# ["castle keep"],
-# ["city,1-10"],
+# ["cat", None, 30],
+# ["cemetery", None, 60],
+# ["commercial area", None, 90],
 # ["crustacean", None, .2],
 # ["diamond", None, 2],
 # ["dirt"],
+# ["dog", None, 60],
 # ["dungeon", None, 15],
+# ["factory", (0, 2)],
+# ["farm", (0, 6)],
+# ["fire department", None, 40],
 # ["forest", (0, 4)],
 # "future building"
 # ["future commercial building", (2, 6)],
@@ -47,32 +51,58 @@ __GENEVERSE_DATA = []
 # ["ghost", None, 0.1],
 # ["giant monster cage", None, 1],
 # ["helium"],
+# ["hospital"],
 # ["hydrogen"],
 # ["iron", None, 5],
 # ["ice", None, 50],
 # ["jungle", (0, 4)],
+# ["library", None, 40],
 # ["magma"],
 # ["marble"],
+# ["medieval apothecary shop", (0, 2)]
+# ["medieval armor shop", (0, 2)],
 # ["medieval battlefield", None, 10]
+# [".medieval building"],
+# ["medieval butcher shop", (0, 2)],
 # ["medieval cemetery", None, 50],
-# ["medieval commercial area", (1, 2)],
+# ["medieval chair", (3, 8)],
+# ["medieval chest", None, 30]
+# ["medieval clothing shop", (0, 2)],
+# ["medieval clutter", (0, 4)],
 # ["medieval farm", (4, 8)],
+# ["medieval fireplace"],
+# ["medieval food", (0, 2)],
+# ["medieval food shop", (0, 2)],
 # ["medieval guard", (2, 8)],
 # ["medieval house", (1, 4)],
 # ["medieval inn,40%"],
+# ["medieval king", None, 90],
 # ["medieval mage quarter", None, 50],
+# ["medieval meat", None, 30],
 # ["medieval noble", (0, 2)],
 # ["medieval peasant", (1, 4)],
-# ["medieval residential area", (1, 4)],
+# ["medieval queen", None, 90],
+# ["medieval servant", (1, 4)],
+# ["medieval table"],
 # ["medieval temple", (0, 2)],
+# ["medieval tool shop", (0, 2)],
 # ["medieval wall"],
 # ["metal"],
+# ["monument", None, 5],
 # ["mountain", (0, 3)],
+# ["museum", None, 5],
 # ["nitrogen", None, 5],
+# ["noble medieval bedroom", (2, 5)],
+# ["noble medieval living quarters", (1, 3)],
+# ["ocean", (1, 7)],
 # ["oxygen", None, 15],
 # ["plain", (1, 5)],
+# ["police station", None, 50],
+# ["research facility", None, 4]
+# ["residential area", (1, 4)],
 # ["rock"],
-# ["ocean", (1, 7)],
+# ["sack of grain", None, 50],
+# ["sack of medieval food", (0, 2)],
 # ["sea", None, (1, 5)],
 # ["silicon"]
 # ["sky"],
@@ -83,11 +113,11 @@ __GENEVERSE_DATA = []
 # ["stone"],
 # ["sulfur", None, 5],
 # ["terraformed sky"],
-# ["village,2-15"]
+# ["throne", [2]],
 # ["visitor city", (1, 8)],
 # ["visitor installation", (2, 6)],
-# ["watchtower", None, 15],
 # ["water", None, 5],
+# ["wizard", (0, 3)],
 # ["wizard tower", None, 5]
 # ["wood"],
 
@@ -578,11 +608,6 @@ __GENEVERSE_DATA += WORLD_SUBDIVISIONS_DATA
 
 
 """
-//towns
-new Thing("village",["residential area,1-4","commercial area,90%","police station,50%","fire department,40%","museum,5%","library,40%","farm,0-6","factory,0-2","cemetery,60%","research facility,4%"],"village");
-new Thing("city",["monument,15%","monument,5%","residential area,4-9","commercial area,1-5","police station","police station,50%","fire department","fire department,50%","museum,40%","library,60%","hospital","farm,0-3","factory,1-4","cemetery","research facility,2%"],"city");
-new Thing("capital",["monument,70%","monument,40%","monument,10%","residential area,7-15","commercial area,3-9","police station,2-5","fire department,1-3","museum,1-2","library,1-3","hospital,1-3","farm,0-2","factory,2-6","cemetery","cemetery,50%","research facility,1%"],"capital city");
-
 //buildings
 new Thing("monument",["tourist,5-30","souvenir shop,70%","souvenir shop,30%"],"*MONUMENT*");
 new Thing("tourist",[".person"],"*PERSON*| (tourist)");
