@@ -6,10 +6,6 @@
       grid-list-md
     >
       <v-card>
-        <v-card-title
-          class="headline"
-          v-text="generated.name"
-        />
         <v-list>
           <v-list-tile
             v-for="(item, id) in generated.children"

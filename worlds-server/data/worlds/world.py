@@ -1,5 +1,5 @@
 from app import app
-from ..wikifiles import get_wiki, list_wiki
+from ..wikifiles import get_wiki, list_wiki, wikis
 
 
 class World:
@@ -12,17 +12,19 @@ class World:
         slug=None,
         title='',
         text=None,
+        index_page=None,
         wiki=None,
         **data,
     ):
         self.__id = id
         self.__image = image
         self.__loader = loader
-        self.pages = pages or {}
+        self.__pages = pages or {}
         self.slug = slug
         self.title = title
         self.__text = text
-        self.wiki = wiki
+        self.index_page = index_page
+        self.wiki = wiki or {}
 
         self.data = data
 
@@ -37,10 +39,11 @@ class World:
         result = {
             'image': self.__image,
             'loader': self.__loader,
-            'pages': self.pages,
+            'pages': self.__pages,
             'slug': self.slug,
             'title': self.title,
             'text': self.__text,
+            'index_page': self.index_page,
             'wiki': self.wiki,
         }
         result.update(self.data)
@@ -54,7 +57,7 @@ class World:
     def loader(self):
         if self.__loader is not None:
             return self.__loader
-        if self.wiki is not None:
+        if self.index_page is not None:
             return self.wiki_loader
         return self.__text_loader
 
@@ -63,15 +66,15 @@ class World:
         return self.loader and self.loader()
 
     @property
-    def wiki_pages(self):
+    def pages(self):
         return [{
-            'filename': self.pages.get(file) or file,
+            'filename': self.__pages.get(file) or file,
             'url': "{}/{}".format(self.slug, file),
         } for file in list_wiki(self.slug)]
 
     def get_wiki(self, filename=None):
         if filename is None:
-            filename = self.wiki
+            filename = self.index_page
         else:
             filename = "{}/{}.md".format(self.slug, filename)
         return get_wiki(filename)
@@ -88,7 +91,8 @@ class World:
 
         result.update({
             'text': self.text,
-            'wiki': self.wiki_pages,
+            'pages': self.pages,
+            'wiki': self.wiki,
         })
         return result
 
@@ -97,12 +101,19 @@ class SluggedWorld(World):
     def __init__(
         self,
         slug,
+        title,
         image=None,
+        wiki=None,
         **data,
     ):
+        if wiki is None:
+            wiki = wikis(title)
+
         data.update({
+            'title': title,
             'image': image and "{}/{}".format(slug, image),
             'slug': slug,
-            'wiki': "{}/index.md".format(slug),
+            'index_page': "{}/index.md".format(slug),
+            'wiki': wiki,
         })
         super().__init__(**data)

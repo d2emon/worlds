@@ -27,6 +27,7 @@ export default {
       image,
       slug,
       wiki,
+      pages,
       text,
     }) => ({
       title,
@@ -35,6 +36,7 @@ export default {
       // image: imageUrl(image),
       url: worldUrl(slug),
       wiki,
+      pages,
       text,
     })),
   getWiki: (world, page) => Api

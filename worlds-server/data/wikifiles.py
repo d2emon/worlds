@@ -21,3 +21,19 @@ def list_wiki(slug):
         if not file.endswith(".md"):
             continue
         yield os.path.splitext(os.path.basename(file))[0]
+
+
+def wikis(
+    title,
+    wikipedia=True,
+    lurkmore=True,
+    posmotreli=True,
+    **data,
+):
+    if wikipedia:
+        data['wikipedia'] = "https://ru.wikipedia.org/wiki/{}".format(title)
+    if lurkmore:
+        data['lurkmore'] = "http://lurkmore.to/{}".format(title)
+    if posmotreli:
+        data['posmotreli'] = "https://posmotre.li/{}".format(title)
+    return data

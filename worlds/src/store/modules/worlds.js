@@ -35,8 +35,10 @@ const actions = {
       html: world.text ? markdown2html(world.text) : undefined,
     }))
     .then(world => commit('setWorld', world)),
-  getWiki: ({commit}, {slug, filename}) => worldsService
-    .getWiki(slug, filename)
+  getWiki: ({commit}, {slug, filename}) => (filename
+      ? worldsService.getWiki(slug, filename)
+      : Promise.resolve(null)
+    )
     .then(wiki => (wiki ? markdown2html(wiki) : undefined))
     .then(wiki => commit('setWiki', wiki)),
 };

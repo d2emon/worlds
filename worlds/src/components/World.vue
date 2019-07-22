@@ -5,12 +5,6 @@
     <v-card
       v-if="world"
     >
-      <v-card-title
-        class="headline"
-        :to="world.to"
-        v-text="world.title"
-      />
-
       <v-img
         v-if="world.image"
         :src="world.image"
@@ -21,6 +15,48 @@
         <v-layout row wrap>
           <v-flex xs3>
             <v-card>
+              <v-card-actions>
+                <v-btn
+                  to="/"
+                  icon
+                >
+                  <v-icon>view_module</v-icon>
+                </v-btn>
+                <v-btn
+                  to="/random-world"
+                  icon
+                >
+                  <v-icon>gesture</v-icon>
+                </v-btn>
+              </v-card-actions>
+
+              <v-card-actions
+                v-if="world.wiki"
+              >
+                <v-btn
+                  v-for="(href, k) in world.wiki"
+                  :key="k"
+                  :href="href"
+                  target="_blank"
+                  icon
+                >
+                  <v-avatar
+                    :size="32"
+                  >
+                    <img
+                      v-if="wikiLogo[k]"
+                      :src="wikiLogo[k]"
+                      :alt="k"
+                    >
+                    <span
+                      v-else
+                    >
+                      {{k}}
+                    </span>
+                  </v-avatar>
+                </v-btn>
+              </v-card-actions>
+
               <v-list>
                 <v-list-tile
                   :to="world.url"
@@ -32,7 +68,7 @@
                   </v-list-tile-content>
                 </v-list-tile>
                 <v-list-tile
-                  v-for="(page, id) in world.wiki"
+                  v-for="(page, id) in world.pages"
                   :key="`page-${id}`"
                   :to="`/wiki/${page.url}`"
                 >
@@ -69,6 +105,12 @@
             </template>
           </v-flex>
           <v-flex xs9>
+            <v-card-title
+              class="headline"
+              :to="world.to"
+              v-text="world.title"
+            />
+
             <slot />
 
             <!-- Object.keys(world) -->
@@ -108,6 +150,10 @@
 </template>
 
 <script>
+import wikipedia from '@/assets/wiki/wiki.png';
+import lurkmore from '@/assets/wiki/lurk.png';
+import posmotreli from '@/assets/wiki/posmotreli.png';
+
 export default {
   name: 'World',
   components: {
@@ -119,6 +165,11 @@ export default {
   ],
   data: () => ({
     enteringPortal: true,
+    wikiLogo: {
+      wikipedia,
+      lurkmore,
+      posmotreli,
+    },
     encyclo: {
       child: [
         [
