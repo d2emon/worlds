@@ -8,6 +8,7 @@ const state = {
   portal: [],
   worlds: [],
   world: null,
+  wiki: '',
 };
 
 const getters = {};
@@ -16,6 +17,7 @@ const mutations = {
   setPortal: (state, portal) => { state.portal = portal; },
   setWorlds: (state, worlds) => { state.worlds = worlds; },
   setWorld: (state, world) => { state.world = world; },
+  setWiki: (state, wiki) => { state.wiki = wiki; },
 };
 
 const actions = {
@@ -33,6 +35,12 @@ const actions = {
       html: world.text ? markdown2html(world.text) : undefined,
     }))
     .then(world => commit('setWorld', world)),
+  getWiki: ({commit}, {slug, filename}) => (filename
+      ? worldsService.getWiki(slug, filename)
+      : Promise.resolve(null)
+    )
+    .then(wiki => (wiki ? markdown2html(wiki) : undefined))
+    .then(wiki => commit('setWiki', wiki)),
 };
 
 export default {

@@ -5,12 +5,6 @@
     <v-card
       v-if="world"
     >
-      <v-card-title
-        class="headline"
-        :to="world.to"
-        v-text="world.title"
-      />
-
       <v-img
         v-if="world.image"
         :src="world.image"
@@ -20,6 +14,73 @@
       <v-container>
         <v-layout row wrap>
           <v-flex xs3>
+            <v-card>
+              <v-card-actions>
+                <v-btn
+                  to="/"
+                  icon
+                >
+                  <v-icon>view_module</v-icon>
+                </v-btn>
+                <v-btn
+                  to="/random-world"
+                  icon
+                >
+                  <v-icon>gesture</v-icon>
+                </v-btn>
+              </v-card-actions>
+
+              <v-card-actions
+                v-if="world.wiki"
+              >
+                <v-btn
+                  v-for="(href, k) in world.wiki"
+                  :key="k"
+                  :href="href"
+                  target="_blank"
+                  icon
+                >
+                  <v-avatar
+                    :size="32"
+                  >
+                    <img
+                      v-if="wikiLogo[k]"
+                      :src="wikiLogo[k]"
+                      :alt="k"
+                    >
+                    <span
+                      v-else
+                    >
+                      {{k}}
+                    </span>
+                  </v-avatar>
+                </v-btn>
+              </v-card-actions>
+
+              <v-list>
+                <v-list-tile
+                  :to="world.url"
+                >
+                  <v-list-tile-content>
+                    <v-list-tile-title>
+                      Главная
+                    </v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile
+                  v-for="(page, id) in world.pages"
+                  :key="`page-${id}`"
+                  :to="`/wiki/${page.url}`"
+                  :title="page.filename"
+                >
+                  <v-list-tile-content>
+                    <v-list-tile-title v-text="page.filename" />
+                  </v-list-tile-content>
+                </v-list-tile>
+              </v-list>
+            </v-card>
+            <br />
+
             <template
               v-for="(v, id) in encyclo.child"
             >
@@ -41,11 +102,16 @@
                   </v-list-tile>
                 </v-list>
               </v-card>
-
               <br />
             </template>
           </v-flex>
           <v-flex xs9>
+            <v-card-title
+              class="headline"
+              :to="world.to"
+              v-text="world.title"
+            />
+
             <slot />
 
             <!-- Object.keys(world) -->
@@ -55,7 +121,57 @@
             <!-- world.text -->
             <!-- world.html -->
 
-            <v-card-text v-html="world.html" />
+            <v-card-text
+              v-if="wiki"
+              v-html="wiki"
+            />
+            <v-card-text
+              v-else-if="world.html"
+              v-html="world.html"
+            />
+            <v-container v-else>
+              <v-list>
+                <v-list-tile
+                  v-for="(page, id) in world.pages"
+                  :key="`page-${id}`"
+                  :to="`/wiki/${page.url}`"
+                  :title="page.filename"
+                >
+                  <v-list-tile-content>
+                    <v-list-tile-title v-text="page.filename" />
+                  </v-list-tile-content>
+                </v-list-tile>
+              </v-list>
+
+              <v-layout
+                v-if="world.data && world.data.cards"
+                row
+                wrap
+              >
+                <v-flex
+                  sm4
+                  class="pa-1"
+                  v-for="card in world.data.cards"
+                >
+                  <v-card>
+                    <a
+                      :href="card.image"
+                      target="_blank"
+                    >
+                      <v-img
+                        v-if="card.image"
+                        :src="card.image"
+                      />
+                    </a>
+
+                    <v-card-title>
+                      <h3 class="headline" v-text="card.title"/>
+                      <div v-text="card.text" />
+                    </v-card-title>
+                  </v-card>
+                </v-flex>
+              </v-layout>
+            </v-container>
           </v-flex>
         </v-layout>
 
@@ -78,6 +194,10 @@
 </template>
 
 <script>
+import wikipedia from '@/assets/wiki/wiki.png';
+import lurkmore from '@/assets/wiki/lurk.png';
+import posmotreli from '@/assets/wiki/posmotreli.png';
+
 export default {
   name: 'World',
   components: {
@@ -85,9 +205,15 @@ export default {
   },
   props: [
     'world',
+    'wiki',
   ],
   data: () => ({
     enteringPortal: true,
+    wikiLogo: {
+      wikipedia,
+      lurkmore,
+      posmotreli,
+    },
     encyclo: {
       child: [
         [
