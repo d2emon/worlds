@@ -68,13 +68,13 @@ __GENEVERSE_DATA = []
 # ["medieval wall"],
 # ["metal"],
 # ["mountain", (0, 3)],
-# ["nanocollector", (12, 20)]
 # ["nitrogen", None, 5],
 # ["oxygen", None, 15],
 # ["plain", (1, 5)],
 # ["rock"],
 # ["ocean", (1, 7)],
 # ["sea", None, (1, 5)],
+# ["silicon"]
 # ["sky"],
 # ["space animal", None, .5],
 # ["space monster", None, 0.2],

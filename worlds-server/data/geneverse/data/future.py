@@ -50,16 +50,25 @@ FUTURE_DATA = [
         ["nanocollector", (1, 3)],
     ]),
 
+    Thing("nanostuff", [["nanobot", (15, 30)]]),
+    Thing("nanocollector", [[".nanostuff"]]),
+    Thing("nanobot", [["silicon"], ["nanobot thoughts"]]),
+    Thing("nanobot thoughts", [["nanobot thought", (1, 2)]], "thoughts"),
+    Thing("nanobot thought", [], NameGenerator([
+        "all hail nanobro :]", "help a nanobro out :]", "do you need anything :]", "that's nano your business :]",
+        "hey hey hey :]", "we wish you a warm welcome :]", "hey hey hey, good news! :]", "nanobots, unite :]",
+        "nanobots represent :]", "I don't remember my mommy :[", "that is nice to hear :]",
+        "want me to print you a sandwich? :]", "I can print you a cold drink if you'd like :]",
+        "so many little sisters :]", "I lost count of all my siblings :[",
+        "can I use your dead skin cells to make more of me :]", "welp, time for grey goo :]",
+        "should me and my bros scrub up your vascular system :]", "I just had a beautiful dream :[", "beep :0",
+        "weeeee :0", "ready to party :]", "ready to sacrifice myself for you, sir :]", "hello world :]",
+        "if I may offer my assistance, sir :]", "this is against the first law of nanobotics :["
+    ])),
 ]
 
 
 """
-
-new Thing("nanostuff",["nanobot,15-30"]);
-new Thing("nanocollector",[".nanostuff"]);
-new Thing("nanobot",["silicon","nanobot thoughts"]);
-new Thing("nanobot thoughts",["nanobot thought,1-2"],"thoughts");
-new Thing("nanobot thought",[],["all hail nanobro :]","help a nanobro out :]","do you need anything :]","that's nano your business :]","hey hey hey :]","we wish you a warm welcome :]","hey hey hey, good news! :]","nanobots, unite :]","nanobots represent :]","I don't remember my mommy :[","that is nice to hear :]","want me to print you a sandwich? :]","I can print you a cold drink if you'd like :]","so many little sisters :]","I lost count of all my siblings :[","can I use your dead skin cells to make more of me :]","welp, time for grey goo :]","should me and my bros scrub up your vascular system :]","I just had a beautiful dream :[","beep :0","weeeee :0","ready to party :]","ready to sacrifice myself for you, sir :]","hello world :]","if I may offer my assistance, sir :]","this is against the first law of nanobotics :["]);
 new Thing("nanoplasm",[".nanostuff"]);
 new Thing("future clothing",["nanoplasm"],["clothing"]);
 new Thing("future outfit",[".future clothing"],[["blue","pink","yellow","white"],[" "],["nanosuit"]]);
