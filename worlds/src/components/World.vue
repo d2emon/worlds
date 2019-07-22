@@ -129,18 +129,49 @@
               v-else-if="world.html"
               v-html="world.html"
             />
-            <v-list v-else>
-              <v-list-tile
-                v-for="(page, id) in world.pages"
-                :key="`page-${id}`"
-                :to="`/wiki/${page.url}`"
-                :title="page.filename"
+            <v-container v-else>
+              <v-list>
+                <v-list-tile
+                  v-for="(page, id) in world.pages"
+                  :key="`page-${id}`"
+                  :to="`/wiki/${page.url}`"
+                  :title="page.filename"
+                >
+                  <v-list-tile-content>
+                    <v-list-tile-title v-text="page.filename" />
+                  </v-list-tile-content>
+                </v-list-tile>
+              </v-list>
+
+              <v-layout
+                v-if="world.data && world.data.cards"
+                row
+                wrap
               >
-                <v-list-tile-content>
-                  <v-list-tile-title v-text="page.filename" />
-                </v-list-tile-content>
-              </v-list-tile>
-            </v-list>
+                <v-flex
+                  sm4
+                  class="pa-1"
+                  v-for="card in world.data.cards"
+                >
+                  <v-card>
+                    <a
+                      :href="card.image"
+                      target="_blank"
+                    >
+                      <v-img
+                        v-if="card.image"
+                        :src="card.image"
+                      />
+                    </a>
+
+                    <v-card-title>
+                      <h3 class="headline" v-text="card.title"/>
+                      <div v-text="card.text" />
+                    </v-card-title>
+                  </v-card>
+                </v-flex>
+              </v-layout>
+            </v-container>
           </v-flex>
         </v-layout>
 

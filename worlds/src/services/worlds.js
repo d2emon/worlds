@@ -29,6 +29,7 @@ export default {
       wiki,
       pages,
       text,
+      data,
     }) => ({
       title,
       slug,
@@ -38,6 +39,7 @@ export default {
       wiki,
       pages,
       text,
+      data,
     })),
   getWiki: (world, page) => Api
     .get(`/api/worlds/wiki/${world}/${page}`)

@@ -6,24 +6,26 @@ class World:
     def __init__(
         self,
         id=None,
+        data_loader=None,
         image='portal.jpg',
+        index_page=None,
         loader=None,
         pages=None,
         slug=None,
-        title='',
         text=None,
-        index_page=None,
+        title='',
         wiki=None,
         **data,
     ):
         self.__id = id
+        self.__data_loader = data_loader
         self.__image = image
+        self.index_page = index_page
         self.__loader = loader
         self.__pages = pages or {}
         self.slug = slug
-        self.title = title
         self.__text = text
-        self.index_page = index_page
+        self.title = title
         self.wiki = wiki or {}
 
         self.data = data
@@ -37,13 +39,14 @@ class World:
     @property
     def fields(self):
         result = {
+            'data_loader': self.__data_loader,
             'image': self.__image,
+            'index_page': self.index_page,
             'loader': self.__loader,
             'pages': self.__pages,
             'slug': self.slug,
             'title': self.title,
             'text': self.__text,
-            'index_page': self.index_page,
             'wiki': self.wiki,
         }
         result.update(self.data)
@@ -59,11 +62,22 @@ class World:
             return self.__loader
         if self.index_page is not None:
             return self.wiki_loader
-        return self.__text_loader
+        # return self.__text_loader
+        return lambda: self.__text
+
+    @property
+    def data_loader(self):
+        if self.__data_loader is not None:
+            return self.__data_loader
+        return lambda: {}
 
     @property
     def text(self):
         return self.loader and self.loader()
+
+    @property
+    def additional_data(self):
+        return self.data_loader and self.data_loader()
 
     @property
     def pages(self):
@@ -96,6 +110,8 @@ class World:
             'text': self.text,
             'pages': self.pages,
             'wiki': self.wiki,
+
+            'data': self.additional_data,
         })
         return result
 

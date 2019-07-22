@@ -2,6 +2,7 @@ from ..utils import Database
 from ..wikifiles import wikis
 from .world import World, SluggedWorld
 
+from .futureMoscow import future_moscow
 from .spectre import spectre
 
 
@@ -9,6 +10,8 @@ class WorldsDB(Database):
     @classmethod
     def world(cls, item):
         return World(**item)
+
+
 WORLDS_DATA = [
     {
         'title': 'Assassin\'s Creed',
@@ -307,19 +310,7 @@ WORLDS_DATA = [
         'slug': 'mir-ktulhu',
         'index_page': 'mir-ktulhu/index.md',
     },
-    SluggedWorld(
-        title='Москва Будущего',
-        slug='moskva-budushego',
-        image='Moscow.jpg',
-        pages={
-            'moscow20': "Каким виделось будущее Москвы из 1920-30-х годов",
-            'moscow45': "Москва в 1945 году",
-            'moscow50': "Какой виделась Москва будущего из 1950-60-х годов",
-            'moscow-xxiii': "Москва в XXIII веке",
-            'russia2017': "А.Лиговский: Россия в 2017 году. Новогодняя фантазия",
-        },
-        wiki={},
-    ),
+    future_moscow,
     SluggedWorld(
         title='Плоский мир',
         slug='discworld',
@@ -366,3 +357,5 @@ WORLDS_DATA = [
 # 'image': 'd20-logos.jpg',
 
 WORLDS = WorldsDB([world.fields if isinstance(world, World) else world for world in WORLDS_DATA])
+
+print(WORLDS.items)
