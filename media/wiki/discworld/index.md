@@ -24,6 +24,14 @@
 
 <hr />
 
+![](images/discworld-postcards1-1.jpg =100x)<br />
+
+<hr />
+
+![](images/discworld-postcards1-1.jpg =100x20)<br />
+
+<hr />
+
 ![](http://127.0.0.1:5000/thumbs/worlds/discworld/discworld-postcards1-1.jpg)<br />
 
 ## На великом А’Туине
