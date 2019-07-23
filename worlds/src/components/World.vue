@@ -13,7 +13,7 @@
 
       <v-container>
         <v-layout row wrap>
-          <v-flex xs3>
+          <v-flex xs4>
             <v-card>
               <v-card-actions>
                 <v-btn
@@ -105,7 +105,7 @@
               <br />
             </template>
           </v-flex>
-          <v-flex xs9>
+          <v-flex xs8>
             <v-card-title
               class="headline"
               :to="world.to"
@@ -123,10 +123,12 @@
 
             <v-card-text
               v-if="wiki"
+              class="wiki"
               v-html="wiki"
             />
             <v-card-text
               v-else-if="world.html"
+              class="wiki"
               v-html="world.html"
             />
             <v-container v-else>

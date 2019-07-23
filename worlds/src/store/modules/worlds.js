@@ -1,7 +1,7 @@
 import worldsService from '@/services/worlds';
 import portalService from '@/services/portal';
 import {
-  markdown2html,
+  wiki2html,
 } from '@/helpers';
 
 const state = {
@@ -23,7 +23,7 @@ const mutations = {
 const actions = {
   getPortal: ({ commit }) => portalService
     .getPortal()
-    .then(portal => markdown2html(portal))
+    .then(wiki2html)
     .then(portal => commit('setPortal', portal)),
   getWorlds: ({ commit }) => worldsService
     .getWorlds()
@@ -32,14 +32,14 @@ const actions = {
     .getWorld(slug)
     .then(world => ({
       ...world,
-      html: world.text ? markdown2html(world.text) : undefined,
+      html: wiki2html(world.text, world.slug),
     }))
     .then(world => commit('setWorld', world)),
   getWiki: ({commit}, {slug, filename}) => (filename
       ? worldsService.getWiki(slug, filename)
       : Promise.resolve(null)
     )
-    .then(wiki => (wiki ? markdown2html(wiki) : undefined))
+    .then(wiki => wiki2html(wiki, slug))
     .then(wiki => commit('setWiki', wiki)),
 };
 

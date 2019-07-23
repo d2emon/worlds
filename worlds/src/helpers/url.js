@@ -2,6 +2,7 @@ import config from './config';
 
 
 export default {
-  imageUrl: image => config.url + (image ? image : '/images/portal.jpg'),
+  mediaUrl: `${config.url}/media`,
+  imageUrl: image => config.url + (image || '/images/portal.jpg'),
   worldUrl: slug => (slug  ? `/world/${slug}` : '/'),
 }
