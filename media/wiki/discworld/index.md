@@ -1,3 +1,8 @@
+<style>
+.image img {
+  height: 100px;
+}
+</style>
 # Туристический путеводитель по Плоскому миру
 
 Туристическое бюро «Мира фантастики» предлагает вам путеводитель по миру 
@@ -10,21 +15,33 @@
 зато они точно не дадут заскучать — потому что произойти может вообще что 
 угодно. Аномалии времени, пространства, магии, других миров — к вашим услугам!
 
+1
+<div class="image">
+<img src="http://localhost:5000/media/wiki/discworld/images/discworld-postcards1-1.jpg" />
+</div>
 <hr />
 
-<img src="http://127.0.0.1:5000/media/wiki/discworld/images/discworld-postcards1-1.jpg" height="100px" />
-
+2
+<div style="height: 200px">
+<img src="http://localhost:5000/media/wiki/discworld/images/discworld-postcards1-1.jpg" />
+</div>
 <hr />
 
-<img src="images/discworld-postcards1-1.jpg" height="100px" />
-
-<hr />
+3
+<div style="height: 200px">
 
 ![](images/discworld-postcards1-1.jpg)<br />
 
+</div>
 <hr />
 
-![](http://127.0.0.1:5000/thumbs/worlds/discworld/discworld-postcards1-1.jpg)<br />
+4
+<div class="image">
+
+![](images/discworld-postcards1-1.jpg)<br />
+
+</div>
+<hr />
 
 ## На великом А’Туине
 
