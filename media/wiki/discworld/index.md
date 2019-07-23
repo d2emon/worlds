@@ -24,7 +24,7 @@
 
 <hr />
 
-![](images/discworld-postcards1-1.jpg =100x)<br />
+![](images/discworld-postcards1-1.jpg){: height="200px"}<br />
 
 <hr />
 
