@@ -15,8 +15,8 @@ export default {
     }) => ({
       title,
       slug,
-      image,
-      // image: imageUrl(image),
+      // image,
+      image: image || imageUrl,
       url: worldUrl(slug),
     }))),
   getWorld: world => Api
@@ -33,8 +33,8 @@ export default {
     }) => ({
       title,
       slug,
-      image,
-      // image: imageUrl(image),
+      // image,
+      image: image || imageUrl,
       url: worldUrl(slug),
       wiki,
       pages,
