@@ -20,8 +20,8 @@ class Config:
     DIST_ROOT = os.path.join(ROOT_DIR, 'dist')
     WIKI_ROOT = os.path.join(MEDIA_FOLDER, 'wiki')
 
-    RESIZE_URL = MEDIA_URL + '/images'
-    RESIZE_ROOT = os.path.join(MEDIA_FOLDER, 'images')
+    RESIZE_URL = MEDIA_URL
+    RESIZE_ROOT = os.path.join(MEDIA_FOLDER)
 
     # if not os.path.exists(DIST_DIR):
     #     raise Exception("DIST_DIR not found: {}".format(DIST_DIR))
