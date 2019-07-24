@@ -42,7 +42,7 @@ class FutureMoscow(SluggedWorld):
 future_moscow = FutureMoscow(
     title='Москва Будущего',
     slug='moskva-budushego',
-    image='Moscow.jpg',
+    image='images/Moscow.jpg',
     pages={
         'moscow20': "Каким виделось будущее Москвы из 1920-30-х годов",
         'moscow45': "Москва в 1945 году",

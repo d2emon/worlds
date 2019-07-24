@@ -314,7 +314,7 @@ WORLDS_DATA = [
     SluggedWorld(
         title='Плоский мир',
         slug='discworld',
-        image='discworld-wallpaper-768x480.jpg',
+        image='images/discworld-wallpaper-768x480.jpg',
         wiki=wikis(
             'Плоский мир',
             en="https://discworld.fandom.com/",
@@ -325,7 +325,7 @@ WORLDS_DATA = [
     SluggedWorld(
         title='Путеводитель по коридорам Ада',
         slug='putevoditel-po-koridoram-ada',
-        image='Hell.jpg',
+        image='images/Hell.jpg',
         wiki={
             'lurkmore': "http://lurkmore.to/Путеводитель по коридорам Ада"
         },
@@ -333,7 +333,7 @@ WORLDS_DATA = [
     SluggedWorld(
         title='Рик и Морти',
         slug='rick-and-morty',
-        image='LabRick.png',
+        image='images/LabRick.png',
         wiki=wikis(
             'Рик и Морти',
             en="https://rickandmorty.fandom.com/",

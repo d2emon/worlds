@@ -54,7 +54,7 @@ class World:
 
     @property
     def image(self):
-        return '{}/worlds/{}'.format(app.config.get('RESIZE_URL'), self.__image)
+        return '{}/wiki/{}'.format(app.config.get('MEDIA_URL'), self.__image)
 
     @property
     def loader(self):
