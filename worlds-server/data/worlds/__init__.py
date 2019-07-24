@@ -357,5 +357,3 @@ WORLDS_DATA = [
 # 'image': 'd20-logos.jpg',
 
 WORLDS = WorldsDB([world.fields if isinstance(world, World) else world for world in WORLDS_DATA])
-
-print(WORLDS.items)
