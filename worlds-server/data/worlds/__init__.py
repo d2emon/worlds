@@ -226,6 +226,13 @@ WORLDS_DATA = [
         'slug': 'amber',
         'index_page': 'amber/index.md',
     },
+    SluggedWorld(
+        title='Американские боги',
+        slug='american-gods',
+        image='images/start-3.jpg',
+
+        lurkmore=False,
+    ),
     {
         'title': 'Арда',
         'image': 'arda/images/tolkien.jpg',
@@ -315,12 +322,11 @@ WORLDS_DATA = [
         title='Плоский мир',
         slug='discworld',
         image='images/discworld-wallpaper-768x480.jpg',
-        wiki=wikis(
-            'Плоский мир',
-            en="https://discworld.fandom.com/",
-            ru="https://discworld.fandom.com/ru/",
-            disc="https://disc.fandom.com/ru/",
-        ),
+        additional_wikis={
+            'en': "https://discworld.fandom.com/",
+            'ru': "https://discworld.fandom.com/ru/",
+            'disc': "https://disc.fandom.com/ru/",
+        },
     ),
     SluggedWorld(
         title='Путеводитель по коридорам Ада',
@@ -334,11 +340,10 @@ WORLDS_DATA = [
         title='Рик и Морти',
         slug='rick-and-morty',
         image='images/LabRick.png',
-        wiki=wikis(
-            'Рик и Морти',
-            en="https://rickandmorty.fandom.com/",
-            ru="https://rickandmorty.fandom.com/ru/",
-        ),
+        additional_wikis={
+            'en': "https://rickandmorty.fandom.com/",
+            'ru': "https://rickandmorty.fandom.com/ru/",
+        },
         pages={
             'science': '«Рик и Морти» с точки зрения науки',
             'references': 'Obscure Pop Culture References From Rick And Morty, Explained',

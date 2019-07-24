@@ -56,33 +56,6 @@
                 </v-btn>
               </v-card-actions>
 
-              <v-card-actions
-                v-if="world.wiki"
-              >
-                <v-btn
-                  v-for="(href, k) in world.wiki"
-                  :key="k"
-                  :href="href"
-                  target="_blank"
-                  icon
-                >
-                  <v-avatar
-                    :size="32"
-                  >
-                    <img
-                      v-if="wikiLogo[k]"
-                      :src="wikiLogo[k]"
-                      :alt="k"
-                    >
-                    <span
-                      v-else
-                    >
-                      {{k}}
-                    </span>
-                  </v-avatar>
-                </v-btn>
-              </v-card-actions>
-
               <v-list>
                 <v-list-tile
                   :to="world.url"
