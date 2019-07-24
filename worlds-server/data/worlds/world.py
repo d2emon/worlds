@@ -127,18 +127,18 @@ class SluggedWorld(World):
         wikipedia=True,
         lurkmore=True,
         posmotreli=True,
-        additional_wikis=None,
+        links=None,
 
         **data,
     ):
         if wiki is None:
-            additional_wikis = additional_wikis or {}
+            links = links or {}
             wiki = wikis(
                 title,
                 wikipedia=wikipedia,
                 lurkmore=lurkmore,
                 posmotreli=posmotreli,
-                **additional_wikis,
+                **links,
             )
 
         data.update({

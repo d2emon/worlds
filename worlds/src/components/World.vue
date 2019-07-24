@@ -20,9 +20,11 @@
           :key="k"
           :href="href"
           target="_blank"
-          icon
+          :icon="!!wikiLogo[k]"
+          flat
         >
           <v-avatar
+            v-if="wikiLogo[k]"
             :size="32"
           >
             <img
@@ -30,10 +32,10 @@
               :src="wikiLogo[k]"
               :alt="k"
             />
-            <span v-else>
-              {{k}}
-            </span>
           </v-avatar>
+          <span v-else>
+            {{k}}
+          </span>
         </v-btn>
       </v-card-actions>
 

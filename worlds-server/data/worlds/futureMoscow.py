@@ -40,9 +40,9 @@ class FutureMoscow(SluggedWorld):
 
 
 future_moscow = FutureMoscow(
-    title='Москва Будущего',
-    slug='moskva-budushego',
-    image='images/Moscow.jpg',
+    title='СССР-2061',
+    slug='sssr-2061',
+    image='images/ussr-2061.jpg',
     pages={
         'moscow20': "Каким виделось будущее Москвы из 1920-30-х годов",
         'moscow45': "Москва в 1945 году",
@@ -50,7 +50,17 @@ future_moscow = FutureMoscow(
         'moscow-xxiii': "Москва в XXIII веке",
         'russia2017': "А.Лиговский: Россия в 2017 году. Новогодняя фантазия",
     },
-    wiki={},
+
+    lurkmore=False,
+    posmotreli=False,
+    links={
+        'СССР-2061': "http://2061.su/",
+        'livejournal': "http://ru-2061.livejournal.com/",
+        'vk': "http://vk.com/su2061",
+        'twitter': "https://twitter.com/ru_2061/",
+        'fantlab.ru': "https://fantlab.ru/community254/tag/СССР-2061",
+        'samlib.ru': "http://samlib.ru/s/sssr2061/",
+    },
 
     # Data
     cards=[

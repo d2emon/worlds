@@ -322,7 +322,8 @@ WORLDS_DATA = [
         title='Плоский мир',
         slug='discworld',
         image='images/discworld-wallpaper-768x480.jpg',
-        additional_wikis={
+
+        links={
             'en': "https://discworld.fandom.com/",
             'ru': "https://discworld.fandom.com/ru/",
             'disc': "https://disc.fandom.com/ru/",
@@ -332,6 +333,7 @@ WORLDS_DATA = [
         title='Путеводитель по коридорам Ада',
         slug='putevoditel-po-koridoram-ada',
         image='images/Hell.jpg',
+
         wiki={
             'lurkmore': "http://lurkmore.to/Путеводитель по коридорам Ада"
         },
@@ -340,10 +342,12 @@ WORLDS_DATA = [
         title='Рик и Морти',
         slug='rick-and-morty',
         image='images/LabRick.png',
-        additional_wikis={
+
+        links={
             'en': "https://rickandmorty.fandom.com/",
             'ru': "https://rickandmorty.fandom.com/ru/",
         },
+
         pages={
             'science': '«Рик и Морти» с точки зрения науки',
             'references': 'Obscure Pop Culture References From Rick And Morty, Explained',
@@ -356,7 +360,8 @@ WORLDS_DATA = [
     SluggedWorld(
         title='Юрий Петухов',
         slug='yuriy-petuhov',
-        # image='images/Hell.jpg',
+        image='images/Pet9.png',
+
         wiki={
             'lurkmore': "http://lurkmore.to/Юрий_Петухов"
         },
