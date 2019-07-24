@@ -9,7 +9,10 @@
       <v-flex
         v-for="item in cards"
         :key="item.key"
-        v-bind="{ [item.flex]: true }"
+        v-bind="{
+          [item.flex.sm]: true,
+          [item.flex.lg]: true,
+        }"
       >
         <v-card
           :to="item.url"
@@ -64,6 +67,7 @@ export default {
     'start-offset',
   ],
   data: () => ({
+    fullRow: 6,
     row: 6,
     cards: [],
   }),
@@ -72,18 +76,24 @@ export default {
   },
   methods: {
     getFlex() {
-      const size = Math.floor(Math.random() * this.row) + 1;
-      this.row = this.row <= size ? 6 : this.row - size;
-      return size * 2;
+      const size = Math.floor(Math.random() * (this.row)) + 1;
+      this.row = this.row <= size ? this.fullRow : this.row - size;
+      return size;
     },
     setCards(items) {
-      this.row = 6 - this.startOffset;
-      this.cards = items.map((item, key) => ({
-        key,
-        ...item,
-        flex: `xs${this.getFlex()}`,
-        // height: (Math.random() > 0.5) ? '200px' : '400px',
-      }));
+      this.row = this.fullRow - this.startOffset;
+      this.cards = items.map((item, key) => {
+        const flex = this.getFlex();
+        return {
+          key,
+          ...item,
+          flex: {
+            sm: `sm${flex * 2}`,
+            lg: `lg${flex}`,
+          },
+          // height: (Math.random() > 0.5) ? '200px' : '400px',
+        };
+      });
     },
   },
   mounted() {

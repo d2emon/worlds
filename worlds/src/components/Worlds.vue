@@ -8,13 +8,13 @@
       <v-container>
         <items-list
           :items="worlds"
-          :start-offset="3"
+          :start-offset="4"
         >
           <template v-slot:before>
-            <v-flex sm3>
+            <v-flex sm4 lg2>
               <random-world />
             </v-flex>
-            <v-flex sm3>
+            <v-flex sm4 lg2>
               <generated-card />
             </v-flex>
           </template>
