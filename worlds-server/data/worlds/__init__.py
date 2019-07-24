@@ -348,6 +348,14 @@ WORLDS_DATA = [
         },
     ),
     spectre,
+    SluggedWorld(
+        title='Юрий Петухов',
+        slug='yuriy-petuhov',
+        # image='images/Hell.jpg',
+        wiki={
+            'lurkmore': "http://lurkmore.to/Юрий_Петухов"
+        },
+    ),
 ]
 # 'image': '3e-logos.gif',
 # 'image': 'hw-logos.gif',
