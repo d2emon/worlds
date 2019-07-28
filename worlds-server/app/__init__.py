@@ -56,6 +56,10 @@ def not_found(error):
 
 
 # media
-@app.route('/media/<path:filename>')
-def media(filename):
-    return send_from_directory(current_app.config.get('MEDIA_FOLDER'), filename, as_attachment=True)
+@app.route('/files/<path:path>')
+def media(path):
+    path = os.path.join(current_app.config.get('MEDIA_FOLDER'), path)
+    if not os.path.exists(path):
+        return make_response(jsonify({'error': 'Media not found'}), 404)
+    return send_file(os.path.join(current_app.config.get('MEDIA_FOLDER'), path))
+    # return send_from_directory(current_app.config.get('MEDIA_FOLDER'), filename, as_attachment=True)

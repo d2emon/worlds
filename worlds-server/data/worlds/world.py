@@ -54,7 +54,7 @@ class World:
 
     @property
     def image(self):
-        return '{}/worlds/{}'.format(app.config.get('RESIZE_URL'), self.__image)
+        return self.__image and '{}/wiki/{}'.format(app.config.get('MEDIA_URL'), self.__image)
 
     @property
     def loader(self):
@@ -123,10 +123,23 @@ class SluggedWorld(World):
         title,
         image=None,
         wiki=None,
+
+        wikipedia=True,
+        lurkmore=True,
+        posmotreli=True,
+        links=None,
+
         **data,
     ):
         if wiki is None:
-            wiki = wikis(title)
+            links = links or {}
+            wiki = wikis(
+                title,
+                wikipedia=wikipedia,
+                lurkmore=lurkmore,
+                posmotreli=posmotreli,
+                **links,
+            )
 
         data.update({
             'title': title,

@@ -96,7 +96,7 @@ class Spectre(SluggedWorld):
 spectre = Spectre(
     title="Спектр",
     slug="spectre",
-    image="Spectre.jpg",
+    image="images/Spectre.jpg",
     wiki={
         'wikipedia': 'https://ru.wikipedia.org/wiki/Спектр_(роман)',
     },

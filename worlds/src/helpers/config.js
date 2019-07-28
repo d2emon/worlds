@@ -1,9 +1,8 @@
 const url = '//127.0.0.1:5000';
-const worldImages = `${url}/media/images/worlds/`;
+const media = `${url}/files`;
 
 
 export default {
   url,
-  worldImages,
-  worldImage: `${worldImages}portal.jpg`,
+  worldImage: `${media}/wiki/portal.jpg`,
 };

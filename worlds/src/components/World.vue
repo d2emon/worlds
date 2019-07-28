@@ -11,6 +11,34 @@
         height="200px"
       />
 
+      <v-card-actions
+        v-if="world.wiki"
+      >
+        <v-spacer />
+        <v-btn
+          v-for="(href, k) in world.wiki"
+          :key="k"
+          :href="href"
+          target="_blank"
+          :icon="!!wikiLogo[k]"
+          flat
+        >
+          <v-avatar
+            v-if="wikiLogo[k]"
+            :size="32"
+          >
+            <img
+              v-if="wikiLogo[k]"
+              :src="wikiLogo[k]"
+              :alt="k"
+            />
+          </v-avatar>
+          <span v-else>
+            {{k}}
+          </span>
+        </v-btn>
+      </v-card-actions>
+
       <v-container>
         <v-layout row wrap>
           <v-flex xs4>
@@ -27,33 +55,6 @@
                   icon
                 >
                   <v-icon>gesture</v-icon>
-                </v-btn>
-              </v-card-actions>
-
-              <v-card-actions
-                v-if="world.wiki"
-              >
-                <v-btn
-                  v-for="(href, k) in world.wiki"
-                  :key="k"
-                  :href="href"
-                  target="_blank"
-                  icon
-                >
-                  <v-avatar
-                    :size="32"
-                  >
-                    <img
-                      v-if="wikiLogo[k]"
-                      :src="wikiLogo[k]"
-                      :alt="k"
-                    >
-                    <span
-                      v-else
-                    >
-                      {{k}}
-                    </span>
-                  </v-avatar>
                 </v-btn>
               </v-card-actions>
 
