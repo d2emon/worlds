@@ -34,6 +34,9 @@ app.register_blueprint(worlds)
 from .api.generated import blueprint as generated
 app.register_blueprint(generated)
 
+from .walk import blueprint as walk
+app.register_blueprint(walk)
+
 
 @app.route('/<path:path>')
 @app.route('/', defaults={'path': ''})
