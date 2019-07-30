@@ -4,7 +4,7 @@
 
 # zoname = []
 
-# def findzone(x, str):
+from ..room import find_zone as findzone
 
 # ex_dat    Room
 
@@ -16,7 +16,9 @@
 from ..database.rooms import load_exits as lodex
 
 # def roomnum(str, offstr):
-# def showname(loc):
+
+from ..room import show_name as showname
+
 # def loccom():
 
 """
@@ -35,38 +37,8 @@ struct zone
 typedef struct zone ZONE ;
 
 ZONE zoname[  ]={
-    "LIMBO", 1, "WSTORE", 2, "HOME", 4, "START", 5, "PIT", 6, "WIZROOM", 19, "DEAD", 99,
-    "BLIZZARD", 299, "CAVE", 399, "LABRNTH", 499, "FOREST", 599, "VALLEY", 699, "MOOR", 799,
-    "ISLAND", 899, "SEA", 999, "RIVER", 1049, "CASTLE", 1069, "TOWER", 1099, "HUT", 1101,
-    "TREEHOUSE", 1105, "QUARRY", 2199, "LEDGE", 2299, "INTREE", 2499, "WASTE", 99999
+    
     } ;
-
- findzone( x, str )
- char *str ;
-    {
-    extern ZONE zoname[] ;
-    long a, b ;
-    long c ;
-    a=0 ;
-    b=0 ;
-    x= -x ;
-    if( x<=0 )
-       {
-       strcpy( str, "TCHAN" ) ;
-       return( 0 ) ;
-       }
-
-    while( a<x )
-       {
-       strcpy( str, zoname[ b ].z_name ) ;
-       c=a ;
-       a=zoname[ b ].z_loc ;
-       b++;
-       }
-    return( x-c ) ;
-    }
-
-long ex_dat[ 7 ] ;
 
  exits(  )
     {
@@ -141,18 +113,6 @@ char *dirns[  ]={"North", "East ", "South", "West ", "Up   ", "Down "} ;
     if( d+b>c ) return( 0 ) ;
     return( -( d+b ) ) ;
     }
- showname( loc )
-    {
-    extern long my_lev ;
-    char a[64] ;
-    extern char wd_there[];
-    long b ;
-    b=findzone( loc, a ) ;
-    bprintf( "%s%d", a, b ) ;
-    if( my_lev>9999 )bprintf( "[ %d ]", loc ) ;
-    sprintf(wd_there,"%s %d",a,b);
-    bprintf( "\n" ) ;
-    }
  loccom(  )
     {
     extern long my_lev ;
@@ -170,7 +130,4 @@ return ;
     if( zoname[ a++ ].z_loc!=99999 ) goto l1 ;
     bprintf( "\n" ) ;
     }
-
- 
-
 """
