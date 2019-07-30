@@ -1,3 +1,7 @@
+from .database import World, connect, disconnect
+from .exceptions import crapup
+
+
 class Globals:
     ail_blind = False
     my_lev = 0
@@ -8,55 +12,38 @@ class Globals:
 
 
 class Room:
-    ROOMS = "ROOMS"
+    database = "ROOMS"
 
     def __init__(self, room_id, permissions="r"):
         self.room_id = room_id
         self.title = None
+        self.exits = [None] * 7
         self.description = "You are on channel {}\n".format(self.room_id)
         self.death_room = False
         self.no_brief = False
 
-        self.__permissions = None
         self.__data = None
 
-        self.open(permissions)
-
-    @property
-    def __filename(self):
-        return "{}{}".format(self.ROOMS, -self.room_id)
+        self.open(permissions).load()
 
     def open(self, permissions):
-        print("fopen({}, {})".format(self.__filename, permissions))
-        self.__permissions = permissions
-        # self.__data = []
-        self.__data = None
+        self.__data = connect(self.database, permissions, item_id=self.room_id)
         return self
 
     def close(self):
-        self.__permissions = None
-        self.__data = None
+        self.__data = disconnect(self.database)
 
     def load(self):
         if self.__data is None:
             return
 
-        lodex(self.__data)
-        for s in self.__data:
-            self.__parse(s)
-        self.close()
+        self.title = self.__data.get('title')
+        self.exits = self.__data.get('exits')
+        self.description = self.__data.get('description')
+        self.death_room = self.__data.get('death_room')
+        self.no_brief = self.__data.get('no_brief')
 
-    def __parse(self, s):
-        if s == "#DIE":
-            self.death_room = True
-            return
-        if s == "#NOBR":
-            self.no_brief = True
-            return
-        if self.title is None:
-            self.title = s
-            return
-        self.description += "{}\n".format(s)
+        self.close()
 
     @property
     def text(self):
@@ -70,13 +57,12 @@ def look_room(room_id=None, brief=None):
     if room_id is None:
         room_id = Globals.curch
 
-    closeworld()
+    World.save()
 
     # 1
     error = "You are blind... you can't see a thing!\n" if Globals.ail_blind else None
 
     room = Room(room_id)
-    room.load()
 
     if Globals.my_lev > 9:
         showname(room_id)
@@ -103,7 +89,7 @@ def look_room(room_id=None, brief=None):
     else:
         text = room.text
 
-    openworld()
+    World.load()
 
     if not isdark() and not Globals.ail_blind:
         lisobs()
@@ -127,15 +113,6 @@ def open_room(room_id, permissions):
     return Room(room_id, permissions)
 
 
-def closeworld():
-    # raise NotImplementedError()
-    print("closeworld()")
-
-
-def crapup(*args):
-    raise NotImplementedError()
-
-
 def showname(*args):
     raise NotImplementedError()
 
@@ -156,11 +133,6 @@ def lispeople(*args):
     print("lispeople({})".format(args))
 
 
-def lodex(*args):
-    # raise NotImplementedError()
-    print("lodex({})".format(args))
-
-
 def loseme(*args):
     raise NotImplementedError()
 
@@ -168,8 +140,3 @@ def loseme(*args):
 def onlook(*args):
     # raise NotImplementedError()
     print("onlook({})".format(args))
-
-
-def openworld(*args):
-    # raise NotImplementedError()
-    print("openworld()")

@@ -1,3 +1,5 @@
+from .database import World
+from .exceptions import ActionError
 from .room import look_room
 
 
@@ -6,13 +8,9 @@ class Globals:
     my_lev = 0
 
 
-class ActionError(Exception):
-    pass
-
-
 def look(parser):
     def __look():
-        return look_room(Globals.curch, brmode=False)
+        return look_room(Globals.curch, brief=False)
 
     def __look_at():
         return examcom()
@@ -500,7 +498,7 @@ __actions = {
 
 
 def execute_action(action_id):
-    openworld()
+    World.load()
 
     """
     if 1 < action_id < 8:
@@ -525,8 +523,4 @@ def examcom():
 
 
 def fobna(*args):
-    raise NotImplementedError()
-
-
-def openworld(*args):
     raise NotImplementedError()

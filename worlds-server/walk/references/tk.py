@@ -43,7 +43,7 @@ Sectors 1-n  in pairs ie [128 words]
 # fl_com = None
 
 # def rte(name):
-# def openlock(file, perm):
+from ..database import connect as openlock
 # def findstart(unit):
 # def findend(unit):
 # def talker(name):
@@ -85,30 +85,13 @@ from ..room import look_room as lookin
 # iamon = 0
 
 # def userwrap():
-# def fcloselock(file):
+from ..database import disconnect as fcloselock
 
 """
 long i_setup=0;
 long oddcat=0;
 long  talkfl=0;
 
-#include <stdio.h>
-#include <sys/errno.h>
-#include <sys/file.h>
-
-extern FILE * openlock();
-extern char globme[];
-extern long cms;
-extern long curch;
-extern long my_str;
-extern long my_sex;
-extern long my_lev;
-extern FILE * openroom(); 
-extern FILE * openworld();
-extern char * pname();
-extern char * oname();
-extern long ppos();
-extern char key_buff[];
 long cms= -1;
 long curch=0;
  
@@ -318,30 +301,6 @@ extern long findend();
     rdes=0;tdes=0;vdes=0;
     }
     
-FILE *openlock(file,perm)
-char *file;
-char *perm;
-    {
-    FILE *unit;
-    long ct;
-    extern int errno;
-    extern char globme[];
-    ct=0;
-   unit=fopen(file,perm);
-   if(unit==NULL) return(unit);
-   /* NOTE: Always open with R or r+ or w */
-intr:if(flock(fileno(unit),LOCK_EX)== -1)
-		if(errno==EINTR) goto intr; /* INTERRUPTED SYSTEM CALL CATCH */
-    switch(errno)
-    {
-    	case ENOSPC:crapup("PANIC exit device full\n");
-/*    	case ESTALE:;*/
-    	case EHOSTDOWN:;
-    	case EHOSTUNREACH:crapup("PANIC exit access failure, NFS gone for a snooze");
-    }
-    return(unit);
-    }
- 
 long findstart(unit)
  FILE *unit;
     {
@@ -645,13 +604,5 @@ userwrap()
 extern char globme[];
 extern long iamon;
 if(fpbns(globme)!= -1) {loseme();syslog("System Wrapup exorcised %s",globme);}
-}
-
-fcloselock(file)
-FILE *file;
-{
-	fflush(file);
-	flock(fileno(file),LOCK_UN);
-	fclose(file);
 }
 """
