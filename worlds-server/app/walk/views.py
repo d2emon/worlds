@@ -5,7 +5,11 @@ from . import blueprint
 
 @blueprint.route('/look', methods=['GET'])
 def look():
-    return jsonify(look_room(brief=False))
+    room = look_room(brief=False)
+    return jsonify({
+        'result': not room['error'],
+        'room': room,
+    })
 
 
 @blueprint.route('/look/at/<word>', methods=['GET'])

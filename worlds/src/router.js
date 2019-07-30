@@ -31,6 +31,11 @@ export default new Router({
       component: () => import('@/views/Geneverse.vue'),
     },
     {
+      path: '/walk',
+      name: 'walk',
+      component: () => import('@/views/Walk.vue'),
+    },
+    {
       path: '/hello',
       name: 'hello',
       component: () => import('@/views/Home.vue'),

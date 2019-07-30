@@ -45,13 +45,6 @@ class Room:
 
         self.close()
 
-    @property
-    def text(self):
-        if isdark():
-            return "It is dark\n"
-        title = self.title or ""
-        return "{}\n{}".format(title, self.description)
-
 
 def look_room(room_id=None, brief=None):
     if room_id is None:
@@ -85,9 +78,9 @@ def look_room(room_id=None, brief=None):
     elif Globals.ail_blind:
         text = None
     elif brief:
-        text = room.title
+        text = None
     else:
-        text = room.text
+        text = room.description
 
     World.load()
 
@@ -102,9 +95,11 @@ def look_room(room_id=None, brief=None):
     return {
         'result': True,
         'room_id': room.room_id,
+        'no_brief': room.no_brief,
 
         'error': error,
         'death': room.death_room and "<DEATH ROOM>\n",
+        'title': room.title if not isdark() else None,
         'text': text,
         '4': not isdark() and not Globals.ail_blind and "\n",
     }
