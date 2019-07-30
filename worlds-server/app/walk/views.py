@@ -1,12 +1,11 @@
 from flask import jsonify
-from walk import look_room
+from walk.room import look_room
 from . import blueprint
 
 
 @blueprint.route('/look', methods=['GET'])
 def look():
-    # lookin(curch, brmode=0)
-    return jsonify({'result': 'Ok'})
+    return jsonify(look_room(brief=False))
 
 
 @blueprint.route('/look/at/<word>', methods=['GET'])
