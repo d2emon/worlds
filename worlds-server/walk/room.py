@@ -1,11 +1,11 @@
 from .database import World, connect, disconnect
 from .exceptions import crapup
+from .player import Player
 
 
 class Globals:
     ail_blind = False
     my_lev = 0
-    curch = 0
     curmode = 0
     globme = ""
     brmode = 0
@@ -55,7 +55,7 @@ class Room:
 
 def look_room(room_id=None, brief=None):
     if room_id is None:
-        room_id = Globals.curch
+        room_id = Player.room_id
 
     World.save()
 
@@ -101,6 +101,7 @@ def look_room(room_id=None, brief=None):
     onlook()
     return {
         'result': True,
+        'room_id': room.room_id,
 
         'error': error,
         'death': room.death_room and "<DEATH ROOM>\n",

@@ -482,7 +482,7 @@ extern long curch;
     if(my_lev>9) goto ndie;
     ndie:unit=openworld();
     setploc(mynum,chan);
-    lookin(chan);
+    look_room(chan);
     }
  
 long mynum=0;
@@ -593,7 +593,7 @@ long lasup=0;
  loodrv()
     {
     extern long curch;
-    lookin(curch);
+    look_room(curch);
     }
  
 
