@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-dialog
-      v-model="showMessage"
+      v-model="showingMessage"
       max-width="300"
     >
       <v-card>
@@ -12,7 +12,7 @@
           <v-spacer />
           <v-btn
             text
-            @click="closeMessage"
+            @click="hideMessage"
           >
             Ok
           </v-btn>
@@ -51,7 +51,19 @@
         <v-btn @click="setLevel(10000)">God</v-btn>
       </v-layout>
       <v-layout row wrap>
-        <v-btn @click="console.log(1)">Go</v-btn>
+        <v-btn
+          v-if="!inFight"
+          @click="console.log(1)"
+        >
+          Go
+        </v-btn>
+        <v-btn
+          v-else
+          :disabled="!inFight"
+          @click="doFlee"
+        >
+          Flee
+        </v-btn>
 
         <v-btn
           :disabled="inFight || isForced"
@@ -62,7 +74,11 @@
         <v-btn @click="console.log(9)">Take</v-btn>
         <v-btn @click="console.log(10)">Drop</v-btn>
 
-        <v-btn @click="console.log(11)">Look</v-btn>
+        <v-btn
+          @click="getRoom"
+        >
+          Look
+        </v-btn>
         <v-btn @click="console.log(12)">Inventory</v-btn>
         <v-btn @click="console.log(13)">Who</v-btn>
         <v-btn @click="console.log(14)">Reset</v-btn>
@@ -207,17 +223,16 @@
         >
           Map
         </v-btn>
-        <v-btn
-          @click="doFlee"
-        >
-          Flee
-        </v-btn>
         <v-btn @click="console.log(175)">Bug</v-btn>
         <v-btn @click="console.log(176)">Typo</v-btn>
         <v-btn @click="console.log(177)">Pn</v-btn>
         <v-btn @click="console.log(178)">Blind</v-btn>
         <v-btn @click="console.log(179)">Patch</v-btn>
-        <v-btn @click="console.log(180)">Debug Mode</v-btn>
+        <v-switch
+          label="Debug Mode"
+          :input-value="debugMode"
+          @change="setDebugMode"
+        />
 
         <v-btn @click="console.log(181)">PFlags</v-btn>
         <v-btn @click="console.log(182)">Frobnicate</v-btn>
@@ -236,23 +251,28 @@
 <script>
 import {
   mapState,
+  mapGetters,
   mapMutations,
+  mapActions,
 } from 'vuex';
 
 export default {
   name: 'WalkControls',
   computed: {
+    ...mapGetters('walk', [
+      'showingMessage',
+      'isDebugger',
+    ]),
     ...mapState('walk', [
+      'message',
       'brief',
+      'debugMode',
       'player',
     ]),
-    showMessage() { return !!this.message; }
   },
   data: () => ({
     level: 1,
 
-    message: null,
-    on_message: null,
     // Special
     inFight: false,
     isForced: false,
@@ -261,17 +281,20 @@ export default {
     curmode: 0,
     mynum: 1,
     my_sco: 0,
+    debugMode: false,
   }),
   methods: {
-    ...mapMutations('walk', ['setBrief']),
+    ...mapMutations('walk', [
+      'setBrief',
+    ]),
+    ...mapActions('walk', [
+      'showMessage',
+      'hideMessage',
+      'getRoom',
+      'setDebugMode',
+    ]),
     setLevel(level) {
       this.level = level;
-    },
-    closeMessage() {
-      this.message = null;
-
-      if (this.on_message) this.on_message();
-      this.on_message = null;
     },
     // utils
     calibme: console.log,
@@ -281,6 +304,7 @@ export default {
     iscarrby: console.log,
     on_flee_event: console.log,
     openworld: console.log,
+    ptstflg: console.log,
     rte: console.log,
     saveme: console.log,
     sendsys: console.log,
@@ -288,18 +312,16 @@ export default {
     setpstr: console.log,
     // actions
     doGo() {
-        console.log('go');
+      console.log('go');
     },
     doQuit() {
       if (this.isForced) {
-        this.message = 'You can\'t be forced to do that\n';
-        return;
+        return this.showMessage({ message: 'You can\'t be forced to do that\n' });
       }
       this.rte(this.globme);
       this.openworld();
       if (this.inFight) {
-        this.message = 'Not in the middle of a fight!\n';
-        return;
+        return this.showMessage({ message: 'Not in the middle of a fight!\n' });
       }
       this.sendsys(
         this.globme,
@@ -325,23 +347,24 @@ export default {
 
       this.saveme();
 
-      this.message = 'Ok';
-      this.on_message = () => {
-        this.crapup('Goodbye');
-      };
+      this.showMessage({
+        message: 'Ok',
+        onMessage: () => this.crapup('Goodbye'),
+      });
     },
     doCredits() {
-      this.message = '[file]CREDITS[/file]';
+      return this.showMessage({ message: '[file]CREDITS[/file]' });
     },
     doMap() {
-      this.message = 'Your adventurers automatic monster detecting radar, and long range\n'
-          + 'mapping kit, is, sadly, out of order.';
+      return this.showMessage({
+        message: 'Your adventurers automatic monster detecting radar, and long range\n'
+          + 'mapping kit, is, sadly, out of order.',
+      });
     },
     doFlee() {
       if (!this.inFight) return this.doGo();
       if (this.iscarrby(32, this.mynum)) {
-        this.message = "The sword won't let you!!!!";
-        return null;
+        return this.showMessage({ message: 'The sword won\'t let you!!!!' });
       }
       this.sendsys(
         this.globme,
@@ -364,7 +387,7 @@ export default {
       return this.doGo();
     },
   },
-}
+};
 </script>
 
 <style scoped>

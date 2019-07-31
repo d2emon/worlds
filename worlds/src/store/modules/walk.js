@@ -4,7 +4,12 @@ import {
 } from '@/helpers';
 
 const state = {
+  message: '',
+  onMessage: null,
+
   brief: false,
+  debugMode: false,
+
   player: {
     is_wizard: false,
     is_god: false,
@@ -12,10 +17,18 @@ const state = {
   room: null,
 };
 
-const getters = {};
+const getters = {
+  showingMessage: state => !!state.message,
+  isDebugger: () => true, // this.ptstflg(this.mynum, 4)
+};
 
 const mutations = {
-  setBrief: (state, brief) => { state.brief = brief },
+  setMessage: (state, { message, onMessage }) => {
+    state.message = message;
+    state.onMessage = onMessage;
+  },
+  setBrief: (state, brief) => { state.brief = brief; },
+  setDebugMode: (state, brief) => { state.debugMode = debugMode; },
   setRoom: (state, room) => { state.room = room; },
 };
 
@@ -30,6 +43,16 @@ const actions = {
       if (room.not_brief) commit('setBrief', false);
       commit('setRoom', room);
     }),
+  setDebugMode: ({ getters, commit }, debugMode) => {
+    if (!getters.isDebugger) return;
+    commit('setDebugMode', debugMode);
+  },
+  showMessage: ({ commit }, payload) => commit('setMessage', payload),
+  hideMessage: ({ commit, state }) => {
+    const { onMessage } = state;
+    commit('setMessage', {});
+    return onMessage ? onMessage() : null;
+  },
 };
 
 export default {
