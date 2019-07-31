@@ -1,5 +1,25 @@
 <template>
   <v-card>
+    <v-dialog
+      v-model="showMessage"
+      max-width="300"
+    >
+      <v-card>
+        <v-card-text>
+          {{message}}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            text
+            @click="closeMessage"
+          >
+            Ok
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-container>
       <v-layout row wrap>
         <v-flex xs3 class="offset-xs3">
@@ -33,7 +53,12 @@
       <v-layout row wrap>
         <v-btn @click="console.log(1)">Go</v-btn>
 
-        <v-btn @click="console.log(8)">Quit</v-btn>
+        <v-btn
+          :disabled="inFight || isForced"
+          @click="doQuit"
+        >
+          Quit
+        </v-btn>
         <v-btn @click="console.log(9)">Take</v-btn>
         <v-btn @click="console.log(10)">Drop</v-btn>
 
@@ -126,7 +151,12 @@
         <v-btn @click="console.log(136)">Exits</v-btn>
         <v-btn @click="console.log(137)">Crash</v-btn>
         <v-btn @click="console.log(138)">Sing</v-btn>
-        <v-btn @click="console.log(139)">Grope</v-btn>
+        <v-btn
+          :disabled="inFight"
+          @click="console.log(139)"
+        >
+          Grope
+        </v-btn>
         <v-btn @click="console.log(140)">Spray</v-btn>
 
         <v-btn @click="console.log(141)">Groan</v-btn>
@@ -204,18 +234,82 @@ export default {
       'brief',
       'player',
     ]),
-
+    showMessage() { return !!this.message; }
   },
   data: () => ({
     level: 1,
+
+    message: null,
+    on_message: null,
+    // Special
+    inFight: false,
+    isForced: false,
+    globme: 'Globme',
+    curch: -1,
+    curmode: 0,
+    mynum: 1,
   }),
   methods: {
     ...mapMutations('walk', ['setBrief']),
     setLevel(level) {
       this.level = level;
     },
-    setBrief1(value) {
-        console.log(value);
+    closeMessage() {
+      this.message = null;
+
+      if (this.on_message) this.on_message();
+      this.on_message = null;
+    },
+    // utils
+    closeworld: console.log,
+    crapup(message) { this.message = message; },
+    dumpitems: console.log,
+    openworld: console.log,
+    rte: console.log,
+    saveme: console.log,
+    sendsys: console.log,
+    setpname: console.log,
+    setpstr: console.log,
+    // actions
+    doQuit() {
+      if (this.isForced) {
+        this.message = 'You can\'t be forced to do that\n';
+        return;
+      }
+      this.rte(this.globme);
+      this.openworld();
+      if (this.inFight) {
+        this.message = 'Not in the middle of a fight!\n';
+        return;
+      }
+      this.sendsys(
+        this.globme,
+        this.globme,
+        -10000,
+        this.curch,
+        `${this.globme} has left the game\n`,
+      );
+      this.sendsys(
+        this.globme,
+        this.globme,
+        -10113,
+        this.curch,
+        `[ Quitting Game : ${this.globme} ]\n`,
+      );
+      this.dumpitems();
+      this.setpstr(this.mynum, -1);
+      this.setpname(this.mynum, '');
+      this.closeworld();
+
+      this.curmode = 0;
+      this.curch = 0;
+
+      this.saveme();
+
+      this.message = 'Ok';
+      this.on_message = () => {
+        this.crapup('Goodbye');
+      };
     },
   },
 }
