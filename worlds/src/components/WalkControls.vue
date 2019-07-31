@@ -189,7 +189,11 @@
         <v-btn @click="console.log(166)">Cuddle</v-btn>
         <v-btn @click="console.log(167)">Sulk</v-btn>
         <v-btn @click="console.log(168)">Roll</v-btn>
-        <v-btn @click="console.log(169)">Credits</v-btn>
+        <v-btn
+          @click="doCredits"
+        >
+          Credits
+        </v-btn>
         <v-switch
           label="Brief"
           :input-value="brief"
@@ -310,6 +314,9 @@ export default {
       this.on_message = () => {
         this.crapup('Goodbye');
       };
+    },
+    doCredits() {
+      this.message = '[file]CREDITS[/file]';
     },
   },
 }
