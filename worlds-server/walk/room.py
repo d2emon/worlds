@@ -1,59 +1,43 @@
-from .database import World, connect, disconnect
+from .database import World, connect, disconnect, names
 from .exceptions import crapup
 from .player import Player
 
 
 class Globals:
     ail_blind = False
-    my_lev = 0
+    my_lev = 10000
     curmode = 0
     globme = ""
+    wd_there = ""
 
 
 class Zone:
-    def __init__(self, name, first, last):
+    database = names.ZONES
+
+    def __init__(self, name="TCHAN", begin=None, end=0):
         self.name = name
-        self.first = first
-        self.last = last
+        self.begin = begin
+        self.end = end + 1
 
+    @classmethod
+    def zones(cls):
+        return [cls(**data) for data in connect(cls.database).all()]
 
-__ZONES = {
-    1: "LIMBO",
-    2: "WSTORE",
-    4: "HOME",
-    5: "START",
-    6: "PIT",
-    19: "WIZROOM",
-    99: "DEAD",
-    299: "BLIZZARD",
-    399: "CAVE",
-    499: "LABRNTH",
-    599: "FOREST",
-    699: "VALLEY",
-    799: "MOOR",
-    899: "ISLAND",
-    999: "SEA",
-    1049: "RIVER",
-    1069: "CASTLE",
-    1099: "TOWER",
-    1101: "HUT",
-    1105: "TREEHOUSE",
-    2199: "QUARRY",
-    2299: "LEDGE",
-    2499: "INTREE",
-    99999: "WASTE",
-}
-__names = list(__ZONES.keys())
-__names.sort()
-ZONES = [Zone(__names[zone_id, ]) for zone_id in __names]
+    @classmethod
+    def by_room_id(cls, room_id):
+        if room_id > 0:
+            return None
+        return next((zone for zone in cls.zones() if zone.begin <= -room_id < zone.end), None)
 
-ZONES = [
-    Zone('LIMBO', 0, 1),
-]
+    def room_id(self, room_id):
+        return 0 if self.begin is None else (-room_id) - self.begin
 
 
 class Room:
-    database = "ROOMS"
+    database = names.ROOMS
+
+    DEFAULT_ZONE = Zone()
+    ZONES = Zone.zones()
 
     def __init__(self, room_id, permissions="r"):
         self.room_id = room_id
@@ -68,7 +52,7 @@ class Room:
         self.open(permissions).load()
 
     def open(self, permissions):
-        self.__data = connect(self.database, permissions, item_id=self.room_id)
+        self.__data = connect(self.database, permissions).get(-self.room_id)
         return self
 
     def close(self):
@@ -86,14 +70,20 @@ class Room:
 
         self.close()
 
+    @property
+    def zone(self):
+        return Zone.by_room_id(self.room_id) or self.DEFAULT_ZONE
+
+    @property
+    def in_zone(self):
+        return self.zone.room_id(self.room_id)
+
     def show_name(self):
-        a, b = findzone(self.room_id)
-        text = "{}{}".format(a, b)
+        zone, in_zone = self.zone.name, self.in_zone
+        Globals.wd_there = "{} {}".format(zone, in_zone)
         if Globals.my_lev > 9999:
-            text += "[ {} ]".format(self.room_id)
-        Globals.wd_there = "{} {}".format(a, b)
-        text += "\n"
-        return text
+            return "{}{}[ {} ]".format(zone, in_zone, self.room_id)
+        return "{}{}".format(zone, in_zone)
 
 
 def look_room(room_id=None):
@@ -137,24 +127,16 @@ def look_room(room_id=None):
         'title': room.title if not isdark() else None,
         'text': text,
         '5': not isdark() and not Globals.ail_blind and "\n",
+
+        # Secret
+        'zone': room.zone.name,
+        'in_zone': room.in_zone,
     }
 
 
 def find_zone(room_id):
-    first = 0
-    last = 0
-    zone = "TCHAN"
-    zone_id = 0
-
-    room_id = -room_id
-    if room_id <= 0:
-        return "TCHAN", 0
-
-    while last < room_id:
-        first, last, zone = last, zoname[zone_id].loc, zoname[zone_id].name
-        zone_id += 1
-
-    return zone, (room_id - first)
+    room = Room(room_id)
+    return room.zone, room.in_zone
 
 
 def open_room(room_id, permissions):

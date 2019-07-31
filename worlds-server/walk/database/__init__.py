@@ -1,23 +1,45 @@
 from ..exceptions import crapup, DatabaseError
+# Databases
 from .rooms import Rooms
 from .world import WorldData
+from .zones import Zones
+from . import names
+
+
+__databases = {
+    names.ROOMS: Rooms(),
+    names.WORLD: WorldData(),
+    names.ZONES: Zones(),
+}
+
+
+def connect(database, permissions=None):
+    print("Connect to \'{}\' mode: {}".format(database, permissions))
+    data = __databases.get(database)
+    if data is None:
+        raise DatabaseError()
+    return data
+
+
+def disconnect(database):
+    print("Disconnect from \'{}\'".format(database))
 
 
 class World:
-    filename = "/usr/tmp/-iy7AM"
+    filename = names.WORLD
 
     instance = None  # filrf
 
     def __init__(self):
         try:
-            self.__data = connect(self.filename, "r+")
+            self.__data = connect(self.filename, "r+").all()
         except DatabaseError:
             crapup("Cannot find World file")
 
         self.items = self.__data['items']  # ? objinfo[4 * numobs]
         self.players = self.__data['players']  # ? ublock[16 * 48]
 
-    def write(self):
+    def __write(self):
         self.__data['items'] = self.items  # ? objinfo[4 * numobs]
         self.__data['players'] = self.players  # ? ublock[16 * 48]
 
@@ -33,7 +55,7 @@ class World:
     def save(cls):
         if cls.instance is None:
             return
-        cls.instance.write()
+        cls.instance.__write()
         cls.instance = None
 
 
@@ -43,21 +65,3 @@ def load():
 
 def save():
     return World.save()
-
-
-__databases = {
-    'ROOMS': Rooms(),
-    World.filename: WorldData(),
-}
-
-
-def connect(database, permissions, item_id=None):
-    print("Connect to \'{}\' mode: {}".format(database, permissions))
-    data = __databases.get(database)
-    if data is None:
-        raise DatabaseError()
-    return data.all() if item_id is None else data.get(item_id)
-
-
-def disconnect(database):
-    print("Disconnect from \'{}\'".format(database))
