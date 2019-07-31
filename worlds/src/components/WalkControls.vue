@@ -189,11 +189,7 @@
         <v-btn @click="console.log(166)">Cuddle</v-btn>
         <v-btn @click="console.log(167)">Sulk</v-btn>
         <v-btn @click="console.log(168)">Roll</v-btn>
-        <v-btn
-          @click="doCredits"
-        >
-          Credits
-        </v-btn>
+        <v-btn @click="doCredits">Credits</v-btn>
         <v-switch
           label="Brief"
           :input-value="brief"
@@ -202,7 +198,7 @@
 
         <v-btn @click="console.log(171)">Debug</v-btn>
         <v-btn @click="console.log(172)">Jump</v-btn>
-        <v-btn @click="console.log(173)">Map</v-btn>
+        <v-btn @click="doMap">Map</v-btn>
         <v-btn @click="console.log(174)">Flee</v-btn>
         <v-btn @click="console.log(175)">Bug</v-btn>
         <v-btn @click="console.log(176)">Typo</v-btn>
@@ -317,6 +313,10 @@ export default {
     },
     doCredits() {
       this.message = '[file]CREDITS[/file]';
+    },
+    doMap() {
+      this.message = 'Your adventurers automatic monster detecting radar, and long range\n'
+          + 'mapping kit, is, sadly, out of order.';
     },
   },
 }
