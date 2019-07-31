@@ -189,7 +189,11 @@
         <v-btn @click="console.log(166)">Cuddle</v-btn>
         <v-btn @click="console.log(167)">Sulk</v-btn>
         <v-btn @click="console.log(168)">Roll</v-btn>
-        <v-btn @click="doCredits">Credits</v-btn>
+        <v-btn
+          @click="doCredits"
+        >
+          Credits
+        </v-btn>
         <v-switch
           label="Brief"
           :input-value="brief"
@@ -198,8 +202,16 @@
 
         <v-btn @click="console.log(171)">Debug</v-btn>
         <v-btn @click="console.log(172)">Jump</v-btn>
-        <v-btn @click="doMap">Map</v-btn>
-        <v-btn @click="console.log(174)">Flee</v-btn>
+        <v-btn
+          @click="doMap"
+        >
+          Map
+        </v-btn>
+        <v-btn
+          @click="doFlee"
+        >
+          Flee
+        </v-btn>
         <v-btn @click="console.log(175)">Bug</v-btn>
         <v-btn @click="console.log(176)">Typo</v-btn>
         <v-btn @click="console.log(177)">Pn</v-btn>
@@ -248,6 +260,7 @@ export default {
     curch: -1,
     curmode: 0,
     mynum: 1,
+    my_sco: 0,
   }),
   methods: {
     ...mapMutations('walk', ['setBrief']),
@@ -261,9 +274,12 @@ export default {
       this.on_message = null;
     },
     // utils
+    calibme: console.log,
     closeworld: console.log,
     crapup(message) { this.message = message; },
     dumpitems: console.log,
+    iscarrby: console.log,
+    on_flee_event: console.log,
     openworld: console.log,
     rte: console.log,
     saveme: console.log,
@@ -271,6 +287,9 @@ export default {
     setpname: console.log,
     setpstr: console.log,
     // actions
+    doGo() {
+        console.log('go');
+    },
     doQuit() {
       if (this.isForced) {
         this.message = 'You can\'t be forced to do that\n';
@@ -317,6 +336,32 @@ export default {
     doMap() {
       this.message = 'Your adventurers automatic monster detecting radar, and long range\n'
           + 'mapping kit, is, sadly, out of order.';
+    },
+    doFlee() {
+      if (!this.inFight) return this.doGo();
+      if (this.iscarrby(32, this.mynum)) {
+        this.message = "The sword won't let you!!!!";
+        return null;
+      }
+      this.sendsys(
+        this.globme,
+        this.globme,
+        -10000,
+        this.curch,
+        `[c]${this.globme}[/c] drops everything in a frantic attempt to escape\n`,
+      );
+      this.sendsys(
+        this.globme,
+        this.globme,
+        -20000,
+        this.curch,
+        '',
+      );
+      this.my_sco -= this.my_sco / 33; // loose 3%
+      this.calibme();
+      this.inFight = false;
+      this.on_flee_event();
+      return this.doGo();
     },
   },
 }
