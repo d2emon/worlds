@@ -1,10 +1,10 @@
 from .database import World
 from .exceptions import ActionError
-from .room import look_room
+from .player import Player
+from .room import look_room, go_direction
 
 
 class Globals:
-    curch = 0
     my_lev = 0
     in_fight = 0
 
@@ -13,12 +13,12 @@ def go(parser):
     word = next(parser)
     if word is None:
         raise ActionError("GO where?")
-    return dodirn(parser.get_direction_id(word))
+    return go_direction(parser.get_direction_id(word))
 
 
 def look(parser):
     def __look():
-        return look_room(Globals.curch)
+        return look_room(Player.room_id)
 
     def __look_at():
         return examcom()
@@ -36,6 +36,7 @@ def look(parser):
             raise ActionError("It's closed!")
         text = "The {} contains:\n".format(container)
         aobjsat(container, 3)
+        return text
 
     word = next(parser)
     if word is None:
@@ -509,10 +510,9 @@ __actions = {
 def execute_action(action_id):
     World.load()
 
-    """
     if 1 < action_id < 8:
-        return dodirn(action_id)
-    """
+        return go_direction(action_id)
+
     action = __actions.get(action_id)
     if action is not None:
         return action()
@@ -524,10 +524,6 @@ def execute_action(action_id):
 
 
 def aobjsat(*args):
-    raise NotImplementedError()
-
-
-def dodirn(*args):
     raise NotImplementedError()
 
 

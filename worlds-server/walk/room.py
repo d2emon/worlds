@@ -276,10 +276,29 @@ def fpbns(*args):
     return -1
 
 
-def isdark(*args):
-    # raise NotImplementedError()
-    print("isdark({})".format(args))
-    return False
+def is_dark(*args):
+    def dark():
+        for c in range(Globals.numobs):
+            if c != 32 and not otstbit(c, 13):
+                continue
+            if ishere(c):
+                return False
+            if ocarrf(c) == 0 or ocarrf(c) == 3:
+                continue
+            if ploc(olo(c)) != Player.room_id:
+                continue
+            return False
+        return True
+
+    if Globals.my_lev > 9:
+        return False
+    if Player.room_id in (-1100, -1101):
+        return False
+    if -1123 <= Player.room_id <= -1113:
+        return dark()
+    if Player.room_id < -399 or Player.room_id > -300:
+        return False
+    return dark()
 
 
 def iscarrby(*args):
