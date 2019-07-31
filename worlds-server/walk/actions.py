@@ -42,7 +42,7 @@ __actions = {
   11: look,
 }
 """
-       case 1:
+       case 1: 
           dogocom();
           break;
        case 139:

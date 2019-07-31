@@ -7,6 +7,7 @@ const state = {
   brief: false,
   player: {
     is_wizard: false,
+    is_god: false,
   },
   room: null,
 };

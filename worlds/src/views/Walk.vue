@@ -7,7 +7,10 @@
     </v-flex>
     <v-flex xs12 sm9>
       <v-container>
-        <room :room="room" />
+        <room
+          v-if="room"
+          :room="room"
+        />
       </v-container>
     </v-flex>
   </v-layout>
