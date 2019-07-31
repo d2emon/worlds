@@ -40,9 +40,8 @@ from ..parser import check_verb as chkverb
 
 # verbtxt   parser
 # verbnum   parser
-
-# exittxt = []
-# exitnum = []
+# exittxt   parser
+# exitnum   parser
 
 from ..actions import execute_action as doaction
 
@@ -52,8 +51,8 @@ from ..actions import execute_action as doaction
 # min_ms = "appears with an ear-splitting bang."
 # here_ms = "is here"
 
-# def dogocom(n):
-# def dodirn(n):
+from ..actions import go as dogocom
+from ..room import go_direction as dodirn
 
 # tdes = 0
 # vdes = 0
@@ -196,110 +195,12 @@ void pncom()
 	}
 }
 
- 
-char *exittxt[]={"north","east","south","west","up","down","n","e","s","w","u","d",0};
-long exitnum[]={1,2,3,4,5,6,1,2,3,4,5,6};
- 
 char in_ms[81]="has arrived.";
 char out_ms[81]="";
 char mout_ms[81]="vanishes in a puff of smoke.";
 char min_ms[81]="appears with an ear-splitting bang.";
 char here_ms[81]="is here";
 
-dogocom(n)
-    {
-    extern char *exittxt[];
-    extern long exitnum[];
-    extern char wordbuf[];
-    long  a;
-    if(brkword()== -1)
-       {
-       bprintf("GO where ?\n");
-       return(-1);
-       }
-    if(!strcmp(wordbuf,"rope")) strcpy(wordbuf,"up");
-    a=chklist(wordbuf,exittxt,exitnum);
-    if(a== -1)
-       {
-       bprintf("Thats not a valid direction\n");
-       return(-1);
-       }
-    return(dodirn(a+1));
-    }
- 
- dodirn(n)
-    {
-    extern long curch;
-    extern long mynum;
-    extern char globme[];
-    extern long ex_dat[];
-    extern long ail_blind;
-    extern char in_ms[],out_ms[];
-    char block[256],x[32];
-    long  newch,fl,i;
-    extern long in_fight;
-    if(in_fight>0)
-       {
-       bprintf("You can't just stroll out of a fight!\n");
-       bprintf("If you wish to leave a fight, you must FLEE in a direction\n");
-       return;
-       }
-    if((iscarrby(32,mynum))&&(ploc(25)==curch)&&(!!strlen(pname(25))))
-       {
-       bprintf("\001cThe Golem\001 bars the doorway!\n");
-       return;
-       }
-    n-=2;
-    if(chkcrip()) return;
-    newch=ex_dat[n];
-    if((newch>999)&&(newch<2000))
-       {
-       auto long  drnum,droff;
-       drnum=newch-1000;
-       droff=drnum^1;/* other door side */
-       if(state(drnum)!=0)
-          {
-	  if (strcmp(oname(drnum),"door")||isdark()||strlen(olongt(drnum,state(drnum)))==0)
-              {
-              bprintf("You can't go that way\n");
-              /* Invis doors */
-              }
-              else
-              bprintf("The door is not open\n");
-          return;
-          }
-       newch=oloc(droff);
-       }
-    if(newch==-139)
-       {
-       if((!iswornby(113,mynum))&&(!(iswornby(114,mynum)))&&(!iswornby(89,mynum)))
-          {
-          bprintf("The intense heat drives you back\n");
-          return;
-          }
-       else
-          bprintf("The shield protects you from the worst of the lava stream's heat\n");
-       }
-    if(n==2)
-       {
-         if(((i=fpbns("figure"))!=mynum)&&(i!=-1)&&(ploc(i)==curch)&&!iswornby(101,mynum)&&!iswornby(102,mynum)&&!iswornby(103,mynum))
-    	    {
-            bprintf("\001pThe Figure\001 holds you back\n");
-            bprintf("\001pThe Figure\001 says 'Only true sorcerors may pass'\n");
-            return;
-            }
-       }
-    if(newch>=0)bprintf("You can't go that way\n");
-    else
-       {
-       sprintf(block,"%s%s%s%s%s%s%s%s%s%s","\001s",pname(mynum),"\001",globme," has gone ",exittxt[n]," ",out_ms,".","\n\001");
-       sendsys(globme,globme,-10000,curch,block);
-       curch=newch;
-       sprintf(block,"%s%s%s%s %s%s","\001s",globme,"\001",globme,in_ms,"\n\001");
-       sendsys(globme,globme,-10000,newch,block);
-       trapch(curch);
-       }
-    }
  
 long tdes=0;
 long vdes=0;

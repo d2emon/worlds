@@ -6,11 +6,19 @@ from .room import look_room
 class Globals:
     curch = 0
     my_lev = 0
+    in_fight = 0
+
+
+def go(parser):
+    word = next(parser)
+    if word is None:
+        raise ActionError("GO where?")
+    return dodirn(parser.get_direction_id(word))
 
 
 def look(parser):
     def __look():
-        return look_room(Globals.curch, brief=False)
+        return look_room(Globals.curch)
 
     def __look_at():
         return examcom()
@@ -39,6 +47,7 @@ def look(parser):
 
 
 __actions = {
+  1: go,
   11: look,
 }
 """
@@ -515,6 +524,10 @@ def execute_action(action_id):
 
 
 def aobjsat(*args):
+    raise NotImplementedError()
+
+
+def dodirn(*args):
     raise NotImplementedError()
 
 

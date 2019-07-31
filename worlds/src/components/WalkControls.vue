@@ -23,26 +23,62 @@
     <v-container>
       <v-layout row wrap>
         <v-flex xs3 class="offset-xs3">
-          <v-btn flat icon>N</v-btn>
+          <v-btn
+            flat
+            icon
+            @click="doGoOrFlee(2)"
+          >
+            N
+          </v-btn>
         </v-flex>
         <v-flex xs3 class="offset-xs3">
-          <v-btn flat icon>U</v-btn>
+          <v-btn
+            flat
+            icon
+            @click="doGoOrFlee(6)"
+          >
+            U
+          </v-btn>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
         <v-flex xs3>
-          <v-btn flat icon>W</v-btn>
+          <v-btn
+            flat
+            icon
+            @click="doGoOrFlee(5)"
+          >
+            W
+          </v-btn>
         </v-flex>
         <v-flex xs3 class="offset-xs3">
-          <v-btn flat icon>E</v-btn>
+          <v-btn
+            flat
+            icon
+            @click="doGoOrFlee(3)"
+          >
+            E
+          </v-btn>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
         <v-flex xs3 class="offset-xs3">
-          <v-btn flat icon>S</v-btn>
+          <v-btn
+            flat
+            icon
+            @click="doGoOrFlee(4)"
+          >
+            S
+          </v-btn>
         </v-flex>
         <v-flex xs3 class="offset-xs3">
-          <v-btn flat icon>D</v-btn>
+          <v-btn
+            flat
+            icon
+            @click="doGoOrFlee(7)"
+          >
+            D
+          </v-btn>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
@@ -311,8 +347,9 @@ export default {
     setpname: console.log,
     setpstr: console.log,
     // actions
-    doGo() {
-      console.log('go');
+    doGoOrFlee(directionId) { return this.inFight ? this.doFlee(directionId) : this.doGo(directionId) },
+    doGo(directionId) {
+      console.log('go', directionId);
     },
     doQuit() {
       if (this.isForced) {
@@ -361,7 +398,7 @@ export default {
           + 'mapping kit, is, sadly, out of order.',
       });
     },
-    doFlee() {
+    doFlee(directionId) {
       if (!this.inFight) return this.doGo();
       if (this.iscarrby(32, this.mynum)) {
         return this.showMessage({ message: 'The sword won\'t let you!!!!' });
@@ -384,7 +421,7 @@ export default {
       this.calibme();
       this.inFight = false;
       this.on_flee_event();
-      return this.doGo();
+      return this.doGo(directionId);
     },
   },
 };

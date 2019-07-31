@@ -1,3 +1,4 @@
+from .exceptions import ActionError
 from .actions import execute_action
 
 
@@ -50,6 +51,21 @@ class Parser:
         ,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170
         ,171,172,34,173,174,175,176,177,178,179,180,181,182,35,183,184,185,186,187,188,189};
     """
+
+    exits = {
+        "north": 1,
+        "east": 2,
+        "south": 3,
+        "west": 4,
+        "up": 5,
+        "down": 6,
+        "n": 1,
+        "e": 2,
+        "s": 3,
+        "w": 4,
+        "u": 5,
+        "d": 6,
+    }
 
     def __init__(self, text):
         self.wd_it = ""
@@ -108,18 +124,37 @@ class Parser:
             raise ParseError("I don't know that verb")
         return a
 
+    @classmethod
+    def check_dict(cls, word, items):
+        word = word.lower()
+        diff = list(filter(lambda value: value[1] >= 5, [(key, word_diff(word, key)) for key in items.keys()]))
+        if len(diff) < 1:
+            return None
+        key = max(diff, key=lambda item: item[1])[0]
+        return items[key]
+
+    @classmethod
+    def check_list(cls, word, src, dst):
+        return cls.check_dict(word, {item: dst[item_id] for (item_id, item) in src})
+
     def check_verb(self):
-        return check_list(self.word, self.verbtxt, self.verbnum)
+        return self.check_list(self.word, self.verbtxt, self.verbnum)
+
+    @classmethod
+    def get_direction_id(cls, word):
+        if word == "rope":
+            word = "up"
+        direction_id = cls.check_dict(word, cls.exits)
+        if direction_id is None:
+            raise ActionError("GO where?")
+        return direction_id + 1
 
 
 PARSER = Parser("")
 
 
 def check_list(word, src, dst):
-    word = word.lower()
-    diff = [(dst[item_id], word_diff(word, item)) for (item_id, item) in enumerate(src)]
-    item, best = max(diff, key=lambda item: item[2])
-    return None if best < 5 else item
+    return PARSER.check_list(word, src,dst)
 
 
 def check_verb():

@@ -1,14 +1,25 @@
 from .database import World, connect, disconnect, names
-from .exceptions import crapup
+from .exceptions import crapup, ActionError
 from .player import Player
+
+
+def apply_events(events, key):
+    event = events.get(key)
+    return event() if event is not None else {}
 
 
 class Globals:
     ail_blind = False
     my_lev = 10000
+    curch = 0
     curmode = 0
     globme = ""
     wd_there = ""
+    mynum = 0
+    exittxt = {}
+    in_ms = ""
+    out_ms = ""
+    in_fight = False
 
 
 class Zone:
@@ -42,7 +53,7 @@ class Room:
     def __init__(self, room_id, permissions="r"):
         self.room_id = room_id
         self.title = None
-        self.exits = [None] * 7
+        self.exits = [0] * 7
         self.description = "You are on channel {}\n".format(self.room_id)
         self.death_room = False
         self.no_brief = False
@@ -84,6 +95,38 @@ class Room:
         if Globals.my_lev > 9999:
             return "{}{}[ {} ]".format(zone, in_zone, self.room_id)
         return "{}{}".format(zone, in_zone)
+
+    def on_enter(self):
+        def room_139():
+            if any(iswornby(item_id, Globals.mynum) for item_id in (113, 114, 89)):
+                return {'message': "The shield protects you from the worst of the lava stream's heat\n"}
+            return {'error': "The intense heat drives you back"}
+
+        return apply_events(
+            {
+                -139: room_139,
+            },
+            self.room_id,
+        )
+
+    @classmethod
+    def on_leave(cls, direction_id):
+        def direction_2():
+            figure = fpbns("figure")
+            wizard = any(iswornby(item, Globals.mynum) for item in (101, 102, 103))
+            if figure != -1 and figure != Globals.mynum and ploc(figure) == Player.room_id and not wizard:
+                return {
+                    'error': "[p]The Figure[/p] holds you back\n"
+                             "[p]The Figure[/p] says 'Only true sorcerors may pass'\n",
+                }
+            return {}
+
+        return apply_events(
+            {
+                2: direction_2,
+            },
+            direction_id,
+        )
 
 
 def look_room(room_id=None):
@@ -134,6 +177,80 @@ def look_room(room_id=None):
     }
 
 
+def go_direction(direction_id):
+    def get_door(door_id):
+        door_other = door_id ^ 1  # other door side
+        if not state(door_id):
+            return oloc(door_other)
+
+        if oname(door_id) != "door" or isdark() or not olongt(door_id, state(door_id)):
+            raise ActionError("You can't go that way")  # Invisible doors
+        else:
+            raise ActionError("The door is not open")
+
+    if Globals.in_fight > 0:
+        return {
+            'error': "You can't just stroll out of a fight!\n"
+                     "If you wish to leave a fight, you must FLEE in a direction\n",
+        }
+    if iscarrby(32, Globals.mynum) and ploc(25) == Player.room_id and len(pname(25)):
+        return {'error': "[c]The Golem[/c] bars the doorway!\n"}
+    if chkcrip():
+        return {'error': True}
+
+    direction_id -= 2
+    room_id = Room(Player.room_id).exits[direction_id]
+    if 999 < room_id < 2000:
+        try:
+            room_id = get_door(room_id - 1000)
+        except ActionError as e:
+            return {'error': e}
+    if room_id >= 0:
+        return {'error': "You can't go that way"}
+
+    result = {}
+
+    room = Room(Player.room_id)
+    result.update(room.on_leave(direction_id))
+
+    room = Room(room_id)
+    result.update(room.on_enter())
+
+    sendsys(
+        Globals.globme,
+        Globals.globme,
+        -10000,
+        Player.room_id,
+        "[s name=\"{}\"]{} has gone {} {}.\n[/s]".format(
+            pname(Globals.mynum),
+            Globals.globme,
+            Globals.exittxt.get(direction_id),
+            Globals.out_ms,
+        ),
+    )
+
+    Player.room_id = room.room_id
+
+    sendsys(
+        Globals.globme,
+        Globals.globme,
+        -10000,
+        Player.room_id,
+        "[s name=\"{}\"]{} {}\n[/s]".format(
+            Globals.globme,
+            Globals.globme,
+            Globals.in_ms,
+        ),
+    )
+
+    trapch(Player.room_id)
+    result.update({
+        'room_id': room_id,
+        'room': look_room(room_id),
+    })
+    return result
+
+
 def find_zone(room_id):
     room = Room(room_id)
     return room.zone, room.in_zone
@@ -147,9 +264,33 @@ def show_name(room_id):
     return Room(room_id).show_name()
 
 
+def chkcrip(*args):
+    # raise NotImplementedError()
+    print("chkcrip({})".format(args))
+    return False
+
+
+def fpbns(*args):
+    # raise NotImplementedError()
+    print("fpbns({})".format(args))
+    return -1
+
+
 def isdark(*args):
     # raise NotImplementedError()
     print("isdark({})".format(args))
+    return False
+
+
+def iscarrby(*args):
+    # raise NotImplementedError()
+    print("iscarrby({})".format(args))
+    return False
+
+
+def iswornby(*args):
+    # raise NotImplementedError()
+    print("iswornby({})".format(args))
     return False
 
 
@@ -167,6 +308,42 @@ def loseme(*args):
     raise NotImplementedError()
 
 
+def oloc(*args):
+    raise NotImplementedError()
+
+
+def olongt(*args):
+    raise NotImplementedError()
+
+
+def oname(*args):
+    raise NotImplementedError()
+
+
 def onlook(*args):
     # raise NotImplementedError()
     print("onlook({})".format(args))
+
+
+def ploc(*args):
+    raise NotImplementedError()
+
+
+def pname(*args):
+    # raise NotImplementedError()
+    print("pname({})".format(args))
+    return ''
+
+
+def sendsys(*args):
+    # raise NotImplementedError()
+    print("sendsys({})".format(args))
+
+
+def state(*args):
+    raise NotImplementedError()
+
+
+def trapch(*args):
+    # raise NotImplementedError()
+    print("trapch({})".format(args))
