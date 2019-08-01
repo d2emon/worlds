@@ -12,4 +12,7 @@ export default {
   getGoDirection: direction => Api
     .get(`/walk/go/${direction}`)
     .then(({ data }) => data),
+  getExits: () => Api
+    .get('/walk/exits')
+    .then(({ data }) => data),
 };

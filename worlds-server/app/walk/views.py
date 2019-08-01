@@ -27,21 +27,21 @@ def restart():
     return jsonify({'result': True})
 
 
-@blueprint.route('/quit', methods=['GET'])
-def quit_system():
+@blueprint.route('/go/<direction>', methods=['GET'])
+def go(direction):
     try:
-        return jsonify(quit_game(Parser("quit")))
+        direction_id = Parser.get_direction_id(direction) - 2
+        return jsonify(PLAYER.go(direction_id))
     except ActionError as e:
         return on_error(e)
     except StopGame as e:
         return on_stop(e)
 
 
-@blueprint.route('/go/<direction>', methods=['GET'])
-def go(direction):
+@blueprint.route('/quit', methods=['GET'])
+def quit_system():
     try:
-        direction_id = Parser.get_direction_id(direction) - 2
-        return jsonify(PLAYER.go(direction_id))
+        return jsonify(quit_game(Parser("quit"), PLAYER))
     except ActionError as e:
         return on_error(e)
     except StopGame as e:
@@ -87,3 +87,13 @@ def look_in(word=None):
     # bprintf("The %s contains:\n",oname(a))
     # aobjsat(a,3)
     return jsonify({'result': 'Ok'})
+
+
+@blueprint.route('/exits', methods=['GET'])
+def exits():
+    try:
+        return jsonify(PLAYER.list_exits())
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)

@@ -22,23 +22,33 @@
 
     <v-container>
       <v-layout row wrap>
+        <v-flex xs12>
+          <h4>Obvious exits are:</h4>
+          <div v-if="!exits">None....</div>
+        </v-flex>
+      </v-layout>
+      <v-layout row wrap>
         <v-flex xs3 class="offset-xs3">
           <v-btn
             flat
             icon
+            :color="goButtonColor('n')"
             @click="doGoOrFlee('n')"
           >
             N
           </v-btn>
+          <div v-if="exits && exits['n'] !== true">{{exits['n']}}</div>
         </v-flex>
         <v-flex xs3 class="offset-xs3">
           <v-btn
             flat
             icon
+            :color="goButtonColor('u')"
             @click="doGoOrFlee('u')"
           >
             U
           </v-btn>
+          <div v-if="exits && exits['u'] !== true">{{exits['u']}}</div>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
@@ -46,19 +56,23 @@
           <v-btn
             flat
             icon
+            :color="goButtonColor('w')"
             @click="doGoOrFlee('w')"
           >
             W
           </v-btn>
+          <div v-if="exits && exits['w'] !== true">{{exits['w']}}</div>
         </v-flex>
         <v-flex xs3 class="offset-xs3">
           <v-btn
             flat
             icon
+            :color="goButtonColor('e')"
             @click="doGoOrFlee('e')"
           >
             E
           </v-btn>
+          <div v-if="exits && exits['e'] !== true">{{exits['e']}}</div>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
@@ -66,19 +80,23 @@
           <v-btn
             flat
             icon
+            :color="goButtonColor('s')"
             @click="doGoOrFlee('s')"
           >
             S
           </v-btn>
+          <div v-if="exits && exits['s'] !== true">{{exits['s']}}</div>
         </v-flex>
         <v-flex xs3 class="offset-xs3">
           <v-btn
             flat
             icon
+            :color="goButtonColor('d')"
             @click="doGoOrFlee('d')"
           >
             D
           </v-btn>
+          <div v-if="exits && exits['d'] !== true">{{exits['d']}}</div>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
@@ -304,6 +322,7 @@ export default {
       'brief',
       'debugMode',
       'player',
+      'exits',
     ]),
     showingMessage: {
       get() { return !!this.message; },
@@ -333,9 +352,13 @@ export default {
       'goDirection',
       'quitGame',
       'getRoom',
+      'fetchExits',
       'setDebugMode',
     ]),
     setLevel(level) { this.level = level; },
+    goButtonColor(direction) {
+      return this.exits && this.exits[direction] ? 'primary' : 'secondary';
+    },
     // utils
     calibme: console.log,
     closeworld: console.log,

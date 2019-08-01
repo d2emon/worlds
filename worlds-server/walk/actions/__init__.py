@@ -8,11 +8,11 @@ from ..player import PLAYER
 
 def required_arg(error):
     def wrapper(f):
-        def wrapped(parser):
+        def wrapped(parser, player):
             word = next(parser)
             if word is None:
                 raise ActionError(error)
-            return f(parser, word)
+            return f(parser, player, word)
         return wrapped
     return wrapper
 
@@ -21,17 +21,17 @@ def required_arg(error):
 
 
 @required_arg("GO where?")
-def go(parser, word):
-    return PLAYER.go(parser.get_direction_id(word) - 2)
+def go(parser, player, word):
+    return player.go(parser.get_direction_id(word) - 2)
 
 
-def quit_game(parser):
-    return PLAYER.quit_game()
+def quit_game(parser, player):
+    return player.quit_game()
 
 
-def look(parser):
+def look(parser, player):
     def __look():
-        return PLAYER.look()
+        return player.look()
 
     def __look_at():
         return examcom()
@@ -60,11 +60,16 @@ def look(parser):
         return __look_in(next(parser))
 
 
+def list_exits(parser, player):
+    pass
+
+
 __actions = {
     1: go,
     # 2 - 7
     8: quit_game,
     11: look,
+    136: list_exits,
 }
 """
        case 139:
@@ -519,17 +524,17 @@ __actions = {
 """
 
 
-def execute_action(action_id):
+def execute_action(action_id, parser, player):
     World.load()
 
     if 1 < action_id < 8:
-        return PLAYER.go(action_id - 2)
+        return player.go(action_id - 2)
 
     action = __actions.get(action_id)
     if action is not None:
-        return action()
+        return action(parser, player)
 
-    if PLAYER.is_god:
+    if player.is_god:
         raise ActionError("Sorry not written yet[COMREF {}]".format(action_id))
     else:
         raise ActionError("I don't know that verb.")

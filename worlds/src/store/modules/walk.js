@@ -16,6 +16,7 @@ const state = {
     is_god: true,
   },
   room: null,
+  exits: null,
 };
 
 const getters = {
@@ -30,10 +31,11 @@ const mutations = {
   setBrief: (state, brief) => { state.brief = brief; },
   setDebugMode: (state, brief) => { state.debugMode = debugMode; },
   setRoom: (state, room) => { state.room = room; },
+  setExits: (state, exits) => { state.exits = exits; },
 };
 
 const actions = {
-  getRoom: ({ commit }) => walkService
+  getRoom: ({ commit, dispatch }) => walkService
     .getRoom()
     .then(({ room }) => room)
     .then(room => ({
@@ -43,7 +45,8 @@ const actions = {
     .then((room) => {
       if (room.not_brief) commit('setBrief', false);
       commit('setRoom', room);
-    }),
+    })
+    .then(() => dispatch('fetchExits')),
 
   goDirection: ({ dispatch }, direction) => walkService
     .getGoDirection(direction)
@@ -52,6 +55,9 @@ const actions = {
     .getQuit()
     .then(({ error, ...response }) => dispatch('modalMessage', error || 'Ok')
       .then(() => dispatch('processResponse', response))),
+  fetchExits: ({ commit }) => walkService
+    .getExits()
+    .then(({ exits }) => commit('setExits', exits)),
 
   setDebugMode: ({ getters, commit }, debugMode) => {
     if (!getters.isDebugger) return;

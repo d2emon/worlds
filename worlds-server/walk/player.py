@@ -190,6 +190,7 @@ class Player:
             # Secret
             response.update({'zone': self.room.zone.name})
             response.update({'in_zone': self.room.in_zone})
+            response.update({'exits': [e.room_to for e in self.room.exits]})
         response.update({'result': not response.get('error')})
 
         # error
@@ -201,12 +202,30 @@ class Player:
 
         return response
 
+    def list_exits(self):
+        exits = {}
+        for e in self.room.exits:
+            if not e.available:
+                continue
+            if not self.is_wizard:
+                exits[e.direction] = True
+                # result.append(e.direction)
+            else:
+                room = Room(e.room_to)
+                exits[e.direction] = "{}{}".format(room.zone.name, room.in_zone)
+                # result.append("{} : {}{}".format(e.direction, room.zone.name, room.in_zone))
+        return {'exits': exits or None}
+
 
 PLAYER = Player()
 
 
 def is_dark():
     return PLAYER.is_dark
+
+
+def list_exits():
+    return PLAYER.list_exits()
 
 
 def set_room(room_id):

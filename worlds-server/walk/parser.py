@@ -177,8 +177,9 @@ def parse(text):
     if not text or text == ".q":
         return
 
-    action_id = Parser(text).parse()
-    return execute_action(action_id)
+    parser = Parser(text)
+    action_id = parser.parse()
+    return execute_action(action_id, parser, PLAYER)
 
 
 def next_word():

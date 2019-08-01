@@ -8,12 +8,11 @@ from ..room import find_zone as findzone
 
 # ex_dat    Room
 
-# def exits():
+from ..player import list_exits as exits
 
-# dirns = ["North", "East ", "South", "West ", "Up   ", "Down "]
+# dirns     Exits
 
-
-from ..database.rooms import load_exits as lodex
+from ..database.rooms import parse_exits as lodex
 
 # def roomnum(str, offstr):
 
@@ -39,37 +38,6 @@ typedef struct zone ZONE ;
 ZONE zoname[  ]={
     
     } ;
-
- exits(  )
-    {
-    long a ;
-    extern long my_lev ;
-    long b ;
-    char st[ 64 ];
-    long v ;
-    extern long ex_dat[] ;
-    extern char *dirns[] ;
-    a=0 ;
-    b=0 ;
-    bprintf( "Obvious exits are\n" ) ;
-    while( a<6 )
-       {
-       if( ex_dat[ a ]>=0 )
-          {
-          a++ ;
-          continue ;
-          }
-       if( my_lev<10 )bprintf( "%s\n", dirns[ a ] ) ;
-       else
-          {
-          v=findzone( ex_dat[ a ], st ) ;
-          bprintf( "%s : %s%d\n", dirns[ a ], st, v ) ;
-          }
-       b=1 ;
-       a++ ;
-       }
-    if( b==0 )bprintf( "None....\n" ) ;
-    }
 
 char *dirns[  ]={"North", "East ", "South", "West ", "Up   ", "Down "} ;
 

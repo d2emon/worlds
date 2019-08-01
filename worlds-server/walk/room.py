@@ -11,16 +11,33 @@ def apply_events(events, key):
 class Exit:
     DOOR_MIN = 1000
     DOOR_MAX = 2000
+    # DIRECTIONS = [
+    #     "North",
+    #     "East ",
+    #     "South",
+    #     "West ",
+    #     "Up   ",
+    #     "Down ",
+    # ]
+    DIRECTIONS = "n", "e", "s", "w", "u", "d",
 
     def __init__(
         self,
-        direction=None,
+        direction_id=None,
         from_room=None,
         to_room=None
     ):
-        self.direction = direction
+        self.direction_id = direction_id
         self.from_room = from_room
         self.room_to = to_room
+
+    @property
+    def available(self):
+        return self.room_to < 0
+
+    @property
+    def direction(self):
+        return self.DIRECTIONS[self.direction_id]
 
     def go(self, player):
         if self.DOOR_MIN <= self.room_to < self.DOOR_MAX:
@@ -59,7 +76,7 @@ class Exit:
             {
                 2: direction_2,
             },
-            self.direction,
+            self.direction_id,
         )
 
 
@@ -106,7 +123,7 @@ class Room:
     @property
     def exits(self):
         return [Exit(
-            direction=direction_id,
+            direction_id=direction_id,
             from_room=self.room_id,
             to_room=room_id,
         ) for direction_id, room_id in enumerate(self.__exits)]
