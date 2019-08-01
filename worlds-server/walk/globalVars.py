@@ -7,3 +7,4 @@ class Globals:
     out_ms = ""
     in_fight = False
     numobs = 0
+    is_forced = False

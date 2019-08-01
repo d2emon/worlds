@@ -1,5 +1,6 @@
 import random
 from flask import jsonify
+from walk.actions import quit_game
 from walk.exceptions import ActionError
 from walk.parser import Parser
 from walk.player import PLAYER
@@ -13,6 +14,17 @@ def restart():
         -183,
     ))
     return jsonify({'result': True})
+
+
+@blueprint.route('/quit', methods=['GET'])
+def quit_system():
+    try:
+        return jsonify(quit_game(Parser("quit")))
+    except ActionError as e:
+        return jsonify({
+            'result': False,
+            'error': str(e),
+        })
 
 
 @blueprint.route('/go/<direction>', methods=['GET'])

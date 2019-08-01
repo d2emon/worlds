@@ -1,7 +1,7 @@
 from ..database import World
 from ..exceptions import ActionError
+from ..globalVars import Globals
 from ..player import PLAYER
-from .player_actions import go_direction, look_room
 
 
 # Decorators
@@ -23,12 +23,52 @@ def required_arg(error):
 
 @required_arg("GO where?")
 def go(parser, word):
-    return go_direction(PLAYER, parser.get_direction_id(word))
+    return PLAYER.go(parser.get_direction_id(word) - 2)
+
+
+def quit_game(parser):
+    if Globals.is_forced:
+        raise ActionError("You can\'t be forced to do that")
+
+    rte(PLAYER.name)
+
+    if Globals.in_fight:
+        raise ActionError("Not in the middle of a fight!")
+
+    World.load()
+    sendsys(
+        PLAYER.name,
+        PLAYER.name,
+        -10000,
+        PLAYER.room_id,
+        "{} has left the game\n".format(PLAYER.name),
+    )
+    sendsys(
+        PLAYER.name,
+        PLAYER.name,
+        -10113,
+        PLAYER.room_id,
+        "[ Quitting Game : {} ]\n".format(PLAYER.name),
+    )
+
+    dumpitems()
+    setpstr(PLAYER.player_id, -1)
+    setpname(PLAYER.player_id, '')
+    World.save()
+
+    Globals.curmode = 0
+    PLAYER.room_id = 0
+
+    saveme()
+
+    response = {'message': 'Ok'}
+    crapup('Goodbye')
+    return response
 
 
 def look(parser):
     def __look():
-        return look_room(PLAYER)
+        return PLAYER.look()
 
     def __look_at():
         return examcom()
@@ -60,6 +100,7 @@ def look(parser):
 __actions = {
     1: go,
     # 2 - 7
+    8: quit_game,
     11: look,
 }
 """
@@ -519,7 +560,7 @@ def execute_action(action_id):
     World.load()
 
     if 1 < action_id < 8:
-        return go_direction(PLAYER, action_id)
+        return PLAYER.go(action_id - 2)
 
     action = __actions.get(action_id)
     if action is not None:
@@ -535,9 +576,37 @@ def aobjsat(*args):
     raise NotImplementedError()
 
 
+def crapup(*args):
+    raise NotImplementedError()
+
+
+def dumpitems(*args):
+    raise NotImplementedError()
+
+
 def examcom():
     raise NotImplementedError()
 
 
 def fobna(*args):
+    raise NotImplementedError()
+
+
+def rte(*args):
+    raise NotImplementedError()
+
+
+def saveme(*args):
+    raise NotImplementedError()
+
+
+def sendsys(*args):
+    raise NotImplementedError()
+
+
+def setpstr(*args):
+    raise NotImplementedError()
+
+
+def setpname(*args):
     raise NotImplementedError()
