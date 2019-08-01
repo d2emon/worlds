@@ -66,9 +66,8 @@ from ..database import connect as openlock
 # tmpwiz = "."  # Illegal name so natural immunes are ungettable!
 
 # def split(block, nam1, nam2, work, luser):
-# def trapch(chan):
 
-# mynum = 0
+from ..player import set_room as trapch
 
 # def putmeon(name):
 # def loseme(name):
@@ -472,20 +471,6 @@ if(!strcmp(lowercase(nam1+4),lowercase(luser))) return(1);
 }
     return(!strcmp(lowercase(nam1),lowercase(luser)));
     }
- trapch(chan)
- long chan;
-    {
-extern long curch;
-    extern long mynum;
-    FILE *unit;
-    extern long my_lev;
-    if(my_lev>9) goto ndie;
-    ndie:unit=openworld();
-    setploc(mynum,chan);
-    look_room(chan);
-    }
- 
-long mynum=0;
  
  putmeon(name)
  char *name;

@@ -48,6 +48,14 @@ class Player:
     def room(self):
         return Room(self.room_id)
 
+    def set_room(self, room_id=None):
+        if room_id is None:
+            room_id = self.room_id
+
+        World.load()
+        setploc(Globals.mynum, room_id)
+        return self.look()
+
     def look(self):
         World.save()
 
@@ -130,13 +138,11 @@ class Player:
             ),
         )
 
-        self.room_id = room.room_id
-
         sendsys(
             Globals.globme,
             Globals.globme,
             -10000,
-            self.room_id,
+            room.room_id,
             "[s name=\"{}\"]{} {}\n[/s]".format(
                 Globals.globme,
                 Globals.globme,
@@ -144,10 +150,10 @@ class Player:
             ),
         )
 
-        trapch(self.room_id)
+        self.room_id = room.room_id
         result.update({
             'result': not result.get('error'),
-            'room': self.look(),
+            'room': self.set_room(),
         })
         return result
 
@@ -157,6 +163,10 @@ PLAYER = Player()
 
 def is_dark():
     return PLAYER.is_dark
+
+
+def set_room(room_id):
+    return PLAYER.set_room(room_id)
 
 
 # TODO: Implement
@@ -226,6 +236,6 @@ def sendsys(*args):
     print("sendsys({})".format(args))
 
 
-def trapch(*args):
+def setploc(*args):
     # raise NotImplementedError()
-    print("trapch({})".format(args))
+    print("setploc({})".format(args))
