@@ -1,24 +1,27 @@
 from flask import jsonify
 from walk.exceptions import ActionError
 from walk.parser import Parser
-from walk.room import look_room, go_direction
+from walk.player import PLAYER
 from . import blueprint
 
 
 @blueprint.route('/go/<direction>', methods=['GET'])
 def go(direction):
     try:
-        direction_id = Parser.get_direction_id(direction)
-        return jsonify(go_direction(direction_id))
+        direction_id = Parser.get_direction_id(direction) - 2
+        return jsonify(PLAYER.go(direction_id))
     except ActionError as e:
-        return jsonify({'error': str(e)})
+        return jsonify({
+            'result': False,
+            'error': str(e),
+        })
 
 
 @blueprint.route('/look', methods=['GET'])
 def look():
-    room = look_room()
+    room = PLAYER.look()
     return jsonify({
-        'result': not room['error'],
+        'result': room['result'],
         'error': room['error'],
         'room': room,
     })

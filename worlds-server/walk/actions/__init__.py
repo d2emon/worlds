@@ -1,7 +1,7 @@
 from ..database import World
 from ..exceptions import ActionError
-from ..player import Player
-from ..room import look_room, go_direction
+from ..player import PLAYER
+from .player_actions import go_direction, look_room
 
 
 # Decorators
@@ -23,12 +23,12 @@ def required_arg(error):
 
 @required_arg("GO where?")
 def go(parser, word):
-    return go_direction(parser.get_direction_id(word))
+    return go_direction(PLAYER, parser.get_direction_id(word))
 
 
 def look(parser):
     def __look():
-        return look_room(Player.room_id)
+        return look_room(PLAYER)
 
     def __look_at():
         return examcom()
@@ -519,13 +519,13 @@ def execute_action(action_id):
     World.load()
 
     if 1 < action_id < 8:
-        return go_direction(action_id)
+        return go_direction(PLAYER, action_id)
 
     action = __actions.get(action_id)
     if action is not None:
         return action()
 
-    if Player.is_god:
+    if PLAYER.is_god:
         raise ActionError("Sorry not written yet[COMREF {}]".format(action_id))
     else:
         raise ActionError("I don't know that verb.")

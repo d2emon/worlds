@@ -1,12 +1,66 @@
-from .database import World, connect, disconnect, names
-from .exceptions import crapup, ActionError
+from .database import connect, disconnect, names
+from .exceptions import ActionError
 from .globalVars import Globals
-from .player import Player
 
 
 def apply_events(events, key):
     event = events.get(key)
     return event() if event is not None else {}
+
+
+class Exit:
+    DOOR_MIN = 1000
+    DOOR_MAX = 2000
+
+    def __init__(
+        self,
+        direction=None,
+        from_room=None,
+        to_room=None
+    ):
+        self.direction = direction
+        self.from_room = from_room
+        self.room_to = to_room
+
+    def go(self, player):
+        if self.DOOR_MIN <= self.room_to < self.DOOR_MAX:
+            room_id = self.__go_door(player)
+        else:
+            room_id = self.room_to
+
+        if room_id >= 0:
+            raise ActionError("You can't go that way")
+
+        self.on_exit(player)
+
+        return room_id
+
+    def __go_door(self, player):
+        if not state(self.room_to):
+            door_id = self.room_to ^ 1  # other door side
+            return oloc(door_id)
+        elif oname(self.room_to) != "door" or player.is_dark or not olongt(self.room_to, state(self.room_to)):
+            raise ActionError("You can't go that way")  # Invisible doors
+        else:
+            raise ActionError("The door is not open")
+
+    def on_exit(self, player):
+        def direction_2():
+            figure = fpbns("figure")
+            wizard = any(iswornby(item, Globals.mynum) for item in (101, 102, 103))
+            if figure != -1 and figure != Globals.mynum and ploc(figure) == self.from_room and not wizard:
+                raise ActionError(
+                    "[p]The Figure[/p] holds you back\n"
+                    "[p]The Figure[/p] says 'Only true sorcerors may pass'\n",
+                )
+            return {}
+
+        return apply_events(
+            {
+                2: direction_2,
+            },
+            self.direction,
+        )
 
 
 class Zone:
@@ -40,7 +94,7 @@ class Room:
     def __init__(self, room_id, permissions="r"):
         self.room_id = room_id
         self.title = None
-        self.exits = [0] * 7
+        self.__exits = [0] * 7
         self.description = "You are on channel {}\n".format(self.room_id)
         self.death_room = False
         self.no_brief = False
@@ -48,6 +102,14 @@ class Room:
         self.__data = None
 
         self.open(permissions).load()
+
+    @property
+    def exits(self):
+        return [Exit(
+            direction=direction_id,
+            from_room=self.room_id,
+            to_room=room_id,
+        ) for direction_id, room_id in enumerate(self.__exits)]
 
     def open(self, permissions):
         self.__data = connect(self.database, permissions).get(-self.room_id)
@@ -61,7 +123,7 @@ class Room:
             return
 
         self.title = self.__data.get('title')
-        self.exits = self.__data.get('exits')
+        self.__exits = self.__data.get('exits')
         self.description = self.__data.get('description')
         self.death_room = self.__data.get('death_room')
         self.no_brief = self.__data.get('no_brief')
@@ -75,6 +137,16 @@ class Room:
     @property
     def in_zone(self):
         return self.zone.room_id(self.room_id)
+
+    @property
+    def is_dark(self):
+        if self.room_id in (-1100, -1101):
+            return False
+        if -1123 <= self.room_id <= -1113:
+            return True
+        if self.room_id < -399 or self.room_id > -300:
+            return False
+        return True
 
     def show_name(self):
         zone, in_zone = self.zone.name, self.in_zone
@@ -94,147 +166,6 @@ class Room:
             self.room_id,
         )
 
-    @classmethod
-    def on_leave(cls, direction_id):
-        def direction_2():
-            figure = fpbns("figure")
-            wizard = any(iswornby(item, Globals.mynum) for item in (101, 102, 103))
-            if figure != -1 and figure != Globals.mynum and ploc(figure) == Player.room_id and not wizard:
-                return {
-                    'error': "[p]The Figure[/p] holds you back\n"
-                             "[p]The Figure[/p] says 'Only true sorcerors may pass'\n",
-                }
-            return {}
-
-        return apply_events(
-            {
-                2: direction_2,
-            },
-            direction_id,
-        )
-
-
-def look_room(room_id=None):
-    if room_id is None:
-        room_id = Player.room_id
-
-    World.save()
-
-    room = Room(room_id)
-
-    if room.death_room:
-        Globals.ail_blind = False
-        if not Player.is_wizard:
-            loseme(Globals.globme)
-            crapup("bye bye.....")
-
-    if is_dark():
-        text = "It is dark\n"
-    elif Globals.ail_blind:
-        text = None
-    else:
-        text = room.description
-
-    World.load()
-
-    if not is_dark() and not Globals.ail_blind:
-        lisobs()
-        if Globals.curmode == 1:
-            lispeople()
-
-        # 5
-    onlook()
-    return {
-        'result': True,
-        'room_id': room.room_id if Player.is_god else None,
-        'no_brief': room.no_brief,
-
-        'error': "You are blind... you can't see a thing!" if Globals.ail_blind else None,
-        'name': room.show_name() if Player.is_wizard else None,
-        'death': room.death_room and "<DEATH ROOM>\n",
-        'title': room.title if not is_dark() else None,
-        'text': text,
-        '5': not is_dark() and not Globals.ail_blind and "\n",
-
-        # Secret
-        'zone': room.zone.name,
-        'in_zone': room.in_zone,
-    }
-
-
-def go_direction(direction_id):
-    def get_door(door_id):
-        door_other = door_id ^ 1  # other door side
-        if not state(door_id):
-            return oloc(door_other)
-
-        if oname(door_id) != "door" or is_dark() or not olongt(door_id, state(door_id)):
-            raise ActionError("You can't go that way")  # Invisible doors
-        else:
-            raise ActionError("The door is not open")
-
-    if Globals.in_fight > 0:
-        return {
-            'error': "You can't just stroll out of a fight!\n"
-                     "If you wish to leave a fight, you must FLEE in a direction\n",
-        }
-    if iscarrby(32, Globals.mynum) and ploc(25) == Player.room_id and len(pname(25)):
-        return {'error': "[c]The Golem[/c] bars the doorway!\n"}
-    if chkcrip():
-        return {'error': True}
-
-    direction_id -= 2
-    room_id = Room(Player.room_id).exits[direction_id]
-    if 999 < room_id < 2000:
-        try:
-            room_id = get_door(room_id - 1000)
-        except ActionError as e:
-            return {'error': e}
-    if room_id >= 0:
-        return {'error': "You can't go that way"}
-
-    result = {}
-
-    room = Room(Player.room_id)
-    result.update(room.on_leave(direction_id))
-
-    room = Room(room_id)
-    result.update(room.on_enter())
-
-    sendsys(
-        Globals.globme,
-        Globals.globme,
-        -10000,
-        Player.room_id,
-        "[s name=\"{}\"]{} has gone {} {}.\n[/s]".format(
-            pname(Globals.mynum),
-            Globals.globme,
-            Globals.exittxt.get(direction_id),
-            Globals.out_ms,
-        ),
-    )
-
-    Player.room_id = room.room_id
-
-    sendsys(
-        Globals.globme,
-        Globals.globme,
-        -10000,
-        Player.room_id,
-        "[s name=\"{}\"]{} {}\n[/s]".format(
-            Globals.globme,
-            Globals.globme,
-            Globals.in_ms,
-        ),
-    )
-
-    trapch(Player.room_id)
-    result.update({
-        'room_id': room_id,
-        'room': look_room(room_id),
-    })
-    return result
-
 
 def find_zone(room_id):
     room = Room(room_id)
@@ -249,77 +180,16 @@ def show_name(room_id):
     return Room(room_id).show_name()
 
 
-def chkcrip(*args):
-    # raise NotImplementedError()
-    print("chkcrip({})".format(args))
-    return False
-
-
 def fpbns(*args):
     # raise NotImplementedError()
     print("fpbns({})".format(args))
     return -1
 
 
-def is_dark(*args):
-    def dark():
-        for c in range(Globals.numobs):
-            if c != 32 and not otstbit(c, 13):
-                continue
-            if ishere(c):
-                return False
-            if ocarrf(c) == 0 or ocarrf(c) == 3:
-                continue
-            if ploc(oloc(c)) != Player.room_id:
-                continue
-            return False
-        return True
-
-    if Player.is_wizard:
-        return False
-    if Player.room_id in (-1100, -1101):
-        return False
-    if -1123 <= Player.room_id <= -1113:
-        return dark()
-    if Player.room_id < -399 or Player.room_id > -300:
-        return False
-    return dark()
-
-
-def iscarrby(*args):
-    # raise NotImplementedError()
-    print("iscarrby({})".format(args))
-    return False
-
-
-def ishere(*args):
-    # raise NotImplementedError()
-    print("ishere({})".format(args))
-    return False
-
-
 def iswornby(*args):
     # raise NotImplementedError()
     print("iswornby({})".format(args))
     return False
-
-
-def lisobs(*args):
-    # raise NotImplementedError()
-    print("lisobs({})".format(args))
-
-
-def lispeople(*args):
-    # raise NotImplementedError()
-    print("lispeople({})".format(args))
-
-
-def loseme(*args):
-    raise NotImplementedError()
-
-
-def ocarrf(*args):
-    raise NotImplementedError()
 
 
 def oloc(*args):
@@ -334,34 +204,9 @@ def oname(*args):
     raise NotImplementedError()
 
 
-def onlook(*args):
-    # raise NotImplementedError()
-    print("onlook({})".format(args))
-
-
-def otstbit(*args):
-    raise NotImplementedError()
-
-
 def ploc(*args):
     raise NotImplementedError()
 
 
-def pname(*args):
-    # raise NotImplementedError()
-    print("pname({})".format(args))
-    return ''
-
-
-def sendsys(*args):
-    # raise NotImplementedError()
-    print("sendsys({})".format(args))
-
-
 def state(*args):
     raise NotImplementedError()
-
-
-def trapch(*args):
-    # raise NotImplementedError()
-    print("trapch({})".format(args))

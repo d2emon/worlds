@@ -78,7 +78,7 @@ from ..database import connect as openlock
 # def update(name):
 # def revise(cutoff):
 
-from ..room import look_room as lookin
+from ..actions.player_actions import look_room as lookin
 
 # def loodrv()
 

@@ -52,7 +52,7 @@ from ..actions import execute_action as doaction
 # here_ms = "is here"
 
 from ..actions import go as dogocom
-from ..room import go_direction as dodirn
+from ..actions.player_actions import go_direction as dodirn
 
 # tdes = 0
 # vdes = 0

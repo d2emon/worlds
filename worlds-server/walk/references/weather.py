@@ -51,9 +51,7 @@ states are
 # def cancarry(plyr):
 # def setcom():
 
-from ..room import is_dark as isdark
-
-# def isdark():
+from ..actions.player_actions import is_dark as isdark
 
 # def modifwthr(n):
 # def setpflags():
