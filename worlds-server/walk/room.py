@@ -79,8 +79,6 @@ class Room:
     def show_name(self):
         zone, in_zone = self.zone.name, self.in_zone
         Globals.wd_there = "{} {}".format(zone, in_zone)
-        if Player.is_god:
-            return "{}{}[ {} ]".format(zone, in_zone, self.room_id)
         return "{}{}".format(zone, in_zone)
 
     def on_enter(self):
@@ -148,7 +146,7 @@ def look_room(room_id=None):
     onlook()
     return {
         'result': True,
-        'room_id': room.room_id,
+        'room_id': room.room_id if Player.is_god else None,
         'no_brief': room.no_brief,
 
         'error': "You are blind... you can't see a thing!" if Globals.ail_blind else None,

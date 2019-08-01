@@ -11,8 +11,8 @@ const state = {
   debugMode: false,
 
   player: {
-    is_wizard: false,
-    is_god: false,
+    is_wizard: true,
+    is_god: true,
   },
   room: null,
 };
