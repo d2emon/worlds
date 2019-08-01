@@ -26,7 +26,7 @@
           <v-btn
             flat
             icon
-            @click="doGoOrFlee(2)"
+            @click="doGoOrFlee('n')"
           >
             N
           </v-btn>
@@ -35,7 +35,7 @@
           <v-btn
             flat
             icon
-            @click="doGoOrFlee(6)"
+            @click="doGoOrFlee('u')"
           >
             U
           </v-btn>
@@ -46,7 +46,7 @@
           <v-btn
             flat
             icon
-            @click="doGoOrFlee(5)"
+            @click="doGoOrFlee('w')"
           >
             W
           </v-btn>
@@ -55,7 +55,7 @@
           <v-btn
             flat
             icon
-            @click="doGoOrFlee(3)"
+            @click="doGoOrFlee('e')"
           >
             E
           </v-btn>
@@ -66,7 +66,7 @@
           <v-btn
             flat
             icon
-            @click="doGoOrFlee(4)"
+            @click="doGoOrFlee('s')"
           >
             S
           </v-btn>
@@ -75,7 +75,7 @@
           <v-btn
             flat
             icon
-            @click="doGoOrFlee(7)"
+            @click="doGoOrFlee('d')"
           >
             D
           </v-btn>
@@ -89,7 +89,8 @@
       <v-layout row wrap>
         <v-btn
           v-if="!inFight"
-          @click="console.log(1)"
+          :disabled="inFight"
+          @click="goDirection"
         >
           Go
         </v-btn>
@@ -326,6 +327,8 @@ export default {
     ...mapActions('walk', [
       'showMessage',
       'hideMessage',
+
+      'goDirection',
       'getRoom',
       'setDebugMode',
     ]),
@@ -347,9 +350,10 @@ export default {
     setpname: console.log,
     setpstr: console.log,
     // actions
-    doGoOrFlee(directionId) { return this.inFight ? this.doFlee(directionId) : this.doGo(directionId) },
-    doGo(directionId) {
-      console.log('go', directionId);
+    doGoOrFlee(directionId) {
+      return this.inFight
+        ? this.doFlee(directionId)
+        : this.goDirection(directionId);
     },
     doQuit() {
       if (this.isForced) {
@@ -421,7 +425,7 @@ export default {
       this.calibme();
       this.inFight = false;
       this.on_flee_event();
-      return this.doGo(directionId);
+      return this.goDirection(directionId);
     },
   },
 };

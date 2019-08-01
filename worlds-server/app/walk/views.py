@@ -21,8 +21,8 @@ def go(direction):
 def look():
     room = PLAYER.look()
     return jsonify({
-        'result': room['result'],
-        'error': room['error'],
+        'result': room.get('result'),
+        'error': room.get('error'),
         'room': room,
     })
 

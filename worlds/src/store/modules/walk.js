@@ -35,6 +35,11 @@ const mutations = {
 const actions = {
   getRoom: ({ commit }) => walkService
     .getRoom()
+    .then((data) => {
+      console.log(data);
+      return data;
+    })
+    .then(({ room }) => room)
     .then(room => ({
       ...room,
       html: wiki2html(room.text),
@@ -43,6 +48,16 @@ const actions = {
       if (room.not_brief) commit('setBrief', false);
       commit('setRoom', room);
     }),
+  goDirection: ({ dispatch }, direction) => walkService
+    .getGoDirection(direction)
+    .then((data) => {
+      console.log(data);
+      return data;
+    })
+    .then(({ error}) => dispatch('showMessage', {
+      message: error,
+      onMessage: () => dispatch('getRoom'),
+    })),
   setDebugMode: ({ getters, commit }, debugMode) => {
     if (!getters.isDebugger) return;
     commit('setDebugMode', debugMode);
