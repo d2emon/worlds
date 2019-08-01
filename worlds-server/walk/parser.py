@@ -1,6 +1,7 @@
 from .actions import execute_action
 from .exceptions import ActionError
 from .globalVars import Globals
+from .player import PLAYER
 
 
 class ParseError(Exception):
@@ -81,8 +82,8 @@ class Parser:
             'them': self.wd_them,
             'him': self.wd_him,
             'her': self.wd_her,
-            'me': Globals.globme,
-            'myself': Globals.globme,
+            'me': PLAYER.name,
+            'myself': PLAYER.name,
             'there': self.wd_there,
         }.get(pronoun)
 

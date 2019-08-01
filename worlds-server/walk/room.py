@@ -47,8 +47,8 @@ class Exit:
     def on_exit(self, player):
         def direction_2():
             figure = fpbns("figure")
-            wizard = any(iswornby(item, Globals.mynum) for item in (101, 102, 103))
-            if figure != -1 and figure != Globals.mynum and ploc(figure) == self.from_room and not wizard:
+            wizard = any(iswornby(item, player.player.id) for item in (101, 102, 103))
+            if figure != -1 and figure != player.player.id and ploc(figure) == self.from_room and not wizard:
                 raise ActionError(
                     "[p]The Figure[/p] holds you back\n"
                     "[p]The Figure[/p] says 'Only true sorcerors may pass'\n",
@@ -153,9 +153,9 @@ class Room:
         Globals.wd_there = "{} {}".format(zone, in_zone)
         return "{}{}".format(zone, in_zone)
 
-    def on_enter(self):
+    def on_enter(self, player):
         def room_139():
-            if any(iswornby(item_id, Globals.mynum) for item_id in (113, 114, 89)):
+            if any(iswornby(item_id, player.player_id) for item_id in (113, 114, 89)):
                 return {'message': "The shield protects you from the worst of the lava stream's heat\n"}
             return {'error': "The intense heat drives you back"}
 
@@ -165,6 +165,9 @@ class Room:
             },
             self.room_id,
         )
+
+    def go_direction(self, player, direction_id):
+        return Room(self.exits[direction_id].go(player))
 
 
 def find_zone(room_id):

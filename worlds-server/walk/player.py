@@ -10,6 +10,8 @@ class Player:
     GOD_LEVEL = 10000
 
     def __init__(self):
+        self.player_id = 0  # mynum
+        self.name = "NAME"  # globme
         self.level = 10000  # my_lev
         self.room_id = random.choice([
             -5,
@@ -53,7 +55,7 @@ class Player:
             room_id = self.room_id
 
         World.load()
-        setploc(Globals.mynum, room_id)
+        setploc(self.player_id, room_id)
         return self.look()
 
     def look(self):
@@ -62,7 +64,7 @@ class Player:
         if self.room.death_room:
             Globals.ail_blind = False
             if not self.is_wizard:
-                loseme(Globals.globme)
+                loseme(self.name)
                 crapup("bye bye.....")
 
         World.load()
@@ -113,39 +115,38 @@ class Player:
                 "You can't just stroll out of a fight!\n"
                 "If you wish to leave a fight, you must FLEE in a direction\n"
             )
-        if iscarrby(32, Globals.mynum) and ploc(25) == self.room_id and len(pname(25)):
+        if iscarrby(32, self.player_id) and ploc(25) == self.room_id and len(pname(25)):
             raise ActionError("[c]The Golem[/c] bars the doorway!\n")
         if chkcrip():
             raise ActionError("ERROR")
 
-        room_id = self.room.exits[direction_id].go(self)
-        room = Room(room_id)
-        result = room.on_enter()
+        room = self.room.go_direction(self, direction_id)
 
+        result = room.on_enter(self)
         if result.get('error'):
             return result
 
         sendsys(
-            Globals.globme,
-            Globals.globme,
+            self.name,
+            self.name,
             -10000,
             self.room_id,
             "[s name=\"{}\"]{} has gone {} {}.\n[/s]".format(
-                pname(Globals.mynum),
-                Globals.globme,
+                pname(self.player_id),
+                self.name,
                 Globals.exittxt.get(direction_id),
                 Globals.out_ms,
             ),
         )
 
         sendsys(
-            Globals.globme,
-            Globals.globme,
+            self.name,
+            self.name,
             -10000,
             room.room_id,
             "[s name=\"{}\"]{} {}\n[/s]".format(
-                Globals.globme,
-                Globals.globme,
+                self.name,
+                self.name,
                 Globals.in_ms,
             ),
         )

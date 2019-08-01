@@ -7,9 +7,10 @@ This file holds the basic communications routines
 # talkfl = 0
 
 # cms = -1
-# curch = 0
 
-# globme = ""
+# curch     player
+# globme    player
+
 # curmode = 0
 # meall = 0
 
@@ -67,6 +68,8 @@ from ..database import connect as openlock
 
 # def split(block, nam1, nam2, work, luser):
 
+# mynum player
+
 from ..player import set_room as trapch
 
 # def putmeon(name):
@@ -84,6 +87,7 @@ from ..actions.player_actions import look_room as lookin
 # iamon = 0
 
 # def userwrap():
+
 from ..database import disconnect as fcloselock
 
 """
