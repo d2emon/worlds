@@ -4,18 +4,7 @@ from .database import Database
 from .logger import logger
 
 
-def room_example():
-    for _ in range(6):
-        yield 0
-    yield "Title"
-    # Description
-    yield "#NOBR"
-    yield "Description1"
-    yield "Description2"
-    yield "Description3"
-
-
-def load_exits(data):
+def parse_exits(data):
     return [int(next(data)) for _ in range(6)]
 
 
@@ -23,7 +12,7 @@ def parse(room_id, data):
     room = {
         'room_id': room_id,
         'title': None,
-        'exits': load_exits(data),
+        'exits': parse_exits(data),
         'description': '',
         'death_room': False,
         'no_brief': False,

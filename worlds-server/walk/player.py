@@ -58,6 +58,100 @@ class Player:
         setploc(self.player_id, room_id)
         return self.look()
 
+    def go(self, direction_id):
+        if Globals.in_fight > 0:
+            raise ActionError(
+                "You can't just stroll out of a fight!\n"
+                "If you wish to leave a fight, you must FLEE in a direction\n"
+            )
+        if iscarrby(32, self.player_id) and ploc(25) == self.room_id and len(pname(25)):
+            raise ActionError("[c]The Golem[/c] bars the doorway!\n")
+        if chkcrip():
+            raise ActionError("ERROR")
+
+        room = self.room.go_direction(self, direction_id)
+
+        result = room.on_enter(self)
+        if result.get('error'):
+            return result
+
+        sendsys(
+            self.name,
+            self.name,
+            -10000,
+            self.room_id,
+            "[s name=\"{}\"]{} has gone {} {}.\n[/s]".format(
+                pname(self.player_id),
+                self.name,
+                Globals.exittxt.get(direction_id),
+                Globals.out_ms,
+            ),
+        )
+
+        sendsys(
+            self.name,
+            self.name,
+            -10000,
+            room.room_id,
+            "[s name=\"{}\"]{} {}\n[/s]".format(
+                self.name,
+                self.name,
+                Globals.in_ms,
+            ),
+        )
+
+        self.room_id = room.room_id
+        result.update({
+            'result': not result.get('error'),
+            'room': self.set_room(),
+        })
+        return result
+
+    def quit_game(self):
+        if Globals.is_forced:
+            raise ActionError("You can\'t be forced to do that")
+
+        rte(self.name)
+
+        if Globals.in_fight:
+            raise ActionError("Not in the middle of a fight!")
+
+        World.load()
+        sendsys(
+            PLAYER.name,
+            PLAYER.name,
+            -10000,
+            PLAYER.room_id,
+            "{} has left the game\n".format(PLAYER.name),
+        )
+        sendsys(
+            PLAYER.name,
+            PLAYER.name,
+            -10113,
+            PLAYER.room_id,
+            "[ Quitting Game : {} ]\n".format(PLAYER.name),
+        )
+
+        dumpitems()
+        setpstr(PLAYER.player_id, -1)
+        setpname(PLAYER.player_id, '')
+        World.save()
+
+        Globals.curmode = 0
+        PLAYER.room_id = 0
+
+        saveme()
+
+        response = {'message': 'Ok'}
+        crapup('Goodbye')
+        #
+        self.room_id = random.choice([
+            -5,
+            -183,
+        ])
+        #
+        return response
+
     def look(self):
         World.save()
 
@@ -109,55 +203,6 @@ class Player:
 
         return response
 
-    def go(self, direction_id):
-        if Globals.in_fight > 0:
-            raise ActionError(
-                "You can't just stroll out of a fight!\n"
-                "If you wish to leave a fight, you must FLEE in a direction\n"
-            )
-        if iscarrby(32, self.player_id) and ploc(25) == self.room_id and len(pname(25)):
-            raise ActionError("[c]The Golem[/c] bars the doorway!\n")
-        if chkcrip():
-            raise ActionError("ERROR")
-
-        room = self.room.go_direction(self, direction_id)
-
-        result = room.on_enter(self)
-        if result.get('error'):
-            return result
-
-        sendsys(
-            self.name,
-            self.name,
-            -10000,
-            self.room_id,
-            "[s name=\"{}\"]{} has gone {} {}.\n[/s]".format(
-                pname(self.player_id),
-                self.name,
-                Globals.exittxt.get(direction_id),
-                Globals.out_ms,
-            ),
-        )
-
-        sendsys(
-            self.name,
-            self.name,
-            -10000,
-            room.room_id,
-            "[s name=\"{}\"]{} {}\n[/s]".format(
-                self.name,
-                self.name,
-                Globals.in_ms,
-            ),
-        )
-
-        self.room_id = room.room_id
-        result.update({
-            'result': not result.get('error'),
-            'room': self.set_room(),
-        })
-        return result
-
 
 PLAYER = Player()
 
@@ -177,6 +222,11 @@ def chkcrip(*args):
     # raise NotImplementedError()
     print("chkcrip({})".format(args))
     return False
+
+
+def dumpitems(*args):
+    # raise NotImplementedError()
+    print("dumpitems({})".format(args))
 
 
 def iscarrby(*args):
@@ -232,6 +282,16 @@ def pname(*args):
     return ''
 
 
+def rte(*args):
+    # raise NotImplementedError()
+    print("rte({})".format(args))
+
+
+def saveme(*args):
+    # raise NotImplementedError()
+    print("saveme({})".format(args))
+
+
 def sendsys(*args):
     # raise NotImplementedError()
     print("sendsys({})".format(args))
@@ -240,3 +300,13 @@ def sendsys(*args):
 def setploc(*args):
     # raise NotImplementedError()
     print("setploc({})".format(args))
+
+
+def setpname(*args):
+    # raise NotImplementedError()
+    print("setpname({})".format(args))
+
+
+def setpstr(*args):
+    # raise NotImplementedError()
+    print("setpstr({})".format(args))

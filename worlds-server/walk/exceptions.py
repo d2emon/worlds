@@ -7,4 +7,5 @@ class DatabaseError(Exception):
 
 
 def crapup(*args):
-    raise NotImplementedError()
+    # raise NotImplementedError()
+    print("crapup({})".format(args))

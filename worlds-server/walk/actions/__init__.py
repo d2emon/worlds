@@ -27,43 +27,7 @@ def go(parser, word):
 
 
 def quit_game(parser):
-    if Globals.is_forced:
-        raise ActionError("You can\'t be forced to do that")
-
-    rte(PLAYER.name)
-
-    if Globals.in_fight:
-        raise ActionError("Not in the middle of a fight!")
-
-    World.load()
-    sendsys(
-        PLAYER.name,
-        PLAYER.name,
-        -10000,
-        PLAYER.room_id,
-        "{} has left the game\n".format(PLAYER.name),
-    )
-    sendsys(
-        PLAYER.name,
-        PLAYER.name,
-        -10113,
-        PLAYER.room_id,
-        "[ Quitting Game : {} ]\n".format(PLAYER.name),
-    )
-
-    dumpitems()
-    setpstr(PLAYER.player_id, -1)
-    setpname(PLAYER.player_id, '')
-    World.save()
-
-    Globals.curmode = 0
-    PLAYER.room_id = 0
-
-    saveme()
-
-    response = {'message': 'Ok'}
-    crapup('Goodbye')
-    return response
+    return PLAYER.quit_game()
 
 
 def look(parser):
@@ -576,37 +540,9 @@ def aobjsat(*args):
     raise NotImplementedError()
 
 
-def crapup(*args):
-    raise NotImplementedError()
-
-
-def dumpitems(*args):
-    raise NotImplementedError()
-
-
 def examcom():
     raise NotImplementedError()
 
 
 def fobna(*args):
-    raise NotImplementedError()
-
-
-def rte(*args):
-    raise NotImplementedError()
-
-
-def saveme(*args):
-    raise NotImplementedError()
-
-
-def sendsys(*args):
-    raise NotImplementedError()
-
-
-def setpstr(*args):
-    raise NotImplementedError()
-
-
-def setpname(*args):
     raise NotImplementedError()

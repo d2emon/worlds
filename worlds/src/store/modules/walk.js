@@ -3,6 +3,8 @@ import {
   wiki2html,
 } from '@/helpers';
 
+
+
 const state = {
   message: '',
   onMessage: null,
@@ -18,7 +20,6 @@ const state = {
 };
 
 const getters = {
-  showingMessage: state => !!state.message,
   isDebugger: () => true, // this.ptstflg(this.mynum, 4)
 };
 
@@ -47,10 +48,11 @@ const actions = {
   goDirection: ({ dispatch }, direction) => walkService
     .getGoDirection(direction)
     .then(({ error }) => error && Promise.reject(error))
-    .catch(error => new Promise(resolve => dispatch('showMessage', {
-      message: error,
-      onMessage: resolve,
-    })))
+    .catch(message => dispatch('responseMessage', message))
+    .then(() => dispatch('getRoom')),
+  quitGame: ({ dispatch }) => walkService
+    .getQuit()
+    .then(({ message }) => dispatch('responseMessage', message))
     .then(() => dispatch('getRoom')),
   setDebugMode: ({ getters, commit }, debugMode) => {
     if (!getters.isDebugger) return;
@@ -62,6 +64,10 @@ const actions = {
     commit('setMessage', {});
     return onMessage ? onMessage() : null;
   },
+  responseMessage: ({ dispatch }, message) => new Promise(resolve => dispatch('showMessage', {
+    message,
+    onMessage: resolve,
+  })),
 };
 
 export default {

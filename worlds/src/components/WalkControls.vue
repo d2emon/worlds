@@ -104,7 +104,7 @@
 
         <v-btn
           :disabled="inFight || isForced"
-          @click="doQuit"
+          @click="quitGame"
         >
           Quit
         </v-btn>
@@ -297,7 +297,6 @@ export default {
   name: 'WalkControls',
   computed: {
     ...mapGetters('walk', [
-      'showingMessage',
       'isDebugger',
     ]),
     ...mapState('walk', [
@@ -306,6 +305,10 @@ export default {
       'debugMode',
       'player',
     ]),
+    showingMessage: {
+      get() { return !!this.message; },
+      set(value) { if (!value) this.hideMessage(); },
+    },
   },
   data: () => ({
     level: 1,
@@ -318,7 +321,6 @@ export default {
     curmode: 0,
     mynum: 1,
     my_sco: 0,
-    debugMode: false,
   }),
   methods: {
     ...mapMutations('walk', [
@@ -329,12 +331,11 @@ export default {
       'hideMessage',
 
       'goDirection',
+      'quitGame',
       'getRoom',
       'setDebugMode',
     ]),
-    setLevel(level) {
-      this.level = level;
-    },
+    setLevel(level) { this.level = level; },
     // utils
     calibme: console.log,
     closeworld: console.log,
@@ -354,44 +355,6 @@ export default {
       return this.inFight
         ? this.doFlee(directionId)
         : this.goDirection(directionId);
-    },
-    doQuit() {
-      if (this.isForced) {
-        return this.showMessage({ message: 'You can\'t be forced to do that\n' });
-      }
-      this.rte(this.globme);
-      this.openworld();
-      if (this.inFight) {
-        return this.showMessage({ message: 'Not in the middle of a fight!\n' });
-      }
-      this.sendsys(
-        this.globme,
-        this.globme,
-        -10000,
-        this.curch,
-        `${this.globme} has left the game\n`,
-      );
-      this.sendsys(
-        this.globme,
-        this.globme,
-        -10113,
-        this.curch,
-        `[ Quitting Game : ${this.globme} ]\n`,
-      );
-      this.dumpitems();
-      this.setpstr(this.mynum, -1);
-      this.setpname(this.mynum, '');
-      this.closeworld();
-
-      this.curmode = 0;
-      this.curch = 0;
-
-      this.saveme();
-
-      this.showMessage({
-        message: 'Ok',
-        onMessage: () => this.crapup('Goodbye'),
-      });
     },
     doCredits() {
       return this.showMessage({ message: '[file]CREDITS[/file]' });
