@@ -47,8 +47,8 @@ class Exit:
     def on_exit(self, player):
         def direction_2():
             figure = fpbns("figure")
-            wizard = any(iswornby(item, player.player.id) for item in (101, 102, 103))
-            if figure != -1 and figure != player.player.id and ploc(figure) == self.from_room and not wizard:
+            wizard = any(iswornby(item, player.player_id) for item in (101, 102, 103))
+            if figure != -1 and figure != player.player_id and ploc(figure) == self.from_room and not wizard:
                 raise ActionError(
                     "[p]The Figure[/p] holds you back\n"
                     "[p]The Figure[/p] says 'Only true sorcerors may pass'\n",
