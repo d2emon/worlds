@@ -1,10 +1,6 @@
-from .exceptions import ActionError
 from .actions import execute_action
-
-
-class Globals:
-    globme = ""
-    my_lev = 0
+from .exceptions import ActionError
+from .globalVars import Globals
 
 
 class ParseError(Exception):

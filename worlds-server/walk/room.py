@@ -1,25 +1,12 @@
 from .database import World, connect, disconnect, names
 from .exceptions import crapup, ActionError
+from .globalVars import Globals
 from .player import Player
 
 
 def apply_events(events, key):
     event = events.get(key)
     return event() if event is not None else {}
-
-
-class Globals:
-    ail_blind = False
-    my_lev = 10000
-    curch = 0
-    curmode = 0
-    globme = ""
-    wd_there = ""
-    mynum = 0
-    exittxt = {}
-    in_ms = ""
-    out_ms = ""
-    in_fight = False
 
 
 class Zone:
@@ -92,7 +79,7 @@ class Room:
     def show_name(self):
         zone, in_zone = self.zone.name, self.in_zone
         Globals.wd_there = "{} {}".format(zone, in_zone)
-        if Globals.my_lev > 9999:
+        if Player.is_god:
             return "{}{}[ {} ]".format(zone, in_zone, self.room_id)
         return "{}{}".format(zone, in_zone)
 
@@ -139,11 +126,11 @@ def look_room(room_id=None):
 
     if room.death_room:
         Globals.ail_blind = False
-        if Globals.my_lev <= 9:
+        if not Player.is_wizard:
             loseme(Globals.globme)
             crapup("bye bye.....")
 
-    if isdark():
+    if is_dark():
         text = "It is dark\n"
     elif Globals.ail_blind:
         text = None
@@ -152,7 +139,7 @@ def look_room(room_id=None):
 
     World.load()
 
-    if not isdark() and not Globals.ail_blind:
+    if not is_dark() and not Globals.ail_blind:
         lisobs()
         if Globals.curmode == 1:
             lispeople()
@@ -165,11 +152,11 @@ def look_room(room_id=None):
         'no_brief': room.no_brief,
 
         'error': "You are blind... you can't see a thing!" if Globals.ail_blind else None,
-        'name': room.show_name() if Globals.my_lev > 9 else None,
+        'name': room.show_name() if Player.is_wizard else None,
         'death': room.death_room and "<DEATH ROOM>\n",
-        'title': room.title if not isdark() else None,
+        'title': room.title if not is_dark() else None,
         'text': text,
-        '5': not isdark() and not Globals.ail_blind and "\n",
+        '5': not is_dark() and not Globals.ail_blind and "\n",
 
         # Secret
         'zone': room.zone.name,
@@ -183,7 +170,7 @@ def go_direction(direction_id):
         if not state(door_id):
             return oloc(door_other)
 
-        if oname(door_id) != "door" or isdark() or not olongt(door_id, state(door_id)):
+        if oname(door_id) != "door" or is_dark() or not olongt(door_id, state(door_id)):
             raise ActionError("You can't go that way")  # Invisible doors
         else:
             raise ActionError("The door is not open")
@@ -285,12 +272,12 @@ def is_dark(*args):
                 return False
             if ocarrf(c) == 0 or ocarrf(c) == 3:
                 continue
-            if ploc(olo(c)) != Player.room_id:
+            if ploc(oloc(c)) != Player.room_id:
                 continue
             return False
         return True
 
-    if Globals.my_lev > 9:
+    if Player.is_wizard:
         return False
     if Player.room_id in (-1100, -1101):
         return False
@@ -304,6 +291,12 @@ def is_dark(*args):
 def iscarrby(*args):
     # raise NotImplementedError()
     print("iscarrby({})".format(args))
+    return False
+
+
+def ishere(*args):
+    # raise NotImplementedError()
+    print("ishere({})".format(args))
     return False
 
 
@@ -327,6 +320,10 @@ def loseme(*args):
     raise NotImplementedError()
 
 
+def ocarrf(*args):
+    raise NotImplementedError()
+
+
 def oloc(*args):
     raise NotImplementedError()
 
@@ -342,6 +339,10 @@ def oname(*args):
 def onlook(*args):
     # raise NotImplementedError()
     print("onlook({})".format(args))
+
+
+def otstbit(*args):
+    raise NotImplementedError()
 
 
 def ploc(*args):

@@ -1,18 +1,28 @@
-from .database import World
-from .exceptions import ActionError
-from .player import Player
-from .room import look_room, go_direction
+from ..database import World
+from ..exceptions import ActionError
+from ..player import Player
+from ..room import look_room, go_direction
 
 
-class Globals:
-    my_lev = 0
-    in_fight = 0
+# Decorators
 
 
-def go(parser):
-    word = next(parser)
-    if word is None:
-        raise ActionError("GO where?")
+def required_arg(error):
+    def wrapper(f):
+        def wrapped(parser):
+            word = next(parser)
+            if word is None:
+                raise ActionError(error)
+            return f(parser, word)
+        return wrapped
+    return wrapper
+
+
+# Actions
+
+
+@required_arg("GO where?")
+def go(parser, word):
     return go_direction(parser.get_direction_id(word))
 
 
@@ -48,13 +58,11 @@ def look(parser):
 
 
 __actions = {
-  1: go,
-  11: look,
+    1: go,
+    # 2 - 7
+    11: look,
 }
 """
-       case 1: 
-          dogocom();
-          break;
        case 139:
           if(in_fight) 
              {
@@ -517,8 +525,8 @@ def execute_action(action_id):
     if action is not None:
         return action()
 
-    if Globals.my_lev > 9999:
-        raise ActionError("Sorry not written yet[COMREF %d]".format(action_id))
+    if Player.is_god:
+        raise ActionError("Sorry not written yet[COMREF {}]".format(action_id))
     else:
         raise ActionError("I don't know that verb.")
 
