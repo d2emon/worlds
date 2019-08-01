@@ -1,4 +1,4 @@
-from ..exceptions import crapup, DatabaseError
+from ..exceptions import DatabaseError, StopGame
 # Databases
 from .rooms import Rooms
 from .world import WorldData
@@ -34,7 +34,7 @@ class World:
         try:
             self.__data = connect(self.filename, "r+").all()
         except DatabaseError:
-            crapup("Cannot find World file")
+            raise StopGame("Cannot find World file")
 
         self.items = self.__data['items']  # ? objinfo[4 * numobs]
         self.players = self.__data['players']  # ? ublock[16 * 48]

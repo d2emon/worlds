@@ -1,6 +1,5 @@
 from ..database import World
 from ..exceptions import ActionError
-from ..globalVars import Globals
 from ..player import PLAYER
 
 

@@ -1,11 +1,6 @@
 from .actions import execute_action
-from .exceptions import ActionError
-from .globalVars import Globals
+from .exceptions import ActionError, ParseError
 from .player import PLAYER
-
-
-class ParseError(Exception):
-    pass
 
 
 class Parser:

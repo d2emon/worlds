@@ -4,7 +4,6 @@ import {
 } from '@/helpers';
 
 
-
 const state = {
   message: '',
   onMessage: null,
@@ -45,29 +44,45 @@ const actions = {
       if (room.not_brief) commit('setBrief', false);
       commit('setRoom', room);
     }),
+
   goDirection: ({ dispatch }, direction) => walkService
     .getGoDirection(direction)
-    .then(({ error }) => error && Promise.reject(error))
-    .catch(message => dispatch('responseMessage', message))
-    .then(() => dispatch('getRoom')),
+    .then(response => dispatch('processResponse', response)),
   quitGame: ({ dispatch }) => walkService
     .getQuit()
-    .then(({ message }) => dispatch('responseMessage', message))
-    .then(() => dispatch('getRoom')),
+    .then(({ error, ...response }) => dispatch('modalMessage', error || 'Ok')
+      .then(() => dispatch('processResponse', response))),
+
   setDebugMode: ({ getters, commit }, debugMode) => {
     if (!getters.isDebugger) return;
     commit('setDebugMode', debugMode);
   },
+
   showMessage: ({ commit }, payload) => commit('setMessage', payload),
   hideMessage: ({ commit, state }) => {
     const { onMessage } = state;
     commit('setMessage', {});
     return onMessage ? onMessage() : null;
   },
-  responseMessage: ({ dispatch }, message) => new Promise(resolve => dispatch('showMessage', {
+
+  modalMessage: ({ dispatch }, message) => new Promise(resolve => dispatch('showMessage', {
     message,
     onMessage: resolve,
   })),
+  processResponse: ({ dispatch }, {
+    crapup,
+    error,
+    ...response
+  }) => Promise.resolve()
+    .then(() => console.log({
+      crapup,
+      error,
+      response,
+    }))
+    .then(() => error && dispatch('modalMessage', error))
+    .then(() => crapup && dispatch('modalMessage', `<hr /><div>${crapup}</div><hr />`))
+    .then(() => dispatch('getRoom'))
+    .then(() => response),
 };
 
 export default {

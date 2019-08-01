@@ -6,6 +6,9 @@ class DatabaseError(Exception):
     pass
 
 
-def crapup(*args):
-    # raise NotImplementedError()
-    print("crapup({})".format(args))
+class ParseError(Exception):
+    pass
+
+
+class StopGame(Exception):
+    pass

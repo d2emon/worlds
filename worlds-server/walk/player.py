@@ -1,5 +1,5 @@
 import random
-from .exceptions import crapup, ActionError
+from .exceptions import ActionError, StopGame
 from .database import World
 from .globalVars import Globals
 from .room import Room
@@ -118,39 +118,37 @@ class Player:
 
         World.load()
         sendsys(
-            PLAYER.name,
-            PLAYER.name,
+            self.name,
+            self.name,
             -10000,
-            PLAYER.room_id,
-            "{} has left the game\n".format(PLAYER.name),
+            self.room_id,
+            "{} has left the game\n".format(self.name),
         )
         sendsys(
-            PLAYER.name,
-            PLAYER.name,
+            self.name,
+            self.name,
             -10113,
-            PLAYER.room_id,
-            "[ Quitting Game : {} ]\n".format(PLAYER.name),
+            self.room_id,
+            "[ Quitting Game : {} ]\n".format(self.name),
         )
 
         dumpitems()
-        setpstr(PLAYER.player_id, -1)
-        setpname(PLAYER.player_id, '')
+        setpstr(self.player_id, -1)
+        setpname(self.player_id, '')
         World.save()
 
         Globals.curmode = 0
-        PLAYER.room_id = 0
+        self.room_id = 0
 
         saveme()
 
-        response = {'message': 'Ok'}
-        crapup('Goodbye')
         #
         self.room_id = random.choice([
             -5,
             -183,
         ])
         #
-        return response
+        raise StopGame('Goodbye')
 
     def look(self):
         World.save()
@@ -159,7 +157,7 @@ class Player:
             Globals.ail_blind = False
             if not self.is_wizard:
                 loseme(self.name)
-                crapup("bye bye.....")
+                raise StopGame("bye bye.....")
 
         World.load()
 

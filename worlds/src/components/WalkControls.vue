@@ -5,9 +5,9 @@
       max-width="300"
     >
       <v-card>
-        <v-card-text>
-          {{message}}
-        </v-card-text>
+        <v-card-text
+          v-html="message"
+        />
         <v-card-actions>
           <v-spacer />
           <v-btn
@@ -339,7 +339,6 @@ export default {
     // utils
     calibme: console.log,
     closeworld: console.log,
-    crapup(message) { this.message = message; },
     dumpitems: console.log,
     iscarrby: console.log,
     on_flee_event: console.log,
