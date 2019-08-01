@@ -59,6 +59,14 @@ class Rooms(Database):
                 "At your feet a huge sacrificial pit allows you to give valuables to the",
                 "gods in the hope of being rewarded.",
             ))),
+            182: parse(iter((
+                -183, -184, -187, -181, 0, 0,
+                "The Village Green",
+                "You are standing on a square of grass in the centre of the village.",
+                "A cottage stands to the east surrounded by gently swaying trees.",
+                "",
+                "To the north is a small church, and a path leads west into the trees."
+            ))),
             183: parse(iter((
                 0, 0, -182, 0, 0, 0,
                 "The Village Church",

@@ -7,10 +7,7 @@
     </v-flex>
     <v-flex xs12 sm9>
       <v-container>
-        <room
-          v-if="room"
-          :room="room"
-        />
+        <room />
       </v-container>
     </v-flex>
   </v-layout>
@@ -27,11 +24,6 @@ export default {
   components: {
     WalkControls: () => import('@/components/WalkControls.vue'),
     Room: () => import('@/components/Room.vue'),
-  },
-  computed: {
-    ...mapState('walk', [
-      'room',
-    ]),
   },
   methods: {
     ...mapActions('walk', [

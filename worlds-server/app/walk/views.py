@@ -1,8 +1,18 @@
+import random
 from flask import jsonify
 from walk.exceptions import ActionError
 from walk.parser import Parser
 from walk.player import PLAYER
 from . import blueprint
+
+
+@blueprint.route('/restart', methods=['GET'])
+def restart():
+    PLAYER.room_id = random.choice((
+        -5,
+        -183,
+    ))
+    return jsonify({'result': True})
 
 
 @blueprint.route('/go/<direction>', methods=['GET'])

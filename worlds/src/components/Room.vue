@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-container>
+    <v-container v-if="room">
       <template v-if="player.is_wizard">
         <v-card-title>
           <span v-if="room.name">{{room.name}}</span>
@@ -39,13 +39,11 @@ import {
 
 export default {
   name: 'Room',
-  props: [
-    'room',
-  ],
   computed: {
     ...mapState('walk', [
       'brief',
       'player',
+      'room',
     ]),
   },
   methods: {

@@ -35,10 +35,6 @@ const mutations = {
 const actions = {
   getRoom: ({ commit }) => walkService
     .getRoom()
-    .then((data) => {
-      console.log(data);
-      return data;
-    })
     .then(({ room }) => room)
     .then(room => ({
       ...room,
@@ -50,14 +46,12 @@ const actions = {
     }),
   goDirection: ({ dispatch }, direction) => walkService
     .getGoDirection(direction)
-    .then((data) => {
-      console.log(data);
-      return data;
-    })
-    .then(({ error}) => dispatch('showMessage', {
+    .then(({ error }) => error && Promise.reject(error))
+    .catch(error => new Promise(resolve => dispatch('showMessage', {
       message: error,
-      onMessage: () => dispatch('getRoom'),
-    })),
+      onMessage: resolve,
+    })))
+    .then(() => dispatch('getRoom')),
   setDebugMode: ({ getters, commit }, debugMode) => {
     if (!getters.isDebugger) return;
     commit('setDebugMode', debugMode);
