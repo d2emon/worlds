@@ -42,7 +42,7 @@ class World:
         self.items, self.players = self.__data.all()  # ? objinfo[4 * numobs], ublock[16 * 48]
 
     def __write(self):
-        self.__data.set(list(self.items), list(self.players))  # ? objinfo[4 * numobs], ublock[16 * 48]
+        self.__data.set(list(self.items.all()), list(self.players.all()))  # ? objinfo[4 * numobs], ublock[16 * 48]
 
         disconnect(self)
 

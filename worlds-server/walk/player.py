@@ -2,6 +2,7 @@ import random
 from .exceptions import ActionError, StopGame
 from .database import World
 from .globalVars import Globals
+from .models.item import Item
 from .models.room import Room
 
 
@@ -184,15 +185,14 @@ class Player:
         elif Globals.ail_blind:
             response.update({'error': "You are blind... you can't see a thing!"})
         else:
-            lisobs()
-            if Globals.curmode == 1:
-                lispeople()
-            # 5
             response.update({
                 'title': self.room.title,
                 'text': self.room.description,
-                'additional': "\n",
+                'items': list(Item.list_items()),
             })
+            if Globals.curmode == 1:
+                lispeople()
+            # 5
 
         onlook()
 

@@ -29,7 +29,7 @@ const mutations = {
     state.onMessage = onMessage;
   },
   setBrief: (state, brief) => { state.brief = brief; },
-  setDebugMode: (state, brief) => { state.debugMode = debugMode; },
+  setDebugMode: (state, debugMode) => { state.debugMode = debugMode; },
   setRoom: (state, room) => { state.room = room; },
   setExits: (state, exits) => { state.exits = exits; },
 };

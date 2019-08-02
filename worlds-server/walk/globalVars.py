@@ -8,3 +8,4 @@ class Globals:
     in_fight = False
     numobs = 0
     is_forced = False
+    debug_mode = True

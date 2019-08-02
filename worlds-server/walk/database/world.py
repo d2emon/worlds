@@ -10,7 +10,7 @@ class WorldDatabase(ListDatabase):
 
 
 class Items(WorldDatabase):
-    pass
+    NOBS = 194
 
 
 class Players(WorldDatabase):
@@ -24,8 +24,8 @@ class WorldData(Database):
 
     def all(self):
         return (
-            self.items.all(),
-            self.players.all(),
+            self.items,
+            self.players,
         )
 
     def get(self, item_id):

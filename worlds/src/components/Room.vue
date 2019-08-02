@@ -23,6 +23,16 @@
         v-if="!brief"
         v-html="room.html"
       />
+      <v-list>
+        <v-list-tile
+          v-for="item in room.items"
+          :key="item.item_id"
+        >
+          <span v-if="item.destroyed">--</span>
+          <span v-if="debugMode">{ {{item.item_id}} }</span>
+          {{item.text}}
+        </v-list-tile>
+      </v-list>
       <v-card-text
         v-if="room['5']"
         v-text="room['5']"
@@ -42,6 +52,7 @@ export default {
   computed: {
     ...mapState('walk', [
       'brief',
+      'debugMode',
       'player',
       'room',
     ]),

@@ -29,7 +29,10 @@ def on_stop(message):
     # pbfr()
     # Globals.pr_due = 0  # So we dont get a prompt after the exit
     # keysetback()
-    return jsonify({'crapup': str(message)})
+    return jsonify({
+        'text': "pbfr()",
+        'crapup': str(message),
+    })
 
 
 @blueprint.route('/restart', methods=['GET'])
