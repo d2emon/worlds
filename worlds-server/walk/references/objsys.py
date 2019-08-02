@@ -9,7 +9,7 @@
 # Value
 # flags (0=Normal 1+flannel)
 
-# NOBS = 194
+# NOBS  World.Items
 # OBMUL = 8
 
 # numobs = NOBS
@@ -39,8 +39,8 @@
 # def iscarrby(item,user):
 # def dropitem():
 
-from ..database.world import list_items as lisobs
-from ..database.world import by_flannel as lojal2
+from ..models.item import list_items as lisobs
+from ..models.item import by_flannel as lojal2
 
 # def dumpitems():
 # def dumpstuff(n,loc):
@@ -54,10 +54,12 @@ from ..database.world import by_flannel as lojal2
 
 # def fpbn(name):
 # def fpbns(name):
-# def lispeople():
+
+from ..models.character import list_characters as lispeople
+
 # def usercom():
 
-from ..database.world import oplong as oplong
+from ..models.item import oplong as oplong
 
 """
 /*
@@ -568,36 +570,6 @@ if((!!strlen(n2))&&(!strcmp(n1,n2))) return(a);
        a++;
        }
     return(-1);
-    }
- lispeople()
-    {
-    extern long debug_mode;
-    extern long curch;
-    extern long mynum;
-    extern char wd_him[],wd_her[];
-    long a,b;
-    b=0;
-    a=0;
-    while(a<48)
-       {
-       if(a==mynum)
-          {
-          a++;
-          continue;
-          }
-       if((!!strlen(pname(a)))&&(ploc(a)==curch)&&(seeplayer(a)))
-          {
-          b=1;
-         bprintf("%s ",pname(a));
-         if(debug_mode) bprintf("{%d}",a);
-          disl4(plev(a),psex(a));
-          if(psex(a)) strcpy(wd_her,pname(a));
-          else strcpy(wd_him,pname(a));
-         bprintf(" is here carrying\n");
-          lobjsat(a);
-          }
-       a++;
-       }
     }
  
 usercom()

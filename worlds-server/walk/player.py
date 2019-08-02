@@ -2,6 +2,7 @@ import random
 from .exceptions import ActionError, StopGame
 from .database import World
 from .globalVars import Globals
+from .models.character import Character
 from .models.item import Item
 from .models.room import Room
 
@@ -179,6 +180,8 @@ class Player:
             'no_brief': self.room.no_brief,
             'is_dark': self.room.is_dark,
             'death': self.room.death_room,
+            'items': [],
+            'characters': [],
         }
         if self.is_dark:
             response.update({'error': "It is dark"})
@@ -191,8 +194,7 @@ class Player:
                 'items': list(Item.list_items()),
             })
             if Globals.curmode == 1:
-                lispeople()
-            # 5
+                response.update({'characters': list(Character.list_characters(self))})
 
         onlook()
 
@@ -211,7 +213,7 @@ class Player:
         # death
         # title
         # text
-        # additional
+        # items
 
         return response
 
@@ -269,16 +271,6 @@ def ishere(*args):
     # raise NotImplementedError()
     print("ishere({})".format(args))
     return False
-
-
-def lisobs(*args):
-    # raise NotImplementedError()
-    print("lisobs({})".format(args))
-
-
-def lispeople(*args):
-    # raise NotImplementedError()
-    print("lispeople({})".format(args))
 
 
 def loseme(*args):

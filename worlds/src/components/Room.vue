@@ -23,7 +23,7 @@
         v-if="!brief"
         v-html="room.html"
       />
-      <v-list>
+      <v-list v-if="room.items">
         <v-list-tile
           v-for="item in room.items"
           :key="item.item_id"
@@ -33,10 +33,27 @@
           {{item.text}}
         </v-list-tile>
       </v-list>
-      <v-card-text
-        v-if="room['5']"
-        v-text="room['5']"
-      />
+      <div v-if="room.characters">
+        <div
+          v-for="character in room.characters"
+          :key="`char-${character.character_id}`"
+        >
+          <div>
+            {{character.name}}
+            <span v-if="debugMode">{ {{character.character_id}} }</span>
+            {{character.level}}
+             is here carrying
+          </div>
+          <v-list v-if="character.items">
+            <v-list-tile
+              v-for="(item, item_id) in character.items"
+              :key="`char-${character.character_id}-item-${item_id}`"
+            >
+              {{item}}
+            </v-list-tile>
+          </v-list>
+        </div>
+      </div>
     </v-container>
   </v-card>
 </template>

@@ -25,6 +25,7 @@
         <v-flex xs12>
           <h4>Obvious exits are:</h4>
           <div v-if="!exits">None....</div>
+          {{exits}}
         </v-flex>
       </v-layout>
       <v-layout row wrap>

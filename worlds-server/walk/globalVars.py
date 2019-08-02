@@ -1,6 +1,6 @@
 class Globals:
     ail_blind = False
-    curmode = 0
+    curmode = 1
     wd_there = ""
     exittxt = {}
     in_ms = ""
@@ -8,4 +8,3 @@ class Globals:
     in_fight = False
     numobs = 0
     is_forced = False
-    debug_mode = True

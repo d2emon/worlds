@@ -30,7 +30,7 @@ class Item(Model):
 
     @classmethod
     def by_flannel(cls, flannel):
-        for item_id in range(cls.database().NOBS):
+        for item_id in cls.database().all():
             item = cls(item_id=item_id)
             if not ishere(item_id) or oflannel(item_id) != flannel:
                 continue
@@ -83,13 +83,13 @@ def oflannel(*args):
 def olongt(*args):
     # raise NotImplementedError()
     print("olongt({})".format(args))
-    return "TEXT"
+    return "ITEM TEXT"
 
 
 def oname(*args):
     # raise NotImplementedError()
     print("oname({})".format(args))
-    return "TEXT"
+    return "ITEM NAME"
 
 
 def showwthr(*args):

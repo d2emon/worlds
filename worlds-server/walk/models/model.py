@@ -13,9 +13,6 @@ class Model:
 
     @classmethod
     def all(cls):
-        # print(cls)
-        # print(cls.database_name)
-        # print(cls.database())
         return (cls(**data) for data in cls.database().all() if data is not None)
 
     @classmethod
