@@ -1,12 +1,15 @@
 from ..exceptions import DatabaseError, StopGame
 # Databases
+from .exits import Exits
 from .rooms import Rooms
 from .world import WorldData
 from .zones import Zones
+# Names
 from . import names
 
 
 __databases = {
+    names.EXITS: Exits(),
     names.ROOMS: Rooms(),
     names.WORLD: WorldData(),
     names.ZONES: Zones(),
@@ -32,16 +35,14 @@ class World:
 
     def __init__(self):
         try:
-            self.__data = connect(self.filename, "r+").all()
+            self.__data = connect(self.filename, "r+")
         except DatabaseError:
             raise StopGame("Cannot find World file")
 
-        self.items = self.__data['items']  # ? objinfo[4 * numobs]
-        self.players = self.__data['players']  # ? ublock[16 * 48]
+        self.items, self.players = self.__data.all()  # ? objinfo[4 * numobs], ublock[16 * 48]
 
     def __write(self):
-        self.__data['items'] = self.items  # ? objinfo[4 * numobs]
-        self.__data['players'] = self.players  # ? ublock[16 * 48]
+        self.__data.set(list(self.items), list(self.players))  # ? objinfo[4 * numobs], ublock[16 * 48]
 
         disconnect(self)
 

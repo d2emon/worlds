@@ -2,7 +2,7 @@ import random
 from .exceptions import ActionError, StopGame
 from .database import World
 from .globalVars import Globals
-from .room import Room
+from .models.room import Room
 
 
 class Player:
@@ -13,10 +13,12 @@ class Player:
         self.player_id = 0  # mynum
         self.name = "NAME"  # globme
         self.level = 10000  # my_lev
-        self.room_id = random.choice([
+        self.__room_id = random.choice([
             -5,
             -183,
         ])  # curch
+
+        self.__room = None
 
     @property
     def is_dark(self):
@@ -48,7 +50,18 @@ class Player:
 
     @property
     def room(self):
-        return Room(self.room_id)
+        if self.__room is None:
+            self.__room = Room.get(self.room_id)
+        return self.__room
+
+    @property
+    def room_id(self):
+        return self.__room_id
+
+    @room_id.setter
+    def room_id(self, value):
+        self.__room = None
+        self.__room_id = value
 
     def set_room(self, room_id=None):
         if room_id is None:
@@ -184,7 +197,7 @@ class Player:
         onlook()
 
         if self.is_wizard:
-            response.update({'name': self.room.show_name()})
+            response.update({'name': self.room.name})
         if self.is_god:
             response.update({'room_id': self.room.room_id})
             # Secret

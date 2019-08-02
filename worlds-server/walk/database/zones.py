@@ -2,7 +2,8 @@ from .database import Database
 
 
 class Zones(Database):
-    __ZONES = {
+    __ITEMS = {
+        0: "TCHAN",
         1: "LIMBO",
         2: "WSTORE",
         4: "HOME",
@@ -30,20 +31,30 @@ class Zones(Database):
     }
 
     def __init__(self):
-        super().__init__(list(self.__zones_generator()))
+        self.__items = self.__ITEMS
 
-    @classmethod
-    def __zones_generator(cls):
-        ends = list(cls.__ZONES.keys())
-        ends.sort()
-        begin = 1
-        for end in ends:
-            yield {
-                'name': cls.__ZONES[end],
-                'begin': begin,
-                'end': end,
-            }
-            begin = end + 1
+    @property
+    def __default(self):
+        return self.__items[0]
+
+    def by_end(self, end):
+        end = max(end, 0)
+        keys = [key for key in self.__items.keys() if key < end]
+        return {
+            'name': self.__items.get(end, self.__default),
+            'begin': min(keys) + 1 if len(keys) else None,
+            'end': end,
+        }
+
+    def by_room_id(self, room_id):
+        room_id = -room_id
+        keys = [key for key in self.__items.keys() if key <= room_id]
+        return self.by_end(max(keys) if len(keys) else 0)
+
+    def all(self):
+        return (self.by_end(end) for end in self.__items.keys())
 
     def get(self, item_id):
-        return self.all().get(item_id)
+        keys = list(self.__items.keys())
+        keys.sort()
+        return lambda: self.by_room_id(keys[item_id])

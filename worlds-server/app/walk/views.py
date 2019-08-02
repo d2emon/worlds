@@ -6,6 +6,20 @@ from walk.parser import Parser
 from walk.player import PLAYER
 from . import blueprint
 
+# from walk.models.room import Room
+# from walk.models.room_exit import Exit
+# from walk.models.zone import Zone
+
+
+# print([[
+#     item.room_id,
+#     item.name,
+#     item.title,
+#     [e.door_id for e in item.exits if e.door_id is not None],
+# ] for item in Room.all()])
+# print(list(Exit.all()))
+# print([item.name for item in Zone.all()])
+
 
 def on_error(message):
     return jsonify({'error': str(message)})
