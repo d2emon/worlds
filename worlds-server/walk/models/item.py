@@ -46,9 +46,9 @@ class Item(Model):
 
     @classmethod
     def list_items(cls):
-        yield from cls.by_flannel(True)
+        # yield from cls.by_flannel(True)
         yield showwthr()
-        yield from cls.by_flannel(False)
+        # yield from cls.by_flannel(False)
 
 
 def by_flannel(flannel):
@@ -77,7 +77,8 @@ def ishere(*args):
 def oflannel(*args):
     # raise NotImplementedError()
     print("oflannel({})".format(args))
-    return random.randrange(100) > 50
+    # return random.randrange(100) > 50
+    return False
 
 
 def olongt(*args):

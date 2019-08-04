@@ -31,7 +31,7 @@ const mutations = {
   setBrief: (state, brief) => { state.brief = brief; },
   setDebugMode: (state, debugMode) => { state.debugMode = debugMode; },
   setRoom: (state, room) => { state.room = room; },
-  setExits: (state, exits) => { console.log(exits); state.exits = exits; },
+  setExits: (state, exits) => { state.exits = exits; },
 };
 
 const actions = {
@@ -57,7 +57,7 @@ const actions = {
       .then(() => dispatch('processResponse', response))),
   fetchExits: ({ commit }) => walkService
     .getExits()
-    .then(({ exits, ...data}) => { console.log(exits, data); return { exits }; })
+    // .then(({ exits, ...data}) => { console.log(exits, data); return { exits }; })
     .then(({ exits }) => commit('setExits', exits)),
 
   setDebugMode: ({ getters, commit }, debugMode) => {
@@ -81,11 +81,13 @@ const actions = {
     error,
     ...response
   }) => Promise.resolve()
+    /*
     .then(() => console.log({
       crapup,
       error,
       response,
     }))
+     */
     .then(() => error && dispatch('modalMessage', error))
     .then(() => crapup && dispatch('modalMessage', `<hr /><div>${crapup}</div><hr />`))
     .then(() => dispatch('getRoom'))

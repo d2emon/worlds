@@ -21,7 +21,7 @@ class Character(Model):
         for character_id in cls.database().all():
             if character_id == player.player_id:
                 continue
-            if not len(pname(character_id)) or ploc(character_id) == player.room_id or not seeplayer(character_id):
+            if not len(pname(character_id)) or ploc(character_id) != player.room_id or not seeplayer(character_id):
                 continue
             if psex(character_id):
                 Globals.wd_her = pname(character_id)
@@ -56,28 +56,32 @@ def lobjsat(*args):
     yield {}
 
 
-def plev(*args):
+def plev(character_id):
     # raise NotImplementedError()
-    print("plev({})".format(args))
-    return random.randrange(100)
+    print("plev({})".format(character_id))
+    character = Character.database().character(character_id)
+    return character.get('level', 0)
 
 
-def ploc(*args):
+def ploc(character_id):
     # raise NotImplementedError()
-    print("plev({})".format(args))
-    return random.randrange(100)
+    print("ploc({})".format(character_id))
+    character = Character.database().character(character_id)
+    return character.get('room_id', 0)
 
 
-def pname(*args):
+def pname(character_id):
     # raise NotImplementedError()
-    print("pname({})".format(args))
-    return "TEXT"
+    print("pname({})".format(character_id))
+    character = Character.database().character(character_id)
+    return character.get('name', '')
 
 
-def psex(*args):
+def psex(character_id):
     # raise NotImplementedError()
-    print("psex({})".format(args))
-    return 1 if random.randrange(100) > 50 else 0
+    print("psex({})".format(character_id))
+    character = Character.database().character(character_id)
+    return character.get('sex', 0)
 
 
 def seeplayer(*args):
