@@ -17,6 +17,10 @@ class Zone(Model):
         self.end = end + 1
 
     @classmethod
+    def by_name(cls, name):
+        return cls(**cls.database().by_name(name))
+
+    @classmethod
     def by_room_id(cls, room_id):
         if room_id > 0:
             return cls()

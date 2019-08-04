@@ -266,7 +266,7 @@ class Player:
                 exits[e.direction] = True
                 # result.append(e.direction)
             else:
-                room = Room(e.room_to)
+                room = Room.get(e.room_to)
                 exits[e.direction] = "{}{}".format(room.zone.name, room.in_zone)
                 # result.append("{} : {}{}".format(e.direction, room.zone.name, room.in_zone))
         return {'exits': exits or None}

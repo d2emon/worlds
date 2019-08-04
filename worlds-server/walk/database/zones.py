@@ -46,6 +46,9 @@ class Zones(Database):
             'end': end,
         }
 
+    def by_name(self, name):
+        return self.by_end(next((key for (key, value) in self.__items.items() if value == name), 0))
+
     def by_room_id(self, room_id):
         room_id = -room_id
         keys = [key for key in self.__items.keys() if key >= room_id]

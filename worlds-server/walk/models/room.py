@@ -26,10 +26,10 @@ class Room(Model):
         death_room=False,
         no_brief=False,
         is_dark=False,
+        zone="TCHAN",
         # permissions="r"
     ):
         super().__init__()
-
         self.__room_id = room_id
         self.title = title
         self.__exits = exits
@@ -37,6 +37,7 @@ class Room(Model):
         self.death_room = death_room
         self.no_brief = no_brief
         self.is_dark = is_dark
+        self.__zone_name = zone
 
         self.__zone = None
 
@@ -71,7 +72,7 @@ class Room(Model):
     @property
     def zone(self):
         if self.__zone is None:
-            self.__zone = Zone.by_room_id(self.room_id)
+            self.__zone = Zone.by_name(self.__zone_name)
         return self.__zone
 
     @property

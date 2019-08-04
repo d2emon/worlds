@@ -23,9 +23,14 @@ class Rooms(Database):
         return True
 
     @classmethod
+    def __zone(cls, room_id):
+        return cls.ZONES.by_room_id(room_id)
+
+    @classmethod
     def __room(cls, room_id):
         return {
             'room_id': room_id,
+            'zone': cls.__zone(room_id).get('name'),
             'title': None,
             'exits': [],
             'description': None,
@@ -54,8 +59,8 @@ class Rooms(Database):
 
     @classmethod
     def __load_room(cls, room_id):
-        zone = cls.ZONES.by_room_id(room_id)
-        filename = os.path.join(cls.__PATH, zone.get('name'), str(-room_id))
+        zone = cls.__zone(room_id).get('name')
+        filename = os.path.join(cls.__PATH, zone, str(-room_id))
         if not os.path.isfile(filename):
             return cls.__room(room_id)
         logger.debug('Loading room: %s', room_id)
