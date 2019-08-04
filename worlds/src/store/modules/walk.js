@@ -5,6 +5,8 @@ import {
 
 
 const state = {
+  name: 'Player',
+
   message: '',
   onMessage: null,
 
@@ -35,6 +37,21 @@ const mutations = {
 };
 
 const actions = {
+  showMessage: ({ commit }, payload) => commit('setMessage', payload),
+  hideMessage: ({ commit, state }) => {
+    const { onMessage } = state;
+    commit('setMessage', {});
+    return onMessage ? onMessage() : null;
+  },
+
+  restart: ({ dispatch, state }) => Promise.all([
+    walkService.getStart(state.name),
+    dispatch('modalMessage', 'Entering Game ....'),
+  ])
+    .then(([response, ]) => dispatch('processResponse', response))
+    .then(response => dispatch('getRoom').then(() => response))
+    .then(({ message }) => message && dispatch('modalMessage', message)),
+
   getRoom: ({ commit, dispatch }) => walkService
     .getRoom()
     .then(({ room }) => room)
@@ -50,11 +67,13 @@ const actions = {
 
   goDirection: ({ dispatch }, direction) => walkService
     .getGoDirection(direction)
-    .then(response => dispatch('processResponse', response)),
+    .then(response => dispatch('processResponse', response))
+    .then(() => dispatch('getRoom')),
   quitGame: ({ dispatch }) => walkService
     .getQuit()
-    .then(({ error, ...response }) => dispatch('modalMessage', error || 'Ok')
-      .then(() => dispatch('processResponse', response))),
+    .then(({ error, ...response }) => dispatch('modalMessage', error || 'Ok').then(() => response))
+    .then(response => dispatch('processResponse', response))
+    .then(() => dispatch('restart')),
   fetchExits: ({ commit }) => walkService
     .getExits()
     // .then(({ exits, ...data}) => { console.log(exits, data); return { exits }; })
@@ -63,13 +82,6 @@ const actions = {
   setDebugMode: ({ getters, commit }, debugMode) => {
     if (!getters.isDebugger) return;
     commit('setDebugMode', debugMode);
-  },
-
-  showMessage: ({ commit }, payload) => commit('setMessage', payload),
-  hideMessage: ({ commit, state }) => {
-    const { onMessage } = state;
-    commit('setMessage', {});
-    return onMessage ? onMessage() : null;
   },
 
   modalMessage: ({ dispatch }, message) => new Promise(resolve => dispatch('showMessage', {
@@ -90,7 +102,6 @@ const actions = {
      */
     .then(() => error && dispatch('modalMessage', error))
     .then(() => crapup && dispatch('modalMessage', `<hr /><div>${crapup}</div><hr />`))
-    .then(() => dispatch('getRoom'))
     .then(() => response),
 };
 

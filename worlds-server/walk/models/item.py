@@ -16,6 +16,10 @@ class Item(Model):
     def database(cls):
         return World.instance.items
 
+    @classmethod
+    def count(cls):
+        return cls.database().ITEMS
+
     @property
     def description(self):
         text = olongt(self.item_id, state(self.item_id))

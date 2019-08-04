@@ -105,6 +105,9 @@
         <v-btn @click="setLevel(10000)">God</v-btn>
       </v-layout>
       <v-layout row wrap>
+        <v-btn @click="restart">Start</v-btn>
+      </v-layout>
+      <v-layout row wrap>
         <v-btn
           v-if="!inFight"
           :disabled="inFight"
@@ -348,6 +351,8 @@ export default {
     ...mapActions('walk', [
       'showMessage',
       'hideMessage',
+
+      'restart',
 
       'goDirection',
       'quitGame',

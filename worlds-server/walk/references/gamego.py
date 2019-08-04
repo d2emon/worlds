@@ -8,7 +8,6 @@
 
 from ..exceptions import StopGame as crapup
 
-# def crapup(str):
 # def listfl(name):
 # def getkbd(s, l):
 
@@ -22,50 +21,14 @@ from ..exceptions import StopGame as crapup
 # long interrupt=0;
 
 # def sig_occur():
-# def sig_init():
-# def sig_oops():
-# def sig_ctrlc():
+
+from ..player import sig_init as sig_init
+from ..player import sig_oops as sig_oops
+from ..player import sig_ctrlc as sig_ctrlc
+
 # def set_progname(n, text):
 
 """
-#include <stdio.h>
-
-/*
- 
-     
- 
-*/
-extern FILE *openlock();
-
-
- 
-main(argc,argv)
-char *argv[];
-{
-char x[32];
-extern char globme[];
-extern long tty;
-sig_init();
-argv_p= argv;
-if(argc!=2)
-{
-	printf("Args!\n");
-	exit(0);
-}
-printf("Entering Game ....\n");
-strcpy(x,argv[1]);
-tty=0;
-/*if(tty==4) {initbbc();initscr();topscr();}*/
-if(!strcmp(x,"Phantom")) sprintf(globme,"The %s",x);
-else strcpy(globme,x);
-printf("Hello %s\n",globme);
-syslog("GAME ENTRY: %s[%s]",globme,cuserid(NULL));
-keysetup();
-talker(globme);
-}
- 
-char privs[4];
-
 listfl(name)
 char *name;
 {
@@ -146,38 +109,6 @@ sig_occur()
 	sig_alon();
 }
 
-	
-sig_init()
-{
-	extern int sig_oops();
-	extern int sig_ctrlc();
-	signal(SIGHUP,sig_oops);
-	signal(SIGINT,sig_ctrlc);
-	signal(SIGTERM,sig_ctrlc);
-	signal(SIGTSTP,SIG_IGN);
-	signal(SIGQUIT,SIG_IGN);
-        signal(SIGCONT,sig_oops);
-}
-
-sig_oops()
-{
-	sig_aloff();
-	loseme();
-	keysetback();
-	exit(255);
-}
-
-sig_ctrlc()
-{
-	extern in_fight;
-	printf("^C\n");
-	if(in_fight) return;
-	sig_aloff();
-	loseme();
-	crapup("Byeeeeeeeeee  ...........");
-}
-
-
 set_progname(n,text)
 char *text;
 {
@@ -192,6 +123,4 @@ char *text;
 	strcpy(argv_p[n],text);
 	*/
 }
-
-
 """

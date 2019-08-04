@@ -9,10 +9,10 @@
 # Value
 # flags (0=Normal 1+flannel)
 
-# NOBS  World.Items
+# NOBS      World.Items
 # OBMUL = 8
 
-# numobs = NOBS
+# numobs    World.Items
 # long objinfo[NOBS*4];
 
 # def inventory():
@@ -66,19 +66,6 @@ from ..models.item import oplong as oplong
 
 
  */
-
-#define NOBS 194
-#define OBMUL 8
-#include <stdio.h>
-
-long numobs=NOBS;
-extern FILE *openlock();
-extern FILE *openworld();
-extern char * oname();
-extern char * pname();
-
-long objinfo[NOBS*4];
-
 
  inventory()
     {

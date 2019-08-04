@@ -1,5 +1,5 @@
 import random
-from .exceptions import ActionError, StopGame
+from .exceptions import ActionError, DatabaseError, StopGame
 from .database import World
 from .globalVars import Globals
 from .models.character import Character
@@ -8,19 +8,50 @@ from .models.room import Room
 
 
 class Player:
+    __PLAYER = None
+
+    MAX_PLAYER = 16
+
     WIZARD_LEVEL = 10
     GOD_LEVEL = 10000
 
-    def __init__(self):
+    def __init__(self, name):
         self.player_id = 0  # mynum
-        self.name = "NAME"  # globme
+        self.name = "The {}".format(name) if name == "Phantom" else name  # globme
+
         self.level = 10000  # my_lev
-        self.__room_id = random.choice([
+        self.__room_id = random.choice((
             -5,
             -183,
-        ])  # curch
+        ))  # curch
 
         self.__room = None
+
+        Globals.tty = 0
+        # if tty == 4:
+        #     initbbc()
+        #     initscr()
+        #     topscr()
+
+        # Talker
+        makebfr()
+        Globals.cms = -1
+        putmeon(self.name)
+
+        try:
+            World.load()
+        except DatabaseError:
+            raise StopGame("Sorry AberMUD is currently unavailable")
+        if self.player_id >= self.MAX_PLAYER:
+            raise StopGame("\nSorry AberMUD is full at the moment\n")
+        rte(self.name)
+        World.save()
+
+        Globals.cms = -1
+        special(".g", self.name)
+        Globals.i_setup = True
+
+        self.__PLAYER = self
 
     @property
     def is_dark(self):
@@ -39,7 +70,7 @@ class Player:
             return False
         if not self.room.is_dark:
             return False
-        if any(is_light(item_id) for item_id in range(Globals.numobs)):
+        if any(is_light(item_id) for item_id in range(Item.count())):
             return False
 
     @property
@@ -64,6 +95,22 @@ class Player:
     def room_id(self, value):
         self.__room = None
         self.__room_id = value
+
+    @classmethod
+    def player(cls, name="Name"):
+        if cls.__PLAYER is None:
+            cls.__PLAYER = cls(name)
+        return cls.__PLAYER
+
+    @classmethod
+    def start(cls, name):
+        cls.__PLAYER = cls(name)
+        return {
+            'player': {
+                'name': cls.__PLAYER.name,
+            },
+            'message': "Hello {}".format(cls.__PLAYER.name),
+        }
 
     def set_room(self, room_id=None):
         if room_id is None:
@@ -156,13 +203,6 @@ class Player:
         self.room_id = 0
 
         saveme()
-
-        #
-        self.room_id = random.choice([
-            -5,
-            -183,
-        ])
-        #
         raise StopGame('Goodbye')
 
     def look(self):
@@ -232,19 +272,55 @@ class Player:
         return {'exits': exits or None}
 
 
-PLAYER = Player()
-
-
 def is_dark():
-    return PLAYER.is_dark
+    return Player.player().is_dark
 
 
 def list_exits():
-    return PLAYER.list_exits()
+    return Player.player().list_exits()
 
 
 def set_room(room_id):
-    return PLAYER.set_room(room_id)
+    return Player.player().set_room(room_id)
+
+
+# Signals
+
+
+def sig_ctrlc():
+    if Globals.in_fight:
+        raise ActionError("^C\n")
+    loseme()
+    raise StopGame("Byeeeeeeeeee  ...........")
+
+
+def sig_oops():
+    loseme()
+    return {'code': 255}
+
+
+def sig_hup():
+    return sig_oops()
+
+
+def sig_int():
+    return sig_ctrlc()
+
+
+def sig_term():
+    return sig_ctrlc()
+
+
+def sig_tstp():
+    return None
+
+
+def sig_quit():
+    return None
+
+
+def sig_cont():
+    return sig_oops()
 
 
 # TODO: Implement
@@ -277,6 +353,11 @@ def loseme(*args):
     raise NotImplementedError()
 
 
+def makebfr(*args):
+    # raise NotImplementedError()
+    print("makebfr({})".format(args))
+
+
 def ocarrf(*args):
     raise NotImplementedError()
 
@@ -304,6 +385,11 @@ def pname(*args):
     return ''
 
 
+def putmeon(*args):
+    # raise NotImplementedError()
+    print("putmeon({})".format(args))
+
+
 def rte(*args):
     # raise NotImplementedError()
     print("rte({})".format(args))
@@ -324,6 +410,21 @@ def setploc(*args):
     print("setploc({})".format(args))
 
 
+# def sig_aloff():
+#     raise NotImplementedError()
+
+
+def sig_init():
+    return {
+        'SIGHUP': sig_oops,
+        'SIGINT': sig_ctrlc,
+        'SIGTERM': sig_ctrlc,
+        'SIGTSTP': None,
+        'SIGQUIT': None,
+        'SIGCONT': sig_oops,
+    }
+
+
 def setpname(*args):
     # raise NotImplementedError()
     print("setpname({})".format(args))
@@ -332,3 +433,8 @@ def setpname(*args):
 def setpstr(*args):
     # raise NotImplementedError()
     print("setpstr({})".format(args))
+
+
+def special(*args):
+    # raise NotImplementedError()
+    print("special({})".format(args))

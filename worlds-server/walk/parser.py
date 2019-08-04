@@ -1,6 +1,6 @@
 from .actions import execute_action
 from .exceptions import ActionError, ParseError
-from .player import PLAYER
+from .player import Player
 
 
 class Parser:
@@ -77,8 +77,8 @@ class Parser:
             'them': self.wd_them,
             'him': self.wd_him,
             'her': self.wd_her,
-            'me': PLAYER.name,
-            'myself': PLAYER.name,
+            'me': Player.player().name,
+            'myself': Player.player().name,
             'there': self.wd_there,
         }.get(pronoun)
 
@@ -179,7 +179,7 @@ def parse(text):
 
     parser = Parser(text)
     action_id = parser.parse()
-    return execute_action(action_id, parser, PLAYER)
+    return execute_action(action_id, parser, Player.player())
 
 
 def next_word():

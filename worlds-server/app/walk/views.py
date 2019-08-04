@@ -1,9 +1,11 @@
 import random
-from flask import jsonify
+from flask import jsonify, request
 from walk.actions import quit_game
 from walk.exceptions import ActionError, StopGame
+from walk.globalVars import Globals
 from walk.parser import Parser
-from walk.player import PLAYER
+from walk.player import Player, sig_oops, sig_ctrlc
+from .. import app
 from . import blueprint
 
 # from walk.models.room import Room
@@ -26,29 +28,38 @@ def on_error(message):
 
 
 def on_stop(message):
-    # pbfr()
+    pbfr()
     # Globals.pr_due = 0  # So we dont get a prompt after the exit
-    # keysetback()
+    keysetback()
     return jsonify({
         'text': "pbfr()",
         'crapup': str(message),
     })
 
 
-@blueprint.route('/restart', methods=['GET'])
-def restart():
-    PLAYER.room_id = random.choice((
-        -5,
-        -183,
-    ))
-    return jsonify({'result': True})
+@blueprint.route('/oops', methods=['GET'])
+def oops():
+    return jsonify(sig_oops())
+
+
+@blueprint.route('/ctrlc', methods=['GET'])
+def ctrlc():
+    return jsonify(sig_ctrlc())
+
+
+@blueprint.route('/start/<name>', methods=['GET'])
+def start(name):
+    response = Player(name).start(name)
+    player = response.get('player', {})
+    app.logger.info("GAME ENTRY: %s[%s]", player.get('name'), request.remote_addr)
+    return jsonify(response)
 
 
 @blueprint.route('/go/<direction>', methods=['GET'])
 def go(direction):
     try:
         direction_id = Parser.get_direction_id(direction) - 2
-        return jsonify(PLAYER.go(direction_id))
+        return jsonify(Player.player().go(direction_id))
     except ActionError as e:
         return on_error(e)
     except StopGame as e:
@@ -58,7 +69,7 @@ def go(direction):
 @blueprint.route('/quit', methods=['GET'])
 def quit_system():
     try:
-        return jsonify(quit_game(Parser("quit"), PLAYER))
+        return jsonify(Player.player().quit_game())
     except ActionError as e:
         return on_error(e)
     except StopGame as e:
@@ -68,7 +79,7 @@ def quit_system():
 @blueprint.route('/look', methods=['GET'])
 def look():
     try:
-        room = PLAYER.look()
+        room = Player.player().look()
         return jsonify({
             'result': room.get('result'),
             'error': room.get('error'),
@@ -109,8 +120,21 @@ def look_in(word=None):
 @blueprint.route('/exits', methods=['GET'])
 def exits():
     try:
-        return jsonify(PLAYER.list_exits())
+        return jsonify(Player.player().list_exits())
     except ActionError as e:
         return on_error(e)
     except StopGame as e:
         return on_stop(e)
+
+
+# Not Implemented
+
+
+def keysetback(*args):
+    # raise NotImplementedError()
+    print("keysetback({})".format(args))
+
+
+def pbfr(*args):
+    # raise NotImplementedError()
+    print("pbfr({})".format(args))

@@ -3,6 +3,9 @@ import {
 } from '@/helpers';
 
 export default {
+  getStart: name => Api
+    .get(`/walk/start/${name}`)
+    .then(({ data }) => data),
   getRoom: () => Api
     .get('/walk/look')
     .then(({ data }) => data),

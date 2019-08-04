@@ -1,6 +1,5 @@
 from ..database import World
 from ..exceptions import ActionError
-from ..player import PLAYER
 
 
 # Decorators
