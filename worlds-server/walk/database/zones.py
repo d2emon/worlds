@@ -42,14 +42,14 @@ class Zones(Database):
         keys = [key for key in self.__items.keys() if key < end]
         return {
             'name': self.__items.get(end, self.__default),
-            'begin': min(keys) + 1 if len(keys) else None,
+            'begin': max(keys) + 1 if len(keys) else None,
             'end': end,
         }
 
     def by_room_id(self, room_id):
         room_id = -room_id
-        keys = [key for key in self.__items.keys() if key <= room_id]
-        return self.by_end(max(keys) if len(keys) else 0)
+        keys = [key for key in self.__items.keys() if key >= room_id]
+        return self.by_end(min(keys) if len(keys) else 0)
 
     def all(self):
         return (self.by_end(end) for end in self.__items.keys())

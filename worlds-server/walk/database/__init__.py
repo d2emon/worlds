@@ -3,7 +3,6 @@ from ..exceptions import DatabaseError, StopGame
 from .exits import Exits
 from .rooms import Rooms
 from .world import WorldData
-from .zones import Zones
 # Names
 from . import names
 
@@ -12,7 +11,7 @@ __databases = {
     names.EXITS: Exits(),
     names.ROOMS: Rooms(),
     names.WORLD: WorldData(),
-    names.ZONES: Zones(),
+    names.ZONES: Rooms().ZONES,
 }
 
 

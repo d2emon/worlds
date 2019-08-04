@@ -3,9 +3,12 @@ from config import Config
 from .database import Database
 from .exits import Exits
 from .logger import logger
+from .zones import Zones
 
 
 class Rooms(Database):
+    ZONES = Zones()
+
     __MAX_ROOM = 1500  # 99999
     __PATH = os.path.join(Config.MEDIA_FOLDER, 'rooms')
 
@@ -51,7 +54,8 @@ class Rooms(Database):
 
     @classmethod
     def __load_room(cls, room_id):
-        filename = os.path.join(cls.__PATH, str(-room_id))
+        zone = cls.ZONES.by_room_id(room_id)
+        filename = os.path.join(cls.__PATH, zone.get('name'), str(-room_id))
         if not os.path.isfile(filename):
             return cls.__room(room_id)
         logger.debug('Loading room: %s', room_id)
