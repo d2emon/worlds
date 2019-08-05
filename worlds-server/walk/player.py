@@ -16,7 +16,7 @@ class Player:
     GOD_LEVEL = 10000
 
     def __init__(self, name):
-        self.player_id = 0  # mynum
+        self.character_id = 0  # mynum
         self.name = "The {}".format(name) if name == "Phantom" else name  # globme
 
         self.level = 10000  # my_lev
@@ -42,7 +42,7 @@ class Player:
             World.load()
         except DatabaseError:
             raise StopGame("Sorry AberMUD is currently unavailable")
-        if self.player_id >= self.MAX_PLAYER:
+        if self.character_id >= self.MAX_PLAYER:
             raise StopGame("\nSorry AberMUD is full at the moment\n")
         rte(self.name)
         World.save()
@@ -54,6 +54,10 @@ class Player:
         self.__PLAYER = self
 
     @property
+    def character(self):
+        return Character.get(self.character_id)
+
+    @property
     def is_dark(self):
         def is_light(item_id):
             if item_id != 32 and not otstbit(item_id, 13):
@@ -62,7 +66,7 @@ class Player:
                 return True
             if ocarrf(item_id) == 0 or ocarrf(item_id) == 3:
                 return False
-            if ploc(oloc(item_id)) != self.room_id:
+            if Character.get(oloc(item_id)).room_id != self.room_id:
                 return False
             return True
 
@@ -117,24 +121,22 @@ class Player:
             room_id = self.room_id
 
         World.load()
-        setploc(self.player_id, room_id)
+
+        self.character.room_id = room_id
         return self.look()
 
     def check_help(self):
-        def remove_helping(name):
-            setphelping(self.player_id, None)
-            return {
-                'message': "You can no longer help [c]{}[/c]\n".format(name)
-            }
-            pass
+        def remove_helping(name=''):
+            self.character.helping = None
+            return {'message': "You can no longer help [c]{}[/c]\n".format(name)}
 
-        helping = phelping(self.player_id)
+        helping = Character.get(self.character.helping)
         if not Globals.i_setup:
             return
-        elif len(pname(helping)) <= 0:
-            return remove_helping(pname(helping))
-        elif ploc(helping) != self.room_id:
-            return remove_helping(pname(helping))
+        elif helping is None or not helping.is_created:
+            return remove_helping()
+        elif helping.room_id != self.room_id:
+            return remove_helping(helping.name)
 
     def go(self, direction_id):
         if Globals.in_fight > 0:
@@ -142,7 +144,8 @@ class Player:
                 "You can't just stroll out of a fight!\n"
                 "If you wish to leave a fight, you must FLEE in a direction\n"
             )
-        if iscarrby(32, self.player_id) and ploc(25) == self.room_id and len(pname(25)):
+        golem = Character.get(25)
+        if iscarrby(32, self.character_id) and golem and golem.is_created and golem.room_id == self.room_id:
             raise ActionError("[c]The Golem[/c] bars the doorway!\n")
         if chkcrip():
             raise ActionError("ERROR")
@@ -159,7 +162,7 @@ class Player:
             -10000,
             self.room_id,
             "[s name=\"{}\"]{} has gone {} {}.\n[/s]".format(
-                pname(self.player_id),
+                self.character.name,
                 self.name,
                 Globals.exittxt.get(direction_id),
                 Globals.out_ms,
@@ -211,8 +214,9 @@ class Player:
         )
 
         dumpitems()
-        setpstr(self.player_id, -1)
-        setpname(self.player_id, '')
+
+        self.character.strength = -1
+        self.character.name = ''
         World.save()
 
         Globals.curmode = 0
@@ -290,14 +294,14 @@ class Player:
     # Events
     def on_look(self):
         check_fight(self, fpbns("shazareth"))
-        if not iscarrby(45, self.player_id):
+        if not iscarrby(45, self.character_id):
             check_fight(self, fpbns("wraith"))
         check_fight(self, fpbns("bomber"))
         check_fight(self, fpbns("owin"))
         check_fight(self, fpbns("glowin"))
         check_fight(self, fpbns("smythe"))
         check_fight(self, fpbns("dio"))
-        if not iscarrby(45, self.player_id):
+        if not iscarrby(45, self.character_id):
             check_fight(self, fpbns("zombie"))
         check_fight(self, fpbns("rat"))
         check_fight(self, fpbns("ghoul"))
@@ -306,9 +310,10 @@ class Player:
         check_fight(self, fpbns("yeti"))
         check_fight(self, fpbns("guardian"))
 
-        if iscarrby(32, self.player_id):
+        if iscarrby(32, self.character_id):
             dorune()
-        if phelping(self.player_id) is not None:
+
+        if self.character.helping is not None:
             check_help()
 
 
@@ -316,17 +321,17 @@ def check_fight(player, mobile):
     if mobile is None:
         return  # No such being
     consid_move(mobile)  # Maybe move it
-    if len(pname(mobile)) <= 0:
+    if not mobile.is_created:
         return
-    if ploc(mobile) != player.room_id:
+    if mobile.room_id != player.room_id:
         return
-    if pvis(player.player_id):
+    if player.character.visible:
         return  # Im invis
     if randperc() > 40:
         return
-    if mobile == fpbns("yeti") and ohany({13: True}):
+    if mobile.character_id == fpbns("yeti").character_id and ohany({13: True}):
         return
-    mhitplayer(mobile, player.player_id)
+    mhitplayer(mobile, player.character_id)
 
 
 def check_help():
@@ -460,31 +465,9 @@ def otstbit(*args):
     raise NotImplementedError()
 
 
-def phelping(*args):
-    # raise NotImplementedError()
-    print("phelping({})".format(args))
-    return None
-
-
-def ploc(*args):
-    raise NotImplementedError()
-
-
-def pname(*args):
-    # raise NotImplementedError()
-    print("pname({})".format(args))
-    return ''
-
-
 def putmeon(*args):
     # raise NotImplementedError()
     print("putmeon({})".format(args))
-
-
-def pvis(*args):
-    # raise NotImplementedError()
-    print("pvis({})".format(args))
-    return 0
 
 
 def randperc(*args):
@@ -508,11 +491,6 @@ def sendsys(*args):
     print("sendsys({})".format(args))
 
 
-def setploc(*args):
-    # raise NotImplementedError()
-    print("setploc({})".format(args))
-
-
 # def sig_aloff():
 #     raise NotImplementedError()
 
@@ -526,21 +504,6 @@ def sig_init():
         'SIGQUIT': None,
         'SIGCONT': sig_oops,
     }
-
-
-def setphelping(*args):
-    # raise NotImplementedError()
-    print("setpname({})".format(args))
-
-
-def setpname(*args):
-    # raise NotImplementedError()
-    print("setpname({})".format(args))
-
-
-def setpstr(*args):
-    # raise NotImplementedError()
-    print("setpstr({})".format(args))
 
 
 def special(*args):

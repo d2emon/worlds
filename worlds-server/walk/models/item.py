@@ -63,7 +63,7 @@ def list_items():
     return Item.list_items()
 
 
-# Not Implemented
+# TODO: Implement
 
 
 def isdest(*args):

@@ -1,7 +1,7 @@
-from .database import WorldDatabase
+from .database import ListDatabase
 
 
-class Characters(WorldDatabase):
+class Characters(ListDatabase):
     ITEMS = 48
     MOBILES = [
         {
@@ -205,11 +205,69 @@ class Characters(WorldDatabase):
         },
     ]
 
+    def __init__(self):
+        super().__init__([self.character(character_id) for character_id in range(self.ITEMS)])
+
+    @classmethod
+    def __is_aggressive(cls, name):
+        return name.lower() in (
+            "shazareth",
+            "wraith",
+            "bomber",
+            "owin",
+            "glowin",
+            "smythe",
+            "dio",
+            "zombie",
+            "rat",
+            "ghoul",
+            "ogre",
+            "riatha",
+            "yeti",
+            "guardian",
+        )
+
+    @classmethod
+    def __is_undead(cls, name):
+        return name.lower() in (
+            "wraith",
+            "zombie",
+        )
+
+    @classmethod
+    def __character_data(cls, character_id):
+        return {
+            'character_id': character_id,
+            'name': '',
+            'room_id': 0,
+            'message_id': -1,
+            # 6
+            'strength': 0,
+            'visible': 0,
+            'level': 0,
+            'weapon': 0,
+            # 12
+            'helping': None,
+            # Flags
+            'sex': 0,
+            # Other
+            'is_aggressive': False,
+            'is_undead': False,
+        }
+
     @classmethod
     def character(cls, character_id):
+        result = cls.__character_data(character_id)
         if character_id < 16:
-            return {}
+            return result
         character_id -= 16
-        if character_id >= len(cls.MOBILES):
-            return {}
-        return cls.MOBILES[character_id]
+        if character_id < len(cls.MOBILES):
+            result.update(cls.MOBILES[character_id])
+            result.update({
+                'is_aggressive': cls.__is_aggressive(result.get('name', '')),
+                'is_undead': cls.__is_undead(result.get('name', '')),
+            })
+        return result
+
+    def set(self, items):
+        self.items = items

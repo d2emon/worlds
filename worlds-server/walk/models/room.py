@@ -85,7 +85,7 @@ class Room(Model):
         return self.get(self.exits[direction_id].go(player))
 
 
-# Not Implemented
+# TODO: Implement
 
 
 def iswornby(*args):

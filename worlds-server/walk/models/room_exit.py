@@ -4,9 +4,12 @@ from .model import Model
 
 
 def direction_2(player):
+    wizard = any(iswornby(item, player.character_id) for item in (101, 102, 103))
     figure = fpbns("figure")
-    wizard = any(iswornby(item, player.player_id) for item in (101, 102, 103))
-    if figure != -1 and figure != player.player_id and ploc(figure) == player.room_id and not wizard:
+    if figure is not None\
+            and figure.character_id != player.character_id \
+            and figure.room_id == player.room_id \
+            and not wizard:
         raise ActionError(
             "[p]The Figure[/p] holds you back\n"
             "[p]The Figure[/p] says 'Only true sorcerors may pass'\n",
@@ -88,13 +91,13 @@ class Exit(Model):
         return room_id
 
 
-# Not Implemented
+# TODO: Implement
 
 
 def fpbns(*args):
     # raise NotImplementedError()
     print("fpbns({})".format(args))
-    return -1
+    return None
 
 
 def iswornby(*args):
@@ -112,10 +115,6 @@ def olongt(*args):
 
 
 def oname(*args):
-    raise NotImplementedError()
-
-
-def ploc(*args):
     raise NotImplementedError()
 
 

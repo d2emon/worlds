@@ -7,10 +7,32 @@ from .model import Model
 class Character(Model):
     def __init__(
         self,
-        player_id,
+        character_id,
+        name="",
+        room_id=0,
+        message_id=-1,
+        strength=0,
+        visible=0,
+        level=0,
+        weapon=None,
+        helping=None,
+        sex=0,
+        is_aggressive=False,
+        is_undead=False,
     ):
         super().__init__()
-        self.player_id = player_id
+        self.character_id = character_id
+        self.name = name
+        self.room_id = room_id
+        self.message_id = message_id
+        self.strength = strength
+        self.visible = visible
+        self.level = level
+        self.weapon = weapon
+        self.helping = helping
+        self.sex = sex
+        self.is_aggressive = is_aggressive
+        self.is_undead = is_undead
 
     @classmethod
     def database(cls):
@@ -18,28 +40,37 @@ class Character(Model):
 
     @classmethod
     def list_characters(cls, player):
-        for character_id in cls.database().all():
-            if character_id == player.player_id:
-                continue
-            if not len(pname(character_id)) or ploc(character_id) != player.room_id or not seeplayer(character_id):
-                continue
-            if psex(character_id):
-                Globals.wd_her = pname(character_id)
+        def characters_filter(c):
+            if c.character_id == player.character_id:
+                return False
+            if not c.is_created:
+                return False
+            if c.room_id != player.room_id:
+                return False
+            return seeplayer(c.character_id)
+
+        for character in filter(characters_filter, cls.all()):
+            if character.sex:
+                Globals.wd_her = character.name
             else:
-                Globals.wd_him = pname(character_id)
+                Globals.wd_him = character.name
             yield {
-                'character_id': character_id,
-                'name': pname(character_id),
-                'level': disl4(plev(character_id), psex(character_id)),
-                'items': list(lobjsat(character_id)),
+                'character_id': character.character_id,
+                'name': character.name,
+                'level': disl4(character.level, character.sex),
+                'items': list(lobjsat(character.character_id)),
             }
+
+    @property
+    def is_created(self):
+        return len(self.name) > 0
 
 
 def list_characters(player):
     return Character.list_characters(player)
 
 
-# Not Implemented
+# TODO: Implement
 
 
 def disl4(*args):
@@ -54,34 +85,6 @@ def lobjsat(*args):
     yield {}
     yield {}
     yield {}
-
-
-def plev(character_id):
-    # raise NotImplementedError()
-    print("plev({})".format(character_id))
-    character = Character.database().character(character_id)
-    return character.get('level', 0)
-
-
-def ploc(character_id):
-    # raise NotImplementedError()
-    print("ploc({})".format(character_id))
-    character = Character.database().character(character_id)
-    return character.get('room_id', 0)
-
-
-def pname(character_id):
-    # raise NotImplementedError()
-    print("pname({})".format(character_id))
-    character = Character.database().character(character_id)
-    return character.get('name', '')
-
-
-def psex(character_id):
-    # raise NotImplementedError()
-    print("psex({})".format(character_id))
-    character = Character.database().character(character_id)
-    return character.get('sex', 0)
 
 
 def seeplayer(*args):
