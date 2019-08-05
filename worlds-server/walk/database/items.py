@@ -381,15 +381,58 @@ class Items(ListDatabase):
         ("chute", "There is a chute in the east wall, too small to climb down.", "", "", "", 0, 0, 1),
     )
     __ITEMS_INITIAL = {
+        # 0
+        1: {'room_id': -5},
+        # 2-34
         35: {'room_id': -600},
+        # 36-39
+        40: {'room_id': -340},
+        41: {'room_id': -340},
+        42: {'room_id': -342},
+        43: {'room_id': -309},
         44: {'room_id': -620},
         45: {'room_id': -633},
         46: {'room_id': -644},
         47: {'room_id': -645},
         48: {'room_id': -609},
         49: {'room_id': -641},
+        50: {'room_id': -302},
+        51: {'room_id': -309},
+        52: {'room_id': -305},
+        53: {'room_id': -306},
+        54: {'room_id': -307},
+        55: {'room_id': -308},
+        56: {'room_id': -311},
+        57: {'room_id': -313},
+        58: {'room_id': -305},
+        59: {'room_id': -313},
+        60: {'room_id': -315},
+        61: {'room_id': -314},
         62: {'room_id': -332},
         63: {'room_id': -600},
+        64: {'room_id': -319},
+        65: {'room_id': -316},
+        66: {'room_id': -321},
+        67: {'room_id': -320},
+        68: {'room_id': -325},
+        69: {'room_id': -326},
+        # 70
+        71: {'room_id': -326},
+        72: {'room_id': -326},
+        73: {'room_id': -326},
+        74: {'room_id': -5},
+        75: {'room_id': -609},
+        76: {'room_id': -612},
+        77: {'room_id': -637},
+        # 78-81
+        82: {'room_id': -643},
+        # 83-85
+        86: {'room_id': -614},
+        # 87-185
+        186: {'room_id': -651},
+        187: {'room_id': -650},
+        188: {'room_id': -650},
+        189: {'room_id': -650},
     }
 
     def __init__(self):

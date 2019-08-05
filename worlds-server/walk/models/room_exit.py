@@ -37,7 +37,7 @@ class Exit(Model):
         self,
         direction_id,
         room_from,
-        room_to=None,
+        room_to=0,
         door_id=None,
     ):
         super().__init__()
@@ -45,10 +45,10 @@ class Exit(Model):
         self.room_from = room_from
         if room_to and (self.DOOR_MIN <= room_to < self.DOOR_MAX):
             self.door_id = room_to - 1000
-            self.__room_to = None
+            self.room_to = 0
         else:
             self.door_id = door_id
-            self.__room_to = room_to
+            self.room_to = room_to
 
     @property
     def available(self):
@@ -66,13 +66,6 @@ class Exit(Model):
         return Item.get(self.door_id)
 
     @property
-    def room_to(self):
-        if self.door is None:
-            return self.__room_to
-        print("location:", self.door.connected.location)
-        return self.door.connected.location  # other door side
-
-    @property
     def on_exit(self):
         if self.door_id and state(self.door_id):
             return self.__on_door_closed
@@ -87,7 +80,8 @@ class Exit(Model):
             raise ActionError("The door is not open")
 
     def go(self, player):
-        room_id = self.room_to
+        room_id = self.room_to if self.door is None else self.door.connected.location  # other door side
+
         print(room_id)
 
         if room_id >= 0:
