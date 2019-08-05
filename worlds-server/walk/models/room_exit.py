@@ -62,15 +62,15 @@ class Exit(Model):
     def door(self):
         if self.door_id is None:
             return None
+        print(self.door_id, Item.get(self.door_id).name, Item.get(self.door_id).connected.name)
         return Item.get(self.door_id)
 
     @property
     def room_to(self):
         if self.door is None:
             return self.__room_to
-
-        door_id = self.door_id ^ 1
-        return Item.get(door_id).location  # other door side
+        print("location:", self.door.connected.location)
+        return self.door.connected.location  # other door side
 
     @property
     def on_exit(self):
@@ -87,8 +87,8 @@ class Exit(Model):
             raise ActionError("The door is not open")
 
     def go(self, player):
-
         room_id = self.room_to
+        print(room_id)
 
         if room_id >= 0:
             raise ActionError("You can't go that way")
@@ -114,4 +114,6 @@ def iswornby(*args):
 
 
 def state(*args):
-    raise NotImplementedError()
+    # raise NotImplementedError()
+    print("state({})".format(args))
+    return 0

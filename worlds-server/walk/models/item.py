@@ -50,28 +50,26 @@ class Item(Model):
 
     @classmethod
     def by_flannel(cls, flannel):
-        for item_id in cls.database().all():
-            item = cls(item_id=item_id)
-            if not ishere(item_id) or item.__flannel != flannel:
-                continue
-            if state(item_id) > 3:
-                continue
-            result = {
-                'item_id': item.item_id,
-                'text': item.description
-            }
-            if len(item.description) <= 0:
-                continue
+        def items_filter(i):
+            if not ishere(i.item_id) or i.flannel != flannel:
+                return False
+            if state(i.item_id) > 3:
+                return False
+            if len(i.description) <= 0:
+                return False
+            return True
+
+        items = filter(items_filter, cls.all())
+        for item in items:
             # OLONGT NOTE TO BE ADDED
             Globals.wd_it = item.name
-            result.update({'destroyed': isdest(item_id)})
-            yield result
+            yield item
 
     @classmethod
     def list_items(cls):
-        # yield from cls.by_flannel(True)
+        yield from cls.by_flannel(True)
         yield showwthr()
-        # yield from cls.by_flannel(False)
+        yield from cls.by_flannel(False)
 
     @property
     def location(self):
@@ -88,6 +86,18 @@ class Item(Model):
         if self.__carry_flag not in (0, 3):
             return None
         return self.location
+
+    @property
+    def connected(self):
+        return Item.get(self.item_id ^ 1)
+
+    @property
+    def serialized(self):
+        return {
+            'item_id': self.item_id,
+            'text': self.description,
+            'destroyed': isdest(self.item_id),
+        }
 
     def set_location(self, location, carry_flag):
         self.__location = location
@@ -120,7 +130,7 @@ def ishere(*args):
 def showwthr(*args):
     # raise NotImplementedError()
     print("showwthr({})".format(args))
-    return {}
+    return None
 
 
 def state(*args):

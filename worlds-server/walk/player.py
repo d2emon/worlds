@@ -258,10 +258,13 @@ class Player:
         elif Globals.ail_blind:
             response.update({'error': "You are blind... you can't see a thing!"})
         else:
+            #
+            items = [item for item in Item.list_items() if item and item.location == self.room_id]
+            #
             response.update({
                 'title': self.room.title,
                 'text': self.room.description,
-                'items': list(Item.list_items()),
+                'items': [item.serialized for item in items],
             })
             if Globals.curmode == 1:
                 response.update({'characters': list(Character.list_characters(self))})
@@ -292,6 +295,7 @@ class Player:
         for e in self.room.exits:
             if e.door_id:
                 exits[e.direction] = "DOOR{}".format(e.door_id)
+                continue
             if not e.available:
                 continue
             if not self.is_wizard:
