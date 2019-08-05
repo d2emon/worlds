@@ -120,6 +120,22 @@ class Player:
         setploc(self.player_id, room_id)
         return self.look()
 
+    def check_help(self):
+        def remove_helping(name):
+            setphelping(self.player_id, None)
+            return {
+                'message': "You can no longer help [c]{}[/c]\n".format(name)
+            }
+            pass
+
+        helping = phelping(self.player_id)
+        if not Globals.i_setup:
+            return
+        elif len(pname(helping)) <= 0:
+            return remove_helping(pname(helping))
+        elif ploc(helping) != self.room_id:
+            return remove_helping(pname(helping))
+
     def go(self, direction_id):
         if Globals.in_fight > 0:
             raise ActionError(
@@ -236,7 +252,7 @@ class Player:
             if Globals.curmode == 1:
                 response.update({'characters': list(Character.list_characters(self))})
 
-        onlook()
+        on_look()
 
         if self.is_wizard:
             response.update({'name': self.room.name})
@@ -271,6 +287,51 @@ class Player:
                 # result.append("{} : {}{}".format(e.direction, room.zone.name, room.in_zone))
         return {'exits': exits or None}
 
+    # Events
+    def on_look(self):
+        check_fight(self, fpbns("shazareth"))
+        if not iscarrby(45, self.player_id):
+            check_fight(self, fpbns("wraith"))
+        check_fight(self, fpbns("bomber"))
+        check_fight(self, fpbns("owin"))
+        check_fight(self, fpbns("glowin"))
+        check_fight(self, fpbns("smythe"))
+        check_fight(self, fpbns("dio"))
+        if not iscarrby(45, self.player_id):
+            check_fight(self, fpbns("zombie"))
+        check_fight(self, fpbns("rat"))
+        check_fight(self, fpbns("ghoul"))
+        check_fight(self, fpbns("ogre"))
+        check_fight(self, fpbns("riatha"))
+        check_fight(self, fpbns("yeti"))
+        check_fight(self, fpbns("guardian"))
+
+        if iscarrby(32, self.player_id):
+            dorune()
+        if phelping(self.player_id) is not None:
+            check_help()
+
+
+def check_fight(player, mobile):
+    if mobile is None:
+        return  # No such being
+    consid_move(mobile)  # Maybe move it
+    if len(pname(mobile)) <= 0:
+        return
+    if ploc(mobile) != player.room_id:
+        return
+    if pvis(player.player_id):
+        return  # Im invis
+    if randperc() > 40:
+        return
+    if mobile == fpbns("yeti") and ohany({13: True}):
+        return
+    mhitplayer(mobile, player.player_id)
+
+
+def check_help():
+    return Player.player().check_help()
+
 
 def is_dark():
     return Player.player().is_dark
@@ -278,6 +339,10 @@ def is_dark():
 
 def list_exits():
     return Player.player().list_exits()
+
+
+def on_look():
+    return Player.player().on_look()
 
 
 def set_room(room_id):
@@ -332,9 +397,25 @@ def chkcrip(*args):
     return False
 
 
+def consid_move(*args):
+    # raise NotImplementedError()
+    print("consid_move({})".format(args))
+
+
+def dorune(*args):
+    # raise NotImplementedError()
+    print("dorune({})".format(args))
+
+
 def dumpitems(*args):
     # raise NotImplementedError()
     print("dumpitems({})".format(args))
+
+
+def fpbns(*args):
+    # raise NotImplementedError()
+    print("fpbns({})".format(args))
+    return None
 
 
 def iscarrby(*args):
@@ -358,7 +439,16 @@ def makebfr(*args):
     print("makebfr({})".format(args))
 
 
+def mhitplayer(*args):
+    # raise NotImplementedError()
+    print("makebfr({})".format(args))
+
+
 def ocarrf(*args):
+    raise NotImplementedError()
+
+
+def ohany(*args):
     raise NotImplementedError()
 
 
@@ -366,13 +456,14 @@ def oloc(*args):
     raise NotImplementedError()
 
 
-def onlook(*args):
-    # raise NotImplementedError()
-    print("onlook({})".format(args))
-
-
 def otstbit(*args):
     raise NotImplementedError()
+
+
+def phelping(*args):
+    # raise NotImplementedError()
+    print("phelping({})".format(args))
+    return None
 
 
 def ploc(*args):
@@ -388,6 +479,18 @@ def pname(*args):
 def putmeon(*args):
     # raise NotImplementedError()
     print("putmeon({})".format(args))
+
+
+def pvis(*args):
+    # raise NotImplementedError()
+    print("pvis({})".format(args))
+    return 0
+
+
+def randperc(*args):
+    # raise NotImplementedError()
+    print("randperc({})".format(args))
+    return 0
 
 
 def rte(*args):
@@ -423,6 +526,11 @@ def sig_init():
         'SIGQUIT': None,
         'SIGCONT': sig_oops,
     }
+
+
+def setphelping(*args):
+    # raise NotImplementedError()
+    print("setpname({})".format(args))
 
 
 def setpname(*args):
