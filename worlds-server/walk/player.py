@@ -287,6 +287,43 @@ class Player:
 
         return response
 
+    def jump(self):
+        jumtb = {
+            -643: -633,
+            -1050: -662,
+            -1082: -1053,
+        }
+
+        a = 0
+        ms = ""
+        room_id = jumtb.get(self.room_id)
+        if room_id is None:
+            return {'message': "Wheeeeee....\n"}
+        if not self.is_wizard and not self.has_item(1) or state(1) == 0:
+            self.__room_id = room_id
+            loseme()
+            return {
+                'message': "Wheeeeeeeeeeeeeeeee  <<<<SPLAT>>>>\nYou seem to be splattered all over the place\n",
+                'crapup': "I suppose you could be scraped up - with a spatula",
+            }
+        sendsys(
+            self.name,
+            self.name,
+            -10000,
+            self.room_id,
+            "[s name=\"{}\"]{} has just left\n[/s]".format(self.name, self.name),
+        )
+        self.__room_id = room_id
+        sendsys(
+            self.name,
+            self.name,
+            -10000,
+            self.room_id,
+            "[s name=\"{}\"]{} has just dropped in\n[/s]".format(self.name, self.name),
+        )
+        self.set_room(self.__room_id)
+        return {}
+
     def list_exits(self):
         exits = {}
         for e in self.room.exits:

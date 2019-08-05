@@ -127,6 +127,16 @@ def exits():
         return on_stop(e)
 
 
+@blueprint.route('/jump', methods=['GET'])
+def jump():
+    try:
+        return jsonify(Player.player().jump())
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
+
+
 # Not Implemented
 
 
