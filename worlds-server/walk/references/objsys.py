@@ -35,12 +35,14 @@
 # def fobncb(word, by):
 # def fobnh(word):
 # def getobj():
-# def ishere(item):
+
+from ..models.item import by_here as ishere
+
 # def iscarrby(item,user):
 # def dropitem():
 
 from ..models.item import list_items as lisobs
-from ..models.item import by_flannel as lojal2
+from ..models.item import list_here_by_flannel as lojal2
 
 # def dumpitems():
 # def dumpstuff(n,loc):
@@ -53,8 +55,9 @@ from ..models.item import by_flannel as lojal2
 # def disl4(n,s):
 
 # def fpbn(name):
-# def fpbns(name):
 
+
+from ..models.character import by_name as fpbns
 from ..models.character import list_characters as lispeople
 
 # def usercom():
@@ -307,16 +310,6 @@ if(curch==-1081)
 }
     }
 
- ishere(item)
-    {
-    extern long curch;
-    long a;
-extern long my_lev;
-    if((my_lev<10)&&(isdest(item)))return(0);
-    if(ocarrf(item)==1) return(0);
-    if(oloc(item)!=curch) return(0);
-    return(1);
-    }
 
  iscarrby(item,user)
     {
@@ -541,24 +534,6 @@ if(!seeplayer(s)) return(-1);
 return(s);
 }
 
- fpbns(name)
- char *name;
-    {
-    char *n1[40],n2[40];
-    long a;
-    a=0;
-    while(a<48)
-       {
-       strcpy(n1,name);strcpy(n2,pname(a));
-       lowercase(n1);lowercase(n2);
-if((!!strlen(n2))&&(!strcmp(n1,n2))) return(a);
-       if(strncmp(n2,"the ",4)==0)
-       if((!!strlen(n2))&&(!strcmp(n1,n2+4)))return(a);
-       a++;
-       }
-    return(-1);
-    }
- 
 usercom()
 {
 extern long my_lev;

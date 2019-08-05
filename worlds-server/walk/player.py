@@ -258,13 +258,10 @@ class Player:
         elif Globals.ail_blind:
             response.update({'error': "You are blind... you can't see a thing!"})
         else:
-            #
-            items = [item for item in Item.list_items() if item and item.location == self.room_id]
-            #
             response.update({
                 'title': self.room.title,
                 'text': self.room.description,
-                'items': [item.serialized for item in items],
+                'items': [item.serialized for item in Item.list_items(self) if item],
             })
             if Globals.curmode == 1:
                 response.update({'characters': list(Character.list_characters(self))})
@@ -311,22 +308,30 @@ class Player:
     def on_look(self):
         turn_undead = self.has_item(45)
 
-        check_fight(self, fpbns("shazareth"))
+        enemies = (
+            "shazareth",
+            "bomber",
+            "owin",
+            "glowin",
+            "smythe",
+            "dio",
+            "rat",
+            "ghoul",
+            "ogre",
+            "riatha",
+            "yeti",
+            "guardian",
+        )
+        for name in enemies:
+            check_fight(self, next(Character.find(name=name)))
+
+        undead = (
+            "wraith",
+            "zombie",
+        )
         if not turn_undead:
-            check_fight(self, fpbns("wraith"))
-        check_fight(self, fpbns("bomber"))
-        check_fight(self, fpbns("owin"))
-        check_fight(self, fpbns("glowin"))
-        check_fight(self, fpbns("smythe"))
-        check_fight(self, fpbns("dio"))
-        if not turn_undead:
-            check_fight(self, fpbns("zombie"))
-        check_fight(self, fpbns("rat"))
-        check_fight(self, fpbns("ghoul"))
-        check_fight(self, fpbns("ogre"))
-        check_fight(self, fpbns("riatha"))
-        check_fight(self, fpbns("yeti"))
-        check_fight(self, fpbns("guardian"))
+            for name in undead:
+                check_fight(self, next(Character.find(name=name)))
 
         if self.has_item(32):
             dorune()
@@ -338,17 +343,21 @@ class Player:
 def check_fight(player, mobile):
     if mobile is None:
         return  # No such being
-    consid_move(mobile)  # Maybe move it
+
+    mobile.check_move()  # Maybe move it
     if not mobile.is_created:
         return
     if mobile.room_id != player.room_id:
         return
     if player.character.visible:
-        return  # Im invis
+        return  # Im invisible
     if randperc() > 40:
         return
-    if mobile.character_id == fpbns("yeti").character_id and ohany({13: True}):
+
+    yeti = next(Character.find(name="yeti"))
+    if yeti and mobile.character_id == yeti.character_id and ohany({13: True}):
         return
+
     mhitplayer(mobile, player.character_id)
 
 
@@ -420,11 +429,6 @@ def chkcrip(*args):
     return False
 
 
-def consid_move(*args):
-    # raise NotImplementedError()
-    print("consid_move({})".format(args))
-
-
 def dorune(*args):
     # raise NotImplementedError()
     print("dorune({})".format(args))
@@ -433,12 +437,6 @@ def dorune(*args):
 def dumpitems(*args):
     # raise NotImplementedError()
     print("dumpitems({})".format(args))
-
-
-def fpbns(*args):
-    # raise NotImplementedError()
-    print("fpbns({})".format(args))
-    return None
 
 
 def ishere(*args):

@@ -41,16 +41,7 @@ class Character(Model):
 
     @classmethod
     def list_characters(cls, player):
-        def characters_filter(c):
-            if c.character_id == player.character_id:
-                return False
-            if not c.is_created:
-                return False
-            if c.room_id != player.room_id:
-                return False
-            return seeplayer(c.character_id)
-
-        for character in filter(characters_filter, cls.all()):
+        for character in cls.find(player=player):
             if character.sex:
                 Globals.wd_her = character.name
             else:
@@ -74,8 +65,11 @@ class Character(Model):
             owner = i.carried_by
             if owner is None:
                 return False
-            return owner.character_id == self.character_id
+            return owner == self.character_id
         return filter(items_filter, Item.all())
+
+    def check_move(self):
+        pass
 
     def has_item(self, item_id, include_destroyed=False):
         def filter_items(item):
@@ -87,6 +81,45 @@ class Character(Model):
             return True
 
         return any(filter(filter_items, self.carry))
+
+    # Search
+    @classmethod
+    def __by_name(cls, name):
+        def get_name(n):
+            n = n.lower()
+            return n[4:] if n[:4] == "the " else n
+
+        def f(character):
+            if not character.name:
+                return False
+            return get_name(name) == get_name(character.name)
+
+        return f
+
+    @classmethod
+    def __by_player_can_see(cls, player):
+        def f(character):
+            if character.character_id == player.character_id:
+                return False
+            if not character.is_created:
+                return False
+            if character.room_id != player.room_id:
+                return False
+            return seeplayer(character.character_id)
+
+        return f
+
+    @classmethod
+    def filters(
+        cls,
+        player=None,
+        name=None,
+        **kwargs,
+    ):
+        if player is not None:
+            yield cls.__by_player_can_see(player)
+        if name is not None:
+            yield cls.__by_name(name)
 
 
 def list_characters(player):

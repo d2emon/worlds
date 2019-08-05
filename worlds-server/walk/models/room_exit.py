@@ -2,15 +2,19 @@ from ..database import names
 from ..exceptions import ActionError
 from .model import Model
 from .item import Item
+from .character import Character
 
 
 def direction_2(player):
     wizard = any(iswornby(item, player.character_id) for item in (101, 102, 103))
-    figure = fpbns("figure")
-    if figure is not None\
-            and figure.character_id != player.character_id \
-            and figure.room_id == player.room_id \
-            and not wizard:
+    if wizard:
+        return None
+    figure = next(Character.find(name="figure"))
+    if figure is None:
+        return None
+    if figure.character_id == player.character_id:
+        return None
+    if figure.room_id == player.room_id:
         raise ActionError(
             "[p]The Figure[/p] holds you back\n"
             "[p]The Figure[/p] says 'Only true sorcerors may pass'\n",
@@ -71,7 +75,7 @@ class Exit(Model):
             return self.__on_door_closed
         if self.direction_id == 2:
             return direction_2
-        return lambda player: {}
+        return lambda player: None
 
     def __on_door_closed(self, player):
         if self.door.name != "door" or player.is_dark or not self.door.description:
@@ -93,12 +97,6 @@ class Exit(Model):
 
 
 # TODO: Implement
-
-
-def fpbns(*args):
-    # raise NotImplementedError()
-    print("fpbns({})".format(args))
-    return None
 
 
 def iswornby(*args):

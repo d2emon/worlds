@@ -457,7 +457,7 @@ class Items(ListDatabase):
             # World Item
             'location': initial.get('room_id', 0),
             # 1-2
-            'carry_flag': 0,
+            'carry_flag': 1,
         }
 
     @classmethod

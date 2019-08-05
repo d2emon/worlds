@@ -2,10 +2,8 @@
 
 from ..player import on_look as onlook
 from ..player import check_fight as chkfight
+from ..player import check_move as consid_move
 
-# def chkfight(x):
-
-# def consid_move(x):
 # def crashcom():
 # def singcom():
 # def spraycom():
@@ -27,26 +25,6 @@ on_timing()
 	if(randperc()>80) onlook();
 }
 
- chkfight( x )
-    {
-    extern long curch ;
-    extern long mynum ;
-    if( x<0 ) return ; /* No such being */
-    consid_move( x); /* Maybe move it */
-    if( !strlen( pname( x ) ) ) return ;
-    if( ploc( x )!=curch ) return ;
-    if( pvis( mynum ) ) return ; /* Im invis */
-    if(randperc()>40) return;
-if( ( x==fpbns( "yeti" ) )&&( ohany( ( 1<<13 ) ) ) )
-{
-return ;
-}
-    mhitplayer( x, mynum ) ;
-    }
- 
- consid_move(x)
- {;}
- 
  crashcom(  )
     {
     extern long my_lev ;
