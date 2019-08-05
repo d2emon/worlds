@@ -6,7 +6,7 @@ from .zone import Zone
 
 
 def room_139(player):
-    if any(iswornby(item_id, player.player_id) for item_id in (113, 114, 89)):
+    if any(iswornby(item_id, player.character_id) for item_id in (113, 114, 89)):
         return {'message': "The shield protects you from the worst of the lava stream's heat\n"}
     return {'error': "The intense heat drives you back"}
 

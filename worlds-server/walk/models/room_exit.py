@@ -1,6 +1,7 @@
 from ..database import names
 from ..exceptions import ActionError
 from .model import Model
+from .item import Item
 
 
 def direction_2(player):
@@ -43,7 +44,7 @@ class Exit(Model):
         self.direction_id = direction_id
         self.room_from = room_from
         if room_to and (self.DOOR_MIN <= room_to < self.DOOR_MAX):
-            self.door_id = room_to
+            self.door_id = room_to - 1000
             self.__room_to = None
         else:
             self.door_id = door_id
@@ -58,12 +59,18 @@ class Exit(Model):
         return self.DIRECTIONS[self.direction_id]
 
     @property
-    def room_to(self):
+    def door(self):
         if self.door_id is None:
+            return None
+        return Item.get(self.door_id)
+
+    @property
+    def room_to(self):
+        if self.door is None:
             return self.__room_to
 
         door_id = self.door_id ^ 1
-        return oloc(door_id)  # other door side
+        return Item.get(door_id).location  # other door side
 
     @property
     def on_exit(self):
@@ -74,7 +81,7 @@ class Exit(Model):
         return lambda player: {}
 
     def __on_door_closed(self, player):
-        if oname(self.door_id) != "door" or player.is_dark or not olongt(self.door_id, state(self.door_id)):
+        if self.door.name != "door" or player.is_dark or not self.door.description:
             raise ActionError("You can't go that way")  # Invisible doors
         else:
             raise ActionError("The door is not open")
@@ -104,18 +111,6 @@ def iswornby(*args):
     # raise NotImplementedError()
     print("iswornby({})".format(args))
     return False
-
-
-def oloc(*args):
-    raise NotImplementedError()
-
-
-def olongt(*args):
-    raise NotImplementedError()
-
-
-def oname(*args):
-    raise NotImplementedError()
 
 
 def state(*args):

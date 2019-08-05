@@ -60,13 +60,13 @@ class Player:
     @property
     def is_dark(self):
         def is_light(item_id):
+            item = Item.get(item_id)
             if item_id != 32 and not otstbit(item_id, 13):
                 return False
             if ishere(item_id):
                 return True
-            if ocarrf(item_id) == 0 or ocarrf(item_id) == 3:
-                return False
-            if Character.get(oloc(item_id)).room_id != self.room_id:
+            owner = item.owner
+            if owner is None or owner.room_id != self.room_id:
                 return False
             return True
 
@@ -116,6 +116,9 @@ class Player:
             'message': "Hello {}".format(cls.__PLAYER.name),
         }
 
+    def has_item(self, item_id):
+        return self.character.has_item(item_id, include_destroyed=self.is_wizard)
+
     def set_room(self, room_id=None):
         if room_id is None:
             room_id = self.room_id
@@ -144,8 +147,15 @@ class Player:
                 "You can't just stroll out of a fight!\n"
                 "If you wish to leave a fight, you must FLEE in a direction\n"
             )
+
+        treasure = self.has_item(32)
         golem = Character.get(25)
-        if iscarrby(32, self.character_id) and golem and golem.is_created and golem.room_id == self.room_id:
+        if not golem or not golem.is_created:
+            golem = None
+        elif golem.room_id != self.room_id:
+            golem = None
+
+        if treasure and golem:
             raise ActionError("[c]The Golem[/c] bars the doorway!\n")
         if chkcrip():
             raise ActionError("ERROR")
@@ -280,6 +290,8 @@ class Player:
     def list_exits(self):
         exits = {}
         for e in self.room.exits:
+            if e.door_id:
+                exits[e.direction] = "DOOR{}".format(e.door_id)
             if not e.available:
                 continue
             if not self.is_wizard:
@@ -293,15 +305,17 @@ class Player:
 
     # Events
     def on_look(self):
+        turn_undead = self.has_item(45)
+
         check_fight(self, fpbns("shazareth"))
-        if not iscarrby(45, self.character_id):
+        if not turn_undead:
             check_fight(self, fpbns("wraith"))
         check_fight(self, fpbns("bomber"))
         check_fight(self, fpbns("owin"))
         check_fight(self, fpbns("glowin"))
         check_fight(self, fpbns("smythe"))
         check_fight(self, fpbns("dio"))
-        if not iscarrby(45, self.character_id):
+        if not turn_undead:
             check_fight(self, fpbns("zombie"))
         check_fight(self, fpbns("rat"))
         check_fight(self, fpbns("ghoul"))
@@ -310,7 +324,7 @@ class Player:
         check_fight(self, fpbns("yeti"))
         check_fight(self, fpbns("guardian"))
 
-        if iscarrby(32, self.character_id):
+        if self.has_item(32):
             dorune()
 
         if self.character.helping is not None:
@@ -423,12 +437,6 @@ def fpbns(*args):
     return None
 
 
-def iscarrby(*args):
-    # raise NotImplementedError()
-    print("iscarrby({})".format(args))
-    return False
-
-
 def ishere(*args):
     # raise NotImplementedError()
     print("ishere({})".format(args))
@@ -449,15 +457,7 @@ def mhitplayer(*args):
     print("makebfr({})".format(args))
 
 
-def ocarrf(*args):
-    raise NotImplementedError()
-
-
 def ohany(*args):
-    raise NotImplementedError()
-
-
-def oloc(*args):
     raise NotImplementedError()
 
 

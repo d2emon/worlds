@@ -8,9 +8,25 @@ class Item(Model):
     def __init__(
         self,
         item_id,
+        name='',
+        description=(),
+        max_state=0,
+        flannel=False,
+        base_value=0,
+        location=0,
+        carry_flag=0,
     ):
         super().__init__()
         self.item_id = item_id
+
+        self.__name = name
+        self.__description = description
+        self.__max_state = max_state
+        self.__flannel = flannel
+        self.__base_value = base_value
+
+        self.__location = location
+        self.__carry_flag = carry_flag
 
     @classmethod
     def database(cls):
@@ -22,29 +38,32 @@ class Item(Model):
 
     @property
     def description(self):
-        text = olongt(self.item_id, state(self.item_id))
-        # if Globals.debug_mode:
-        #     return "{{{}}} {}\n".format(item_id, text)
-        # elif len(text):
-        #     return "{}\n".format(text)
-        return {
-            'item_id': self.item_id,
-            'text': text,
-        }
+        return self.__description[state(self.item_id)]
+
+    @property
+    def flannel(self):
+        return self.__flannel
+
+    @property
+    def name(self):
+        return self.__name
 
     @classmethod
     def by_flannel(cls, flannel):
         for item_id in cls.database().all():
             item = cls(item_id=item_id)
-            if not ishere(item_id) or oflannel(item_id) != flannel:
+            if not ishere(item_id) or item.__flannel != flannel:
                 continue
             if state(item_id) > 3:
                 continue
-            if len(olongt(item_id, state(item_id))) <= 0:
+            result = {
+                'item_id': item.item_id,
+                'text': item.description
+            }
+            if len(item.description) <= 0:
                 continue
             # OLONGT NOTE TO BE ADDED
-            Globals.wd_it = oname(item_id)
-            result = item.description
+            Globals.wd_it = item.name
             result.update({'destroyed': isdest(item_id)})
             yield result
 
@@ -53,6 +72,26 @@ class Item(Model):
         # yield from cls.by_flannel(True)
         yield showwthr()
         # yield from cls.by_flannel(False)
+
+    @property
+    def location(self):
+        return self.__location
+
+    @property
+    def carried_by(self):
+        if self.__carry_flag not in (1, 2):
+            return None
+        return self.location
+
+    @property
+    def owner(self):
+        if self.__carry_flag not in (0, 3):
+            return None
+        return self.location
+
+    def set_location(self, location, carry_flag):
+        self.__location = location
+        self.__carry_flag = carry_flag
 
 
 def by_flannel(flannel):
@@ -76,25 +115,6 @@ def ishere(*args):
     # raise NotImplementedError()
     print("ishere({})".format(args))
     return True
-
-
-def oflannel(*args):
-    # raise NotImplementedError()
-    print("oflannel({})".format(args))
-    # return random.randrange(100) > 50
-    return False
-
-
-def olongt(*args):
-    # raise NotImplementedError()
-    print("olongt({})".format(args))
-    return "ITEM TEXT"
-
-
-def oname(*args):
-    # raise NotImplementedError()
-    print("oname({})".format(args))
-    return "ITEM NAME"
 
 
 def showwthr(*args):

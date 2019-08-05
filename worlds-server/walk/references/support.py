@@ -31,16 +31,22 @@
 # def psex(chr):
 # def setpsex(chr,v):
 
-# def ocarrf(ob):
-# def setocarrf(ob, v):
+# In Item DB
+
 # def oloc(ob):
 # def setoloc(ob,l,c):
+# def ocarrf(ob):
+# def setocarrf(ob, v):
+
+# In ItemData DB
+
 # def oname(ob):
 # def  olongt(ob, st):
 # def omaxstate(ob):
 # def obflannel(ob): # Old version
 # def oflannel(ob):
 # def obaseval(ob):
+
 # def isdest(ob):
 # def isavl(ob):
 # def ospare(ob):
@@ -70,148 +76,6 @@
 # def ptstflg(ch,x):
 
 """
- ocarrf(ob)
-    {
-    extern long objinfo[];
-    return(objinfo[4*ob+3]);
-    }
-
- setocarrf(ob,v)
-    {
-    extern long objinfo[];
-    objinfo[4*ob+3]=v;
-    }
-
- oloc(ob)
-    {
-    extern long objinfo[];
-    return(objinfo[4*ob]);
-    }
-
- setoloc(ob,l,c)
-    {
-    extern long objinfo[];
-    objinfo[4*ob]=l;
-    objinfo[4*ob+3]=c;
-    }
-
-
-
- ploc(chr)
-    {
-    extern long ublock[];
-    return((ublock[16*chr+4]));
-    }
-
-char * pname(chr)
-    {
-    extern long ublock[];
-    return((char *)(ublock+16*chr));
-    }
-
- plev(chr)
-    {
-    extern long ublock[];
-    return(ublock[16*chr+10]);
-    }
-
- setplev(chr,v)
-    {
-    extern long ublock[];
-    ublock[16*chr+10]=v;
-    }
-
- pchan(chr)
-    {
-    extern long ublock[];
-    return(ublock[16*chr+4]);
-    }
-
- pstr(chr)
-    {
-    extern long ublock[];
-    return(ublock[16*chr+7]);
-    }
-
- setpstr(chr,v)
-    {
-    extern long ublock[];
-    ublock[16*chr+7]=v;
-    }
-
- pvis(chr)
-    {
-    extern long ublock[];
-    return(ublock[16*chr+8]);
-    }
-
- setpvis(chr,v)
-    {
-    extern long ublock[];
-    ublock[16*chr+8]=v;
-    }
-
- psex(chr)
-    {
-    extern long ublock[];
-    return(ublock[16*chr+9]%2);
-    }
-
- setpsex(chr,v)
-    {
-    extern long ublock[];
-    ublock[16*chr+9]&=~1;
-    ublock[16*chr+9]|=v;
-    }
-setpsexall(chr,v)
-long v;
-{
-	extern long ublock[];
-	ublock[16*chr+9]=v;
-}
-
-psexall(chr)
-long chr;
-{
-	extern long ublock[];
-	return(ublock[16*chr+9]);
-}
-
-char * oname(ob)
-    {
-    extern OBJECT objects[];
-    return(objects[ob].o_name);
-    }
-
-char * olongt(ob,st)
-{
-	extern OBJECT objects[];
-	return(objects[ob].o_desc[st]);
-}
-
-
- omaxstate(ob)
-    {
-    extern OBJECT objects[];
-    return(objects[ob].o_maxstate);
-    }
-
- obflannel(ob)  /* Old version */
-    {
-    return(oflannel(ob));
-    }
- oflannel(ob)
-    {
-    extern OBJECT objects[];
-    return(objects[ob].o_flannel);
-    }
-
- obaseval(ob)
-    {
-    extern OBJECT objects[];
-    return(objects[ob].o_value);
-    }
-
  isdest(ob)
     {
     if(otstbit(ob,0))return(1);
@@ -230,58 +94,9 @@ char * olongt(ob,st)
     return(otstbit(ob,0)?-1:0);
     }
 
- ppos(chr)
-    {
-    extern long ublock[];
-    return(ublock[16*chr+5]);
-    }
-
- setppos(chr,v)
-    {
-    extern long ublock[];
-    ublock[16*chr+5]=v;
-    }
-
- setploc(chr,n)
-    {
-    extern long ublock[];
-    ublock[16*chr+4]=n;
-    }
-
- pwpn(chr)
-    {
-    extern long ublock[];
-    return(ublock[16*chr+11]);
-    }
-
- setpwpn(chr,n)
-    {
-    extern long ublock[];
-    ublock[16*chr+11]=n;
-    }
-
 ocreate(ob)
 {
 oclrbit(ob,0);
-}
-
-syslog(args,arg1,arg2)
-char *args,*arg1,*arg2;
-{
-extern char *strchr();
-extern char *ctime();
-long tm;
-FILE *x;
-char *z;
-time(&tm);
-z=ctime(&tm);
-*strchr(z,'\n')=0;
-x=openlock(LOG_FILE,"a");
-if(x==NULL) {loseme();crapup("Log fault : Access Failure"); }
-fprintf(x,"%s:  ",z);
-fprintf(x,args,arg1,arg2);
-fprintf(x,"\n");
-fclose(x);
 }
 
 osetbit(ob,x)
@@ -331,19 +146,6 @@ a++;
 return(0);
 }
 
-phelping(x,y)
-{
-extern long ublock[];
-return(ublock[16*x+13]);
-}
-
-setphelping(x,y)
-{
-extern long ublock[];
-ublock[16*x+13]=y;
-}
-
-
 ptothlp(pl)
 {
 int tot;
@@ -374,24 +176,6 @@ long x;
 	extern long ublock[];
 	ublock[16*ch+9]&=~(1<<x);
 }
-
-/*Pflags
-
-0 sex
-
-1 May not be exorcised ok
-
-2 May change pflags ok
-
-3 May use rmedit ok
-
-4 May use debugmode ok
-
-5 May use patch
-
-6 May be snooped upon
-
-*/
 
 ptstbit(ch,x)
 long ch;

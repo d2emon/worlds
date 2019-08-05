@@ -2,6 +2,7 @@ import random
 from ..database import World
 from ..globalVars import Globals
 from .model import Model
+from .item import Item
 
 
 class Character(Model):
@@ -65,6 +66,28 @@ class Character(Model):
     def is_created(self):
         return len(self.name) > 0
 
+    @property
+    def carry(self):
+        def items_filter(i):
+            if i is None:
+                return False
+            owner = i.carried_by
+            if owner is None:
+                return False
+            return owner.character_id == self.character_id
+        return filter(items_filter, Item.all())
+
+    def has_item(self, item_id, include_destroyed=False):
+        def filter_items(item):
+            # if not Player.player().is_wizard and is_dest(i.item_id):
+            if not include_destroyed and is_dest(item.item_id):
+                return False
+            if item.item_id != item_id:
+                return False
+            return True
+
+        return any(filter(filter_items, self.carry))
+
 
 def list_characters(player):
     return Character.list_characters(player)
@@ -77,6 +100,12 @@ def disl4(*args):
     # raise NotImplementedError()
     print("disl4({})".format(args))
     return "disl4({})".format(args)
+
+
+def is_dest(*args):
+    # raise NotImplementedError()
+    print("is_dest({})".format(args))
+    return False
 
 
 def lobjsat(*args):

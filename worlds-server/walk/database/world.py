@@ -1,9 +1,6 @@
-from .database import Database, WorldDatabase
+from .database import Database
 from .characters import Characters
-
-
-class Items(WorldDatabase):
-    ITEMS = 194
+from .items import Items
 
 
 class WorldData(Database):
