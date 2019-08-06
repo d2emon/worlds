@@ -1,14 +1,7 @@
 # Two Phase Game System
 
-# char **argv_p;
-
-# def main(argc, argv):
-
-# char privs[4];
-
 from ..exceptions import StopGame as crapup
 
-# def listfl(name):
 # def getkbd(s, l):
 
 # long sig_active=0;
@@ -29,16 +22,6 @@ from ..player import sig_ctrlc as sig_ctrlc
 # def set_progname(n, text):
 
 """
-listfl(name)
-char *name;
-{
-FILE *a;
-char b[128];
-a=openlock(name,"r+");
-while(fgets(b,128,a)) printf("%s\n",b);
-fcloselock(a);
-}
- 
 char *getkbd(s,l)   /* Getstr() with length limit and filter ctrl */
  char *s;
  int l;
@@ -57,9 +40,9 @@ char *getkbd(s,l)   /* Getstr() with length limit and filter ctrl */
     if (f==0) {s[c]=0;while(getchar()!='\n');}
     return(s);
     }
+"""
 
-#include <signal.h>
-
+"""
 long sig_active=0;
 
 sig_alon()
