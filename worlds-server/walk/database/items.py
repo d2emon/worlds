@@ -435,9 +435,6 @@ class Items(ListDatabase):
         189: {'room_id': -650},
     }
 
-    def __init__(self):
-        super().__init__([self.item(item_id) for item_id in range(self.ITEMS)])
-
     @classmethod
     def __item_data(cls, item_id):
         if 0 <= item_id < len(cls.__ITEMS_DATA):
@@ -466,3 +463,6 @@ class Items(ListDatabase):
 
     def set(self, items):
         self.items = items
+
+    def reset(self):
+        return (self.item(item_id) for item_id in range(self.ITEMS))

@@ -7,8 +7,8 @@ class Database:
 
 
 class ListDatabase(Database):
-    def __init__(self, items):
-        self.items = items
+    def __init__(self):
+        self.items = list(self.reset())
 
     def all(self):
         yield from self.items
@@ -16,12 +16,15 @@ class ListDatabase(Database):
     def get(self, item_id):
         return lambda: self.items[item_id]
 
+    def reset(self):
+        raise NotImplementedError
+
 
 class WorldDatabase(ListDatabase):
     ITEMS = 0
 
-    def __init__(self):
-        super().__init__([item_id for item_id in range(self.ITEMS)])
-
     def set(self, items):
         self.items = items
+
+    def reset(self):
+        yield from range(self.ITEMS)

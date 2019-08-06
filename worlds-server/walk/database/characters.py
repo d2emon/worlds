@@ -205,9 +205,6 @@ class Characters(ListDatabase):
         },
     ]
 
-    def __init__(self):
-        super().__init__([self.character(character_id) for character_id in range(self.ITEMS)])
-
     @classmethod
     def __is_aggressive(cls, name):
         return name.lower() in (
@@ -271,3 +268,6 @@ class Characters(ListDatabase):
 
     def set(self, items):
         self.items = items
+
+    def reset(self):
+        return (self.character(character_id) for character_id in range(self.ITEMS))
