@@ -11,8 +11,20 @@ class Zones(Database):
         6: "PIT",
         19: "WIZROOM",
         99: "DEAD",
+        # 0-99      Light Indoors
         299: "BLIZZARD",
+        # 100-102   Light Outdoors Snow
+        # 103-168   Light Indoors  Snow
+        # 169       Light Outdoors Snow
+        # 170       Light Indoors  Snow
+        # 171-178   Light Outdoors Snow
+        # 179-182   Light Outdoors Mild
+        # 183       Light Indoors  Mild
+        # 184-190   Light Outdoors Mild
+        # 191-199   Light Indoors  Mild
+        # 200-299   Light Indoors
         399: "CAVE",
+        # 300-399   Dark  Indoors
         499: "LABRNTH",
         599: "FOREST",
         699: "VALLEY",
@@ -24,10 +36,15 @@ class Zones(Database):
         1099: "TOWER",
         1101: "HUT",
         1105: "TREEHOUSE",
+        # 400-1105  Light Indoors
         2199: "QUARRY",
+        # 1106-1112 Light Indoors
+        # 1113-1123 Dark  Indoors
+        # 1124-2199 Light Indoors
         2299: "LEDGE",
         2499: "INTREE",
         99999: "WASTE",
+        # 2200-...  Light Indoors
     }
 
     def __init__(self):

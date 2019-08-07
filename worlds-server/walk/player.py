@@ -295,8 +295,9 @@ class Player:
             response.update({
                 'title': self.room.title,
                 'text': self.room.description,
-                'items': [item.serialized for item in Item.list_items(self) if item],
             })
+            response.update(self.room.list_items(self))
+
             if Globals.curmode == 1:
                 response.update({'characters': list(Character.list_characters(self))})
 
@@ -308,8 +309,11 @@ class Player:
         if self.is_god:
             response.update({'room_id': self.room.room_id})
             # Secret
-            response.update({'zone': (self.room.zone.name, self.room.in_zone)})
-            response.update({'exits': [e.room_to for e in self.room.exits]})
+            response.update({
+                'zone': (self.room.zone.name, self.room.in_zone),
+                'exits': [e.room_to for e in self.room.exits],
+                'outdoors': self.room.outdoors,
+            })
         response.update({'result': not response.get('error')})
 
         # error

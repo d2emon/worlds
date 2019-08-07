@@ -104,19 +104,6 @@ class Item(Model):
             Globals.wd_it = item.name
             yield item
 
-    @classmethod
-    def list_items(cls, player):
-        items = list(cls.find(
-            wizard=player.is_wizard,
-            room_id=player.room_id,
-            max_state=3,
-            description=True,
-        ))
-
-        yield from cls.list_by_flannel(items, True)
-        yield showwthr()
-        yield from cls.list_by_flannel(items, False)
-
     @property
     def location(self):
         return self.__location
@@ -231,19 +218,7 @@ def ishere(*args):
     return True
 
 
-def otstbit(*args):
-    # raise NotImplementedError()
-    print("otstbit({})".format(args))
-    return False
-
-
 def randperc(*args):
     # raise NotImplementedError()
     print("randperc({})".format(args))
     return 0
-
-
-def showwthr(*args):
-    # raise NotImplementedError()
-    print("showwthr({})".format(args))
-    return None

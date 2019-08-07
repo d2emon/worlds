@@ -22,8 +22,9 @@ states are
 # def adjwthr(n):
 # def longwthr():
 # def wthrrcv(type):
-# def showwthr():
-# def outdoors():
+
+from ..models.item import show_weather as showwthr
+from ..models.room import outdoors as outdoors
 
 # Silly Section
 
@@ -52,8 +53,8 @@ states are
 # def setcom():
 
 from ..actions.player_actions import is_dark as isdark
+from ..models.item import get_weather_id as modifwthr
 
-# def modifwthr(n):
 # def setpflags():
 
 
@@ -178,52 +179,7 @@ extern char wordbuf[];
           bprintf("\001cYou are half blinded by drifting snow, as a white, icy blizzard sweeps across\nthe land\n\001");
           break;
           }
-    }
- 
- showwthr()
-    {
-    extern long curch;
-    if(!outdoors()) return;
-    switch(modifwthr(state(0)))
-       {
-       case 1:
-          if((curch>-199)&&(curch<-178))
-             {
-             bprintf("It is raining, a gentle mist of rain, which sticks to everything around\n");
-             bprintf("you making it glisten and shine. High in the skies above you is a rainbow\n");
-             }
-          else
-             bprintf("\001cIt is raining\n\001");
-          break;
-       case 2:
-          bprintf("\001cThe skies are dark and stormy\n\001");
-          break;
-       case 3:
-          bprintf("\001cIt is snowing\001\n");
-          break;
-       case 4:
-          bprintf("\001cA blizzard is howling around you\001\n");
-          break;
-       }
-    }
- 
- outdoors()
-    {
-    extern long curch;
-    switch(curch)
-       {
-       case -100:;
-       case -101:;
-       case -102:return(1);
-       case -183:return(0);
-       case -170:return(0);
-       default:
-          if((curch>-191)&&(curch<-168)) return(1);
-          if((curch>-172)&&(curch<-181)) return(1);
-          return(0);
-       }
-    }
- 
+    } 
  
  /* Silly Section */
  
@@ -508,26 +464,6 @@ setmobile:a=fpbn(wordbuf);
  
  
  
-modifwthr(n)
-{
-extern long curch;
-switch(curch)
-{
-default:
-if((curch>=-179)&&(curch<=-199)) 
-{
-	if(n>1)return(n%2);
-	else return(n);
-}
-if((curch>=-178)&&(curch<=-100))
-{
-	if((n==1)||(n==2)) n+=2;
-	return(n);
-}
-return(n);
-}
-}
-
 setpflags()
 {
 	long a,b,c,d;

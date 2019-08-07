@@ -16,11 +16,26 @@ class Rooms(Database):
     def __is_dark(cls, room_id):
         if room_id in (-1100, -1101):
             return False
-        if -1123 <= room_id <= -1113:
+        if -1113 >= room_id >= -1123:
             return True
         if room_id < -399 or room_id > -300:
             return False
         return True
+
+    @classmethod
+    def __outdoors(cls, room_id):
+        if room_id in (-100, -101, -102):
+            return True
+        elif room_id == -183:
+            return False
+        elif room_id == -170:
+            return False
+        elif -168 > room_id > -191:
+            return True
+        elif -181 > room_id > -172:
+            return True
+        else:
+            return False
 
     @classmethod
     def __zone(cls, room_id):
@@ -37,6 +52,7 @@ class Rooms(Database):
             'death_room': False,
             'no_brief': False,
             'is_dark': cls.__is_dark(room_id),
+            'outdoors': cls.__outdoors(room_id),
         }
 
     @classmethod

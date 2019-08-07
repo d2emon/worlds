@@ -4,6 +4,7 @@ from .model import Model
 from .character import Character
 from .item import Item
 from .room_exit import Exit
+from .weather import Weather
 from .zone import Zone
 
 
@@ -28,6 +29,7 @@ class Room(Model):
         death_room=False,
         no_brief=False,
         is_dark=False,
+        outdoors=False,
         zone="TCHAN",
         # permissions="r"
     ):
@@ -39,6 +41,7 @@ class Room(Model):
         self.death_room = death_room
         self.no_brief = no_brief
         self.is_dark = is_dark
+        self.outdoors = outdoors
         self.__zone_name = zone
 
         self.__zone = None
@@ -72,6 +75,10 @@ class Room(Model):
         return self.__room_id
 
     @property
+    def weather(self):
+        return Weather.get()
+
+    @property
     def zone(self):
         if self.__zone is None:
             self.__zone = Zone.by_name(self.__zone_name)
@@ -84,6 +91,19 @@ class Room(Model):
     @property
     def characters(self):
         return Character.find(room_id=self.room_id)
+
+    def list_items(self, player):
+        items = list(Item.find(
+            wizard=player.is_wizard,
+            room_id=self.room_id,
+            max_state=3,
+            description=True,
+        ))
+        return {
+            'flannel': [item.serialized for item in Item.list_by_flannel(items, True)],
+            'weather': self.outdoors and self.weather.get_description(self),
+            'items': [item.serialized for item in Item.list_by_flannel(items, False)],
+        }
 
     # Events
 

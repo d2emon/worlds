@@ -28,7 +28,16 @@
 
       <v-layout raw wrap>
         <v-flex md6>
-          <v-list v-if="room.items">
+          <v-list>
+            <v-list-tile
+              v-for="item in room.flannel"
+              :key="`item-${item.item_id}`"
+            >
+              <span v-if="item.destroyed">--</span>
+              <span v-if="debugMode">{ {{item.item_id}} }</span>
+              {{item.text}}
+            </v-list-tile>
+            <v-list-tile v-if="room.weather">{{room.weather}}</v-list-tile>
             <v-list-tile
               v-for="item in room.items"
               :key="`item-${item.item_id}`"
