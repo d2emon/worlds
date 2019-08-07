@@ -1,4 +1,5 @@
 from .database import ListDatabase
+from .logger import logger
 
 
 class Items(ListDatabase):
@@ -442,7 +443,7 @@ class Items(ListDatabase):
         else:
             data = None
         initial = cls.__ITEMS_INITIAL.get(item_id, {})
-        print(item_id, data, initial)
+        logger.debug("%s:\t%s %s", item_id, data, initial)
         return {
             'item_id': item_id,
             # Item Data

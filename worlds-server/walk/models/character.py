@@ -105,7 +105,13 @@ class Character(Model):
 
     @classmethod
     def __by_player_can_see(cls, player):
-        return lambda character: seeplayer(character.character_id)
+        def f(character):
+            if Globals.ail_blind:
+                return False  # Cant see
+            if player.room.is_dark:
+                return False
+            return character.visible > player.character.level
+        return f
 
     @classmethod
     def __by_not_player(cls, player):
@@ -175,9 +181,3 @@ def lobjsat(*args):
     yield {}
     yield {}
     yield {}
-
-
-def seeplayer(*args):
-    # raise NotImplementedError()
-    print("seeplayer({})".format(args))
-    return True

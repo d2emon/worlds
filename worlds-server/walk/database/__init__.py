@@ -1,4 +1,5 @@
 from ..exceptions import DatabaseError, StopGame
+from .logger import logger
 # Databases
 from .exits import Exits
 from .reset_data import ResetData
@@ -25,7 +26,7 @@ __databases = {
 
 
 def connect(database, permissions=None):
-    print("Connect to \'{}\' mode: {}".format(database, permissions))
+    logger.debug("Connect to '%s' mode: %s", database, permissions)
     data = __databases.get(database)
     if data is None:
         raise DatabaseError()
@@ -33,7 +34,7 @@ def connect(database, permissions=None):
 
 
 def disconnect(database):
-    print("Disconnect from \'{}\'".format(database))
+    logger.debug("Disconnect from '%s'", database)
 
 
 class World:

@@ -76,11 +76,11 @@ class Player:
 
     @property
     def is_god(self):
-        return self.character.is_god
+        return self.level >= self.character.GOD_LEVEL
 
     @property
     def is_wizard(self):
-        return self.character.is_wizard
+        return self.level >= self.character.WIZARD_LEVEL
 
     @property
     def room(self):
@@ -151,6 +151,22 @@ class Player:
             return remove_helping()
         elif helping.room_id != self.room_id:
             return remove_helping(helping.name)
+
+    def can_see_character(self, character):
+        if character is None:
+            return True
+        if self.character_id == character.character_id:
+            return True  # me
+
+        if Globals.ail_blind:
+            return False  # Cant see
+        if self.character.level < character.visible:
+            return False
+        if self.room_id == character.room_id and self.room.is_dark:
+            return False
+
+        setname(character)
+        return True
 
     def go(self, direction_id):
         if Globals.in_fight > 0:
@@ -547,6 +563,11 @@ def saveme(*args):
 def sendsys(*args):
     # raise NotImplementedError()
     print("sendsys({})".format(args))
+
+
+def setname(*args):
+    # raise NotImplementedError()
+    print("setname({})".format(args))
 
 
 # def sig_aloff():
