@@ -12,7 +12,7 @@ from ..player import check_move as consid_move
 
 # def dircom():
 # def sys_reset():
-# def dorune():
+from ..item import do_rune as dorune
 # def pepdrop():
 # def dragget():
 
@@ -142,30 +142,6 @@ errk:t=my_lev ;
     }
  
  
- dorune(  )
-    {
-    char bf[ 128 ] ;
-    long ct ;
-    extern long mynum, my_lev, curch ;
-    extern long in_fight;
-    if(in_fight) return;
-    ct=0 ;
-    while( ct<32 )
-       {
-       if( ct==mynum ){ct++ ;continue ;}
-       if( !strlen( pname( ct ) ) ) {ct++ ;continue ;}
-       if( plev( ct )>9 ) {ct++ ;continue ;}
-       if( ploc( ct )==curch ) goto hitrune ;
-       ct++ ;
-       }
-    return ;
-    hitrune:if( randperc(  )<9*my_lev ) return ;
-    if( fpbns( pname( ct ) )== -1 ) return ;
-    bprintf( "The runesword twists in your hands lashing out savagely\n" ) ;
-    hitplayer(ct,32);
-    }
- 
-
  pepdrop(  )
     {
     extern long my_sco ;

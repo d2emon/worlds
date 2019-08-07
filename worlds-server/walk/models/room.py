@@ -1,6 +1,8 @@
 from ..database import names
 from ..globalVars import Globals
 from .model import Model
+from .character import Character
+from .item import Item
 from .room_exit import Exit
 from .zone import Zone
 
@@ -74,6 +76,16 @@ class Room(Model):
         if self.__zone is None:
             self.__zone = Zone.by_name(self.__zone_name)
         return self.__zone
+
+    @property
+    def items(self):
+        return Item.find(room_id=self.room_id)
+
+    @property
+    def characters(self):
+        return Character.find(room_id=self.room_id)
+
+    # Events
 
     @property
     def on_enter(self):

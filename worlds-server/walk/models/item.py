@@ -4,6 +4,25 @@ from ..globalVars import Globals
 from .model import Model
 
 
+def rune(player):
+    if Globals.in_fight:
+        return {}
+
+    character = next(player.character.find(
+        items=player.available_characters,
+        wizard=True,
+        player_only=True,
+    ), None)
+    if character is None:
+        return {}
+    if randperc() < 9 * player.level:
+        return {}
+    if fpbns(character.name) is None:
+        return {}
+    hitplayer(character.character_id, 32)
+    return {'message': "The runesword twists in your hands lashing out savagely\n"}
+
+
 class Item(Model):
     def __init__(
         self,
@@ -58,12 +77,12 @@ class Item(Model):
     def state(self, value):
         self.__state = min(value, self.__max_state)
         connected = self.connected()
-        if connected is not None:
+        if otstbit(self, 1) and connected is not None:
             connected.state = value
 
     @property
     def connected(self):
-        return self.get(self.item_id ^ 1) if otstbit(self, 1) else None
+        return self.get(self.item_id ^ 1)
 
     @classmethod
     def list_by_flannel(cls, items, flannel):
@@ -168,6 +187,14 @@ class Item(Model):
         if room_id is not None:
             yield cls.__by_room_id(room_id)
 
+    # Events
+
+    @property
+    def on_wait(self):
+        if self.item_id == 32:
+            return rune
+        return lambda player: {}
+
 
 def by_flannel(flannel):
     return Item.list_by_flannel(Item.all(), flannel)
@@ -178,6 +205,17 @@ def list_items(player):
 
 
 # TODO: Implement
+
+
+def fpbns(*args):
+    # raise NotImplementedError()
+    print("fpbns({})".format(args))
+    return None
+
+
+def hitplayer(*args):
+    # raise NotImplementedError()
+    print("hitplayer({})".format(args))
 
 
 def isdest(*args):
@@ -196,6 +234,12 @@ def otstbit(*args):
     # raise NotImplementedError()
     print("otstbit({})".format(args))
     return False
+
+
+def randperc(*args):
+    # raise NotImplementedError()
+    print("randperc({})".format(args))
+    return 0
 
 
 def showwthr(*args):

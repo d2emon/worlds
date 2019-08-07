@@ -29,4 +29,4 @@ class Model:
         if items is None:
             items = cls.all()
         filters = list(cls.filters(**kwargs))
-        return (item for item in items if all(f(item) for f in filters))
+        return (item for item in items if all(item and f(item) for f in filters))

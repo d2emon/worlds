@@ -6,6 +6,9 @@ from .item import Item
 
 
 class Character(Model):
+    WIZARD_LEVEL = 10
+    GOD_LEVEL = 10000
+
     def __init__(
         self,
         character_id,
@@ -58,6 +61,14 @@ class Character(Model):
         return len(self.name) > 0
 
     @property
+    def is_wizard(self):
+        return self.level >= self.WIZARD_LEVEL
+
+    @property
+    def is_god(self):
+        return self.level >= self.GOD_LEVEL
+
+    @property
     def carry(self):
         def items_filter(i):
             if i is None:
@@ -71,16 +82,13 @@ class Character(Model):
     def check_move(self):
         pass
 
-    def has_item(self, item_id, include_destroyed=False):
-        def filter_items(item):
-            # if not Player.player().is_wizard and is_dest(i.item_id):
-            if not include_destroyed and is_dest(item.item_id):
-                return False
-            if item.item_id != item_id:
-                return False
-            return True
+    def has_items(self, include_destroyed=False):
+        if include_destroyed:
+            return self.carry
+        return (item for item in self.carry if not is_dest(item.item_id))
 
-        return any(filter(filter_items, self.carry))
+    def has_item(self, item_id, include_destroyed=False):
+        return any(item for item in self.has_items(include_destroyed) if item.item_id == item_id)
 
     # Search
     @classmethod
@@ -93,33 +101,53 @@ class Character(Model):
             if not character.name:
                 return False
             return get_name(name) == get_name(character.name)
-
         return f
 
     @classmethod
     def __by_player_can_see(cls, player):
-        def f(character):
-            if character.character_id == player.character_id:
-                return False
-            if not character.is_created:
-                return False
-            if character.room_id != player.room_id:
-                return False
-            return seeplayer(character.character_id)
+        return lambda character: seeplayer(character.character_id)
 
+    @classmethod
+    def __by_not_player(cls, player):
+        def f(character):
+            return character.character_id != player.character_id
+        return f
+
+    @classmethod
+    def __by_room_id(cls, room_id):
+        def f(character):
+            return character.room_id == room_id
         return f
 
     @classmethod
     def filters(
         cls,
         player=None,
+        not_player=None,
         name=None,
+        room_id=None,
+        wizard=None,
+        exists_only=False,
+        player_only=False,
         **kwargs,
     ):
         if player is not None:
+            not_player = player
+            room_id = player.room_id
+            exists_only = True
             yield cls.__by_player_can_see(player)
+        if not_player is not None:
+            yield cls.__by_not_player(not_player)
         if name is not None:
             yield cls.__by_name(name)
+        if room_id is not None:
+            yield cls.__by_room_id(room_id)
+        if wizard is not None:
+            yield lambda character: character.is_wizard == wizard
+        if exists_only:
+            yield lambda character: character.is_created
+        if player_only:
+            yield lambda character: character.character_id < 32
 
 
 def list_characters(player):

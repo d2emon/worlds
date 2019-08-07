@@ -12,9 +12,6 @@ class Player:
 
     MAX_PLAYER = 16
 
-    WIZARD_LEVEL = 10
-    GOD_LEVEL = 10000
-
     def __init__(self, name):
         self.character_id = 0  # mynum
         self.name = "The {}".format(name) if name == "Phantom" else name  # globme
@@ -79,11 +76,11 @@ class Player:
 
     @property
     def is_god(self):
-        return self.level >= self.GOD_LEVEL
+        return self.character.is_god
 
     @property
     def is_wizard(self):
-        return self.level >= self.WIZARD_LEVEL
+        return self.character.is_wizard
 
     @property
     def room(self):
@@ -99,6 +96,20 @@ class Player:
     def room_id(self, value):
         self.__room = None
         self.__room_id = value
+
+    @property
+    def carry(self):
+        if self.is_wizard:
+            return self.character.carry
+        return (item for item in self.character.carry if not isdest(item))
+
+    @property
+    def available_characters(self):
+        return Character.find(
+            room_id=self.room_id,
+            not_player=self.character,
+            exists_only=True,
+        )
 
     @classmethod
     def player(cls, name="Name"):
@@ -253,6 +264,7 @@ class Player:
             'items': [],
             'characters': [],
         }
+        messages = []
         if self.is_dark:
             response.update({'error': "It is dark"})
         elif Globals.ail_blind:
@@ -266,8 +278,9 @@ class Player:
             if Globals.curmode == 1:
                 response.update({'characters': list(Character.list_characters(self))})
 
-        on_look()
+        messages += self.on_look().get('messages', [])
 
+        response.update({'messages': messages})
         if self.is_wizard:
             response.update({'name': self.room.name})
         if self.is_god:
@@ -279,12 +292,12 @@ class Player:
         response.update({'result': not response.get('error')})
 
         # error
+        # messages
         # name
         # death
         # title
         # text
         # items
-
         return response
 
     def jump(self):
@@ -344,6 +357,7 @@ class Player:
         return {'exits': exits or None}
 
     # Events
+
     def on_look(self):
         turn_undead = self.has_item(45)
 
@@ -372,11 +386,13 @@ class Player:
             for name in undead:
                 check_fight(self, next(Character.find(name=name)))
 
-        if self.has_item(32):
-            dorune()
+        messages = [item.on_wait(self).get('message', '') for item in self.carry]
+        messages = filter(None, messages)
 
         if self.character.helping is not None:
             check_help()
+
+        return {'messages': list(messages)}
 
 
 def check_fight(player, mobile):
@@ -468,14 +484,15 @@ def chkcrip(*args):
     return False
 
 
-def dorune(*args):
-    # raise NotImplementedError()
-    print("dorune({})".format(args))
-
-
 def dumpitems(*args):
     # raise NotImplementedError()
     print("dumpitems({})".format(args))
+
+
+def isdest(*args):
+    # raise NotImplementedError()
+    print("isdest({})".format(args))
+    return random.randrange(100) > 50
 
 
 def ishere(*args):
