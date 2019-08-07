@@ -76,12 +76,6 @@
 # def ptstflg(ch,x):
 
 """
- isdest(ob)
-    {
-    if(otstbit(ob,0))return(1);
-    return(0);
-    }
-
  isavl(ob)
     {
     extern long mynum;

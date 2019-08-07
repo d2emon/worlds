@@ -20,6 +20,8 @@ class Player:
         self.__room_id = random.choice((
             -5,
             -183,
+
+            # -600,
         ))  # curch
 
         self.__room = None
@@ -96,6 +98,10 @@ class Player:
     def room_id(self, value):
         self.__room = None
         self.__room_id = value
+
+    @property
+    def can_see(self):
+        return not Globals.ail_blind and not self.is_dark
 
     @property
     def carry(self):
@@ -302,8 +308,7 @@ class Player:
         if self.is_god:
             response.update({'room_id': self.room.room_id})
             # Secret
-            response.update({'zone': self.room.zone.name})
-            response.update({'in_zone': self.room.in_zone})
+            response.update({'zone': (self.room.zone.name, self.room.in_zone)})
             response.update({'exits': [e.room_to for e in self.room.exits]})
         response.update({'result': not response.get('error')})
 

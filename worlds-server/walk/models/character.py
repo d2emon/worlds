@@ -106,11 +106,9 @@ class Character(Model):
     @classmethod
     def __by_player_can_see(cls, player):
         def f(character):
-            if Globals.ail_blind:
+            if not player.can_see:
                 return False  # Cant see
-            if player.room.is_dark:
-                return False
-            return character.visible > player.character.level
+            return character.visible <= player.character.level
         return f
 
     @classmethod

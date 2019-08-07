@@ -35,6 +35,9 @@ class Item(Model):
         location=0,
         carry_flag=0,
         state=0,
+        # Flags
+        is_destroyed=False,
+        has_connected=False,
     ):
         super().__init__()
         self.item_id = item_id
@@ -48,6 +51,9 @@ class Item(Model):
         self.__location = location
         self.__carry_flag = carry_flag
         self.__state = state
+
+        self.__is_destroyed = is_destroyed
+        self.__has_connected = has_connected
 
     @classmethod
     def database(cls):
@@ -77,8 +83,12 @@ class Item(Model):
     def state(self, value):
         self.__state = min(value, self.__max_state)
         connected = self.connected()
-        if otstbit(self, 1) and connected is not None:
+        if self.__has_connected and connected is not None:
             connected.state = value
+
+    @property
+    def is_destroyed(self):
+        return self.__is_destroyed
 
     @property
     def connected(self):
@@ -134,7 +144,7 @@ class Item(Model):
         return {
             'item_id': self.item_id,
             'text': self.description,
-            'destroyed': isdest(self.item_id),
+            'destroyed': self.is_destroyed,
         }
 
     def set_location(self, location, carry_flag):
@@ -148,11 +158,8 @@ class Item(Model):
 
     @classmethod
     def __by_destroyed(cls, destroyed=True):
-        def f(i):
-            # if((my_lev<10)&&(isdest(item)))return(0);
-            return isdest(i)
-
-        return f
+        # if((my_lev<10)&&(isdest(item)))return(0);
+        return lambda item: item.is_destroyed == destroyed
 
     @classmethod
     def __by_flannel(cls, flannel):
@@ -216,12 +223,6 @@ def fpbns(*args):
 def hitplayer(*args):
     # raise NotImplementedError()
     print("hitplayer({})".format(args))
-
-
-def isdest(*args):
-    # raise NotImplementedError()
-    print("isdest({})".format(args))
-    return random.randrange(100) > 50
 
 
 def ishere(*args):

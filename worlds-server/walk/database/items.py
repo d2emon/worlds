@@ -443,7 +443,8 @@ class Items(ListDatabase):
         else:
             data = None
         initial = cls.__ITEMS_INITIAL.get(item_id, {})
-        logger.debug("%s:\t%s %s", item_id, data, initial)
+        has_connected = item_id % 2 > 0
+        logger.debug("%s(%s):\t%s %s", item_id, has_connected, data, initial)
         return {
             'item_id': item_id,
             # Item Data
@@ -457,6 +458,9 @@ class Items(ListDatabase):
             # 1-2
             'carry_flag': 1,
             'state': 0,
+            # Flags
+            'is_destroyed': False,
+            'has_connected': has_connected,
         }
 
     @classmethod
