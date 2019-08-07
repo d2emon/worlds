@@ -455,6 +455,7 @@ class Items(ListDatabase):
             'location': initial.get('room_id', 0),
             # 1-2
             'carry_flag': 1,
+            'state': 0,
         }
 
     @classmethod

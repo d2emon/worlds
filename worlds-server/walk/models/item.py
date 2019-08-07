@@ -15,6 +15,7 @@ class Item(Model):
         base_value=0,
         location=0,
         carry_flag=0,
+        state=0,
     ):
         super().__init__()
         self.item_id = item_id
@@ -27,6 +28,7 @@ class Item(Model):
 
         self.__location = location
         self.__carry_flag = carry_flag
+        self.__state = state
 
     @classmethod
     def database(cls):
@@ -38,7 +40,7 @@ class Item(Model):
 
     @property
     def description(self):
-        return self.__description[state(self.item_id)]
+        return self.__description[self.state]
 
     @property
     def flannel(self):
@@ -47,6 +49,21 @@ class Item(Model):
     @property
     def name(self):
         return self.__name
+
+    @property
+    def state(self):
+        return self.__state
+
+    @state.setter
+    def state(self, value):
+        self.__state = min(value, self.__max_state)
+        connected = self.connected()
+        if connected is not None:
+            connected.state = value
+
+    @property
+    def connected(self):
+        return self.get(self.item_id ^ 1) if otstbit(self, 1) else None
 
     @classmethod
     def list_by_flannel(cls, items, flannel):
@@ -94,10 +111,6 @@ class Item(Model):
         return self.location
 
     @property
-    def connected(self):
-        return Item.get(self.item_id ^ 1)
-
-    @property
     def serialized(self):
         return {
             'item_id': self.item_id,
@@ -128,7 +141,7 @@ class Item(Model):
 
     @classmethod
     def __by_max_state(cls, max_state):
-        return lambda item: state(item) <= max_state
+        return lambda item: item.state <= max_state
 
     @classmethod
     def __by_room_id(cls, room_id):
@@ -160,8 +173,8 @@ def by_flannel(flannel):
     return Item.list_by_flannel(Item.all(), flannel)
 
 
-def list_items():
-    return Item.list_items()
+def list_items(player):
+    return Item.list_items(player)
 
 
 # TODO: Implement
@@ -179,13 +192,13 @@ def ishere(*args):
     return True
 
 
+def otstbit(*args):
+    # raise NotImplementedError()
+    print("otstbit({})".format(args))
+    return False
+
+
 def showwthr(*args):
     # raise NotImplementedError()
     print("showwthr({})".format(args))
     return None
-
-
-def state(*args):
-    # raise NotImplementedError()
-    print("state({})".format(args))
-    return 0

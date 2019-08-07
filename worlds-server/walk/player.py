@@ -299,7 +299,9 @@ class Player:
         room_id = jumtb.get(self.room_id)
         if room_id is None:
             return {'message': "Wheeeeee....\n"}
-        if not self.is_wizard and not self.has_item(1) or state(1) == 0:
+
+        umbrella = Item.get(1)
+        if not self.is_wizard and not self.has_item(umbrella.item_id) or umbrella.state == 0:
             self.__room_id = room_id
             loseme()
             return {
