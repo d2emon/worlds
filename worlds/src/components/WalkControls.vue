@@ -28,18 +28,7 @@
         </v-flex>
       </v-layout>
       <v-layout row wrap>
-        <v-flex xs3 class="offset-xs3">
-          <v-btn
-            flat
-            icon
-            :color="goButtonColor('n')"
-            @click="doGoOrFlee('n')"
-          >
-            N
-          </v-btn>
-          <div v-if="exits && exits['n'] !== true">{{exits['n']}}</div>
-        </v-flex>
-        <v-flex xs3 class="offset-xs3">
+        <v-flex xs4>
           <v-btn
             flat
             icon
@@ -50,9 +39,20 @@
           </v-btn>
           <div v-if="exits && exits['u'] !== true">{{exits['u']}}</div>
         </v-flex>
+        <v-flex xs4>
+          <v-btn
+            flat
+            icon
+            :color="goButtonColor('n')"
+            @click="doGoOrFlee('n')"
+          >
+            N
+          </v-btn>
+          <div v-if="exits && exits['n'] !== true">{{exits['n']}}</div>
+        </v-flex>
       </v-layout>
       <v-layout row wrap>
-        <v-flex xs3>
+        <v-flex xs4>
           <v-btn
             flat
             icon
@@ -63,7 +63,7 @@
           </v-btn>
           <div v-if="exits && exits['w'] !== true">{{exits['w']}}</div>
         </v-flex>
-        <v-flex xs3 class="offset-xs3">
+        <v-flex xs4 class="offset-xs4">
           <v-btn
             flat
             icon
@@ -76,7 +76,7 @@
         </v-flex>
       </v-layout>
       <v-layout row wrap>
-        <v-flex xs3 class="offset-xs3">
+        <v-flex xs4 class="offset-xs4">
           <v-btn
             flat
             icon
@@ -87,7 +87,7 @@
           </v-btn>
           <div v-if="exits && exits['s'] !== true">{{exits['s']}}</div>
         </v-flex>
-        <v-flex xs3 class="offset-xs3">
+        <v-flex xs4>
           <v-btn
             flat
             icon
