@@ -19,7 +19,7 @@ from ..character import see_player as seeplayer
 
 # char *sysbuf=NULL;
 
-# def makebfr():
+from ..player import make_buffer as makebfr
 
 # FILE * log_fl= 0; /* 0 = not logging */
 

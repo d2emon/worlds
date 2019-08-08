@@ -1,6 +1,5 @@
 class Globals:
     ail_blind = False
-    cms = -1
     curmode = 1
     exittxt = {}
     i_setup = False

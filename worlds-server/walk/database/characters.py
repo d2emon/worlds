@@ -269,5 +269,8 @@ class Characters(ListDatabase):
     def set(self, items):
         self.items = items
 
+    def set_item(self, item_id, **data):
+        self.items[item_id].update(data)
+
     def reset(self):
         return (self.character(character_id) for character_id in range(self.ITEMS))

@@ -6,8 +6,7 @@ This file holds the basic communications routines
 # oddcat = 0
 # talkfl = 0
 
-# cms = -1
-
+# cms       player
 # curch     player
 # globme    player
 
@@ -44,7 +43,9 @@ Sectors 1-n  in pairs ie [128 words]
 # fl_com = None
 
 # def rte(name):
+
 from ..database import connect as openlock
+
 # def findstart(unit):
 # def findend(unit):
 # def talker(name):
@@ -71,8 +72,8 @@ from ..database import connect as openlock
 # mynum player
 
 from ..player import set_room as trapch
+from ..player import put_on as putmeon
 
-# def putmeon(name):
 # def loseme(name):
 
 # lasup = 0
@@ -474,45 +475,6 @@ if((strncmp(nam1,"The ",4)==0)||(strncmp(nam1,"the ",4)==0))
 if(!strcmp(lowercase(nam1+4),lowercase(luser))) return(1);
 }
     return(!strcmp(lowercase(nam1),lowercase(luser)));
-    }
- 
- putmeon(name)
- char *name;
-    {
-    extern long mynum,curch;
-    extern long maxu;
-    long ct,f;
-    FILE *unit;
-    extern long iamon;
-    iamon=0;
-    unit=openworld();
-    ct=0;
-    f=0;
-    if(fpbn(name)!= -1)
-       {
-       crapup("You are already on the system - you may only be on once at a time");
-       }
-    while((f==0)&&(ct<maxu))
-       {
-       if (!strlen(pname(ct))) f=1;
-       else
-          ct++;
-       }
-    if(ct==maxu)
-       {
-       mynum=maxu;
-       return;
-       }
-    strcpy(pname(ct),name);
-    setploc(ct,curch);
-    setppos(ct,-1);
-    setplev(ct,1);
-    setpvis(ct,0);
-    setpstr(ct,-1);
-    setpwpn(ct,-1);
-    setpsex(ct,0);
-    mynum=ct;
-iamon=1;
     }
  
  loseme(name)

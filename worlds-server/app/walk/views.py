@@ -49,7 +49,7 @@ def ctrlc():
 
 @blueprint.route('/start/<name>', methods=['GET'])
 def start(name):
-    response = Player(name).start(name)
+    response = Player.start(name)
     player = response.get('player', {})
     app.logger.info("GAME ENTRY: %s[%s]", player.get('name'), request.remote_addr)
     return jsonify(response)

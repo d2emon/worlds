@@ -1,4 +1,5 @@
 import random
+from ..exceptions import StopGame
 from ..database import World
 from ..globalVars import Globals
 from .model import Model
@@ -6,6 +7,8 @@ from .item import Item
 
 
 class Character(Model):
+    MAX_USER = 16
+
     WIZARD_LEVEL = 10
     GOD_LEVEL = 10000
 
@@ -15,11 +18,11 @@ class Character(Model):
         name="",
         room_id=0,
         message_id=-1,
-        strength=0,
+        strength=-1,
         visible=0,
-        level=0,
+        level=1,
         weapon=None,
-        helping=None,
+        helping=None,  # ?
         sex=0,
         is_aggressive=False,
         is_undead=False,
@@ -78,6 +81,48 @@ class Character(Model):
                 return False
             return owner == self.character_id
         return filter(items_filter, Item.all())
+
+    @property
+    def serialized(self):
+        return {
+            'character_id': self.character_id,
+            'name': self.name,
+            'room_id': self.room_id,
+            'message_id': self.message_id,
+            'strength': self.strength,
+            'visible': self.visible,
+            'level': self.level,
+            'weapon': self.weapon,
+            'helping': self.helping,
+            'sex': self.sex,
+        }
+
+    @classmethod
+    def add(cls, name):
+        if fpbn(name) is not None:
+            raise StopGame("You are already on the system - you may only be on once at a time")
+
+        characters = (character for character in cls.all() if character.character_id < cls.MAX_USER)
+        character = next((character for character in characters if not character.is_created), None)
+        if character is None:
+            raise StopGame("Sorry AberMUD is full at the moment")
+
+        return character.restart(name).character_id
+
+    def save(self):
+        self.database().set_item(self.character_id, **self.serialized)
+
+    def restart(self, name):
+        self.name = name
+        self.room_id = 0
+        self.message_id = -1
+        self.level = 1
+        self.visible = 0
+        self.strength = -1
+        self.weapon = -1
+        self.sex = 0
+        self.save()
+        return self
 
     def check_move(self):
         pass
@@ -165,6 +210,12 @@ def disl4(*args):
     # raise NotImplementedError()
     print("disl4({})".format(args))
     return "disl4({})".format(args)
+
+
+def fpbn(*args):
+    # raise NotImplementedError()
+    print("fpbn({})".format(args))
+    return None
 
 
 def is_dest(*args):

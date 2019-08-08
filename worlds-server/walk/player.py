@@ -13,8 +13,10 @@ class Player:
     MAX_PLAYER = 16
 
     def __init__(self, name):
+        # Set Fields
         self.character_id = 0  # mynum
         self.name = "The {}".format(name) if name == "Phantom" else name  # globme
+        self.message_id = -1  # cms
 
         self.level = 10000  # my_lev
         self.__room_id = random.choice((
@@ -26,27 +28,13 @@ class Player:
 
         self.__room = None
 
-        Globals.tty = 0
-        # if tty == 4:
-        #     initbbc()
-        #     initscr()
-        #     topscr()
-
         # Talker
-        makebfr()
-        Globals.cms = -1
-        putmeon(self.name)
-
-        try:
-            World.load()
-        except DatabaseError:
-            raise StopGame("Sorry AberMUD is currently unavailable")
-        if self.character_id >= self.MAX_PLAYER:
-            raise StopGame("\nSorry AberMUD is full at the moment\n")
+        World.load()
+        self.character_id = Character.add(self.name)
         rte(self.name)
         World.save()
 
-        Globals.cms = -1
+        self.message_id = -1
         special(".g", self.name)
         Globals.i_setup = True
 
