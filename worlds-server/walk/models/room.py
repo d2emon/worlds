@@ -30,6 +30,7 @@ class Room(Model):
         no_brief=False,
         is_dark=False,
         outdoors=False,
+        climate_id=0,
         zone="TCHAN",
         # permissions="r"
     ):
@@ -45,6 +46,7 @@ class Room(Model):
         self.__zone_name = zone
 
         self.__zone = None
+        self.weather = Weather.get(climate_id) if self.outdoors else None
 
     @property
     def description(self):
@@ -75,10 +77,6 @@ class Room(Model):
         return self.__room_id
 
     @property
-    def weather(self):
-        return Weather.get()
-
-    @property
     def zone(self):
         if self.__zone is None:
             self.__zone = Zone.by_name(self.__zone_name)
@@ -101,7 +99,7 @@ class Room(Model):
         ))
         return {
             'flannel': [item.serialized for item in Item.list_by_flannel(items, True)],
-            'weather': self.outdoors and self.weather.get_description(self),
+            'weather': self.weather and self.weather.description,
             'items': [item.serialized for item in Item.list_by_flannel(items, False)],
         }
 

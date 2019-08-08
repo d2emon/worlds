@@ -2,6 +2,7 @@ from walk.config import Config
 
 
 # BAN_FILE = Config.BAN_FILE
+CLIMATES = "CLIMATES"
 # CREDITS = Config.CREDITS
 EXAMINES = Config.EXAMINES  # Folder
 # EXE = Config.EXE

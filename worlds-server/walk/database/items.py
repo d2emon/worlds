@@ -382,7 +382,7 @@ class Items(ListDatabase):
         ("chute", "There is a chute in the east wall, too small to climb down.", "", "", "", 0, 0, 1),
     )
     __ITEMS_INITIAL = {
-        # 0
+        0: {'room_id': 0},
         1: {'room_id': -5},
         # 2-34
         35: {'room_id': -600},

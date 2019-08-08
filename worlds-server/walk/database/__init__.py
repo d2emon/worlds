@@ -1,6 +1,7 @@
 from ..exceptions import DatabaseError, StopGame
 from .logger import logger
 # Databases
+from .climates import Climates
 from .exits import Exits
 from .reset_data import ResetData
 from .rooms import Rooms
@@ -10,6 +11,7 @@ from . import names
 
 
 __databases = {
+    names.CLIMATES: Climates(),
     names.EXAMINES: "EXAMINES",
     names.EXITS: Exits(),
     names.LOG: "LOG",

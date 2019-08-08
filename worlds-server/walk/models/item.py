@@ -77,12 +77,13 @@ class Item(Model):
 
     @property
     def state(self):
-        return self.__state
+        # return self.__state
+        return random.randrange(self.__max_state + 1)
 
     @state.setter
     def state(self, value):
         self.__state = min(value, self.__max_state)
-        connected = self.connected()
+        connected = self.connected
         if self.__has_connected and connected is not None:
             connected.state = value
 
