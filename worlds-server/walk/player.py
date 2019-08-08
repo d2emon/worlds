@@ -32,6 +32,8 @@ class Player:
         World.load()
         self.character_id = Character.add(self.name)
         rte(self.name)
+        # for c in Character.all():
+        #     print(c.serialized)
         World.save()
 
         self.message_id = -1

@@ -1,4 +1,5 @@
 from .database import ListDatabase
+from .logger import logger
 
 
 class Characters(ListDatabase):
@@ -207,7 +208,7 @@ class Characters(ListDatabase):
 
     @classmethod
     def __is_aggressive(cls, name):
-        return name.lower() in (
+        return name in (
             "shazareth",
             "wraith",
             "bomber",
@@ -226,7 +227,7 @@ class Characters(ListDatabase):
 
     @classmethod
     def __is_undead(cls, name):
-        return name.lower() in (
+        return name in (
             "wraith",
             "zombie",
         )
@@ -256,14 +257,20 @@ class Characters(ListDatabase):
     def character(cls, character_id):
         result = cls.__character_data(character_id)
         if character_id < 16:
+            logger.debug("%s:\t%s", character_id, result)
             return result
         character_id -= 16
         if character_id < len(cls.MOBILES):
             result.update(cls.MOBILES[character_id])
+
+            name = result.get('name', '').lower()
+            if name[:4] == "the ":
+                name = name[4:]
             result.update({
-                'is_aggressive': cls.__is_aggressive(result.get('name', '')),
-                'is_undead': cls.__is_undead(result.get('name', '')),
+                'is_aggressive': cls.__is_aggressive(name),
+                'is_undead': cls.__is_undead(name),
             })
+        logger.debug("%s:\t%s", character_id + 16, result)
         return result
 
     def set(self, items):

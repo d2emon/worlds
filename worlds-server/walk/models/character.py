@@ -95,11 +95,14 @@ class Character(Model):
             'weapon': self.weapon,
             'helping': self.helping,
             'sex': self.sex,
+            # TODO: Remove It
+            'is_aggressive': self.is_aggressive,
+            'is_undead': self.is_undead,
         }
 
     @classmethod
     def add(cls, name):
-        if fpbn(name) is not None:
+        if any(cls.find(name=name)):
             raise StopGame("You are already on the system - you may only be on once at a time")
 
         characters = (character for character in cls.all() if character.character_id < cls.MAX_USER)
@@ -210,12 +213,6 @@ def disl4(*args):
     # raise NotImplementedError()
     print("disl4({})".format(args))
     return "disl4({})".format(args)
-
-
-def fpbn(*args):
-    # raise NotImplementedError()
-    print("fpbn({})".format(args))
-    return None
 
 
 def is_dest(*args):
