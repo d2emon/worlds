@@ -18,4 +18,7 @@ export default {
   getExits: () => Api
     .get('/walk/exits')
     .then(({ data }) => data),
+  getJump: () => Api
+    .get('/walk/jump')
+    .then(({ data }) => data),
 };

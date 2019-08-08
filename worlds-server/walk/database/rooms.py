@@ -48,6 +48,14 @@ class Rooms(Database):
         return 0
 
     @classmethod
+    def __jump_to(cls, room_id):
+        return {
+            -643: -633,
+            -1050: -662,
+            -1082: -1053,
+        }.get(room_id)
+
+    @classmethod
     def __zone(cls, room_id):
         return cls.ZONES.by_room_id(room_id)
 
@@ -58,6 +66,7 @@ class Rooms(Database):
             'zone': cls.__zone(room_id).get('name'),
             'title': None,
             'exits': [],
+            'jump_to': cls.__jump_to(room_id),
             'description': None,
             'death_room': False,
             'no_brief': False,

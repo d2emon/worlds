@@ -275,7 +275,11 @@
         />
 
         <v-btn @click="console.log(171)">Debug</v-btn>
-        <v-btn @click="console.log(172)">Jump</v-btn>
+        <v-btn
+          @click="jump"
+        >
+          Jump
+        </v-btn>
         <v-btn
           @click="doMap"
         >
@@ -358,6 +362,7 @@ export default {
       'quitGame',
       'getRoom',
       'fetchExits',
+      'jump',
       'setDebugMode',
     ]),
     setLevel(level) { this.level = level; },

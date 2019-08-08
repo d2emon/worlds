@@ -21,7 +21,7 @@ class Player:
             -5,
             -183,
 
-            # -600,
+            # -643,
         ))  # curch
 
         self.__room = None
@@ -54,6 +54,9 @@ class Player:
 
     @property
     def character(self):
+        #
+        World.load()
+        #
         return Character.get(self.character_id)
 
     @property
@@ -326,26 +329,22 @@ class Player:
         return response
 
     def jump(self):
-        jumtb = {
-            -643: -633,
-            -1050: -662,
-            -1082: -1053,
-        }
-
-        a = 0
-        ms = ""
-        room_id = jumtb.get(self.room_id)
+        room_id = self.room.jump_to
         if room_id is None:
             return {'message': "Wheeeeee....\n"}
 
+        #
+        World.load()
+        #
         umbrella = Item.get(1)
-        if not self.is_wizard and not self.has_item(umbrella.item_id) or umbrella.state == 0:
+        if not self.is_wizard and (not self.has_item(umbrella.item_id) or umbrella.state == 0):
             self.__room_id = room_id
             loseme()
             return {
                 'message': "Wheeeeeeeeeeeeeeeee  <<<<SPLAT>>>>\nYou seem to be splattered all over the place\n",
                 'crapup': "I suppose you could be scraped up - with a spatula",
             }
+
         sendsys(
             self.name,
             self.name,
@@ -353,7 +352,8 @@ class Player:
             self.room_id,
             "[s name=\"{}\"]{} has just left\n[/s]".format(self.name, self.name),
         )
-        self.__room_id = room_id
+        self.room_id = room_id
+        self.set_room()
         sendsys(
             self.name,
             self.name,
@@ -361,8 +361,7 @@ class Player:
             self.room_id,
             "[s name=\"{}\"]{} has just dropped in\n[/s]".format(self.name, self.name),
         )
-        self.set_room(self.__room_id)
-        return {}
+        return {'result': True}
 
     def list_exits(self):
         exits = {}

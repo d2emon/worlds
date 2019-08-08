@@ -25,6 +25,7 @@ class Room(Model):
         room_id,
         title=None,
         exits=(),
+        jump_to=None,
         description=None,
         death_room=False,
         no_brief=False,
@@ -38,6 +39,7 @@ class Room(Model):
         self.__room_id = room_id
         self.title = title
         self.__exits = exits
+        self.jump_to = jump_to
         self.__description = description
         self.death_room = death_room
         self.no_brief = no_brief

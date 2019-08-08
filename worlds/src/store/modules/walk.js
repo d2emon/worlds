@@ -69,6 +69,11 @@ const actions = {
     .getGoDirection(direction)
     .then(response => dispatch('processResponse', response))
     .then(() => dispatch('getRoom')),
+  jump: ({ dispatch }) => walkService
+    .getJump()
+    .then(response => dispatch('processResponse', response))
+    .then(({ message }) => message && dispatch('modalMessage', message))
+    .then(() => dispatch('getRoom')),
   quitGame: ({ dispatch }) => walkService
     .getQuit()
     .then(({ error, ...response }) => dispatch('modalMessage', error || 'Ok').then(() => response))
