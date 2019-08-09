@@ -285,37 +285,6 @@ long findstart(unit)
     return(bk[0]);
     }
  
- talker(name)
- char *name;
-    {
-    extern long curch,cms;
-    extern long mynum;
-    extern long maxu;
-    extern long rd_qd;
-    FILE *fl;
-    char string[128];
-    extern char globme[];
-    makebfr();
-    	cms= -1;putmeon(name);
-    if(openworld()==NULL) crapup("Sorry AberMUD is currently unavailable");
-    if (mynum>=maxu) {printf("\nSorry AberMUD is full at the moment\n");return(0);}
-    strcpy(globme,name);
-    rte(name);
-    	closeworld();
-    cms= -1;
-    special(".g",name);
-    i_setup=1;
-    while(1)
-       {
-       pbfr();
-       sendmsg(name);
-       if(rd_qd) rte(name);
-       rd_qd=0;
-       closeworld();
-       pbfr();
-       }
-    }
-    
 long rd_qd=0;
  
  cleanup(inpbk)

@@ -7,6 +7,8 @@ class Globals:
     is_forced = False
     in_ms = ""
     out_ms = ""
+    pr_due = False
+    rd_qd = False
     tty = 0
     wd_there = ""
     rdes = 0

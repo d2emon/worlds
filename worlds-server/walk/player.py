@@ -8,6 +8,15 @@ from .models.message import Message
 from .models.room import Room
 
 
+def turn(f):
+    def wrapper(player, *args, **kwargs):
+        player.on_before_turn()
+        result = f(player, *args, **kwargs)
+        player.on_after_turn()
+        return result
+    return wrapper
+
+
 class Player:
     __PLAYER = None
 
@@ -183,6 +192,11 @@ class Player:
         Globals.tdes = 0
         Globals.vdes = 0
 
+    @turn
+    def wait(self):
+        pass
+
+    @turn
     def go(self, direction_id):
         if Globals.in_fight > 0:
             raise ActionError(
@@ -240,6 +254,7 @@ class Player:
         })
         return result
 
+    @turn
     def quit_game(self):
         if Globals.is_forced:
             raise ActionError("You can\'t be forced to do that")
@@ -277,6 +292,7 @@ class Player:
         saveme()
         raise StopGame('Goodbye')
 
+    @turn
     def look(self):
         World.save()
 
@@ -334,6 +350,7 @@ class Player:
         # items
         return response
 
+    @turn
     def jump(self):
         room_id = self.room.jump_to
         if room_id is None:
@@ -369,6 +386,7 @@ class Player:
         )
         return {'result': True}
 
+    @turn
     def list_exits(self):
         exits = {}
         for e in self.room.exits:
@@ -387,6 +405,17 @@ class Player:
         return {'exits': exits or None}
 
     # Events
+
+    def on_before_turn(self):
+        pbfr()
+        # sendmsg(name)
+
+    def on_after_turn(self):
+        if Globals.rd_qd:
+            self.read_messages()
+            Globals.rd_qd = False
+        World.save()
+        pbfr()
 
     def on_look(self):
         turn_undead = self.has_item(45)
@@ -423,6 +452,10 @@ class Player:
             check_help()
 
         return {'messages': list(messages)}
+
+    def on_stop_game(self):
+        pbfr()
+        Globals.pr_due = False  # So we dont get a prompt after the exit
 
 
 def check_fight(player, mobile):
@@ -547,6 +580,11 @@ def mstoout(*args):
 def ohany(*args):
     # raise NotImplementedError()
     print("ohany({})".format(args))
+
+
+def pbfr(*args):
+    # raise NotImplementedError()
+    print("pbfr({})".format(args))
 
 
 def randperc(*args):

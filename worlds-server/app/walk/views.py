@@ -1,6 +1,5 @@
 import random
 from flask import jsonify, request
-from walk.actions import quit_game
 from walk.exceptions import ActionError, StopGame
 from walk.globalVars import Globals
 from walk.parser import Parser
@@ -28,13 +27,8 @@ def on_error(message):
 
 
 def on_stop(message):
-    pbfr()
-    # Globals.pr_due = 0  # So we dont get a prompt after the exit
-    keysetback()
-    return jsonify({
-        'text': "pbfr()",
-        'crapup': str(message),
-    })
+    Player.player().on_stop_game()
+    return jsonify({'crapup': str(message)})
 
 
 @blueprint.route('/oops', methods=['GET'])
@@ -50,9 +44,18 @@ def ctrlc():
 @blueprint.route('/start/<name>', methods=['GET'])
 def start(name):
     response = Player.start(name)
-    player = response.get('player', {})
-    app.logger.info("GAME ENTRY: %s[%s]", player.get('name'), request.remote_addr)
+    app.logger.info("GAME ENTRY: %s[%s]", Player.player().name, request.remote_addr)
     return jsonify(response)
+
+
+@blueprint.route('/wait', methods=['GET'])
+def wait():
+    try:
+        return jsonify(Player.player().wait())
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
 
 
 @blueprint.route('/go/<direction>', methods=['GET'])
@@ -135,16 +138,3 @@ def jump():
         return on_error(e)
     except StopGame as e:
         return on_stop(e)
-
-
-# Not Implemented
-
-
-def keysetback(*args):
-    # raise NotImplementedError()
-    print("keysetback({})".format(args))
-
-
-def pbfr(*args):
-    # raise NotImplementedError()
-    print("pbfr({})".format(args))
