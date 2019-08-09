@@ -77,7 +77,7 @@ from ..player import put_on as putmeon
 
 # def loseme(name):
 
-# lasup = 0
+# lasup player
 
 from ..player import update_character as update
 
@@ -435,8 +435,6 @@ if(!zapped) saveme();
     	chksnp();
     }
  
-long lasup=0;
-
  revise(cutoff)
  long cutoff;
     {

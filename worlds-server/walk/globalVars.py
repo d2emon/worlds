@@ -1,10 +1,15 @@
 class Globals:
     ail_blind = False
+    ail_dumb = False
     curmode = 1
     exittxt = {}
     i_setup = False
     in_fight = False
     is_forced = False
+    me_cal = False
+    me_drunk = False
+    me_ivct = 0
+    my_str = 0
     in_ms = ""
     out_ms = ""
     pr_due = False
@@ -12,6 +17,8 @@ class Globals:
     sig_active = False
     tty = 0
     wd_there = ""
+    wpnheld = None
+    ades = 0
     rdes = 0
     vdes = 0
     tdes = 0

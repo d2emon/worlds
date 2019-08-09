@@ -1,5 +1,6 @@
 import random
-from .exceptions import ActionError, DatabaseError, StopGame
+import time
+from .exceptions import ActionError, StopGame
 from .database import World
 from .globalVars import Globals
 from .models.character import Character
@@ -37,6 +38,7 @@ class Player:
         ))  # curch
 
         self.__updated = 0  # lasup
+        self.__interrupt = None  # last_io_interrupt
 
         self.__room = None
 
@@ -196,13 +198,14 @@ class Player:
         return True
 
     def read_messages(self, interrupt=False):
+        print("Read Messages")
         World.load()
 
         for block in Message.read_from(self.message_id):
             mstoout(block, self)
 
         self.message_id = Message.last_message_id()
-        eorte(interrupt)
+        self.on_after_messages(interrupt=interrupt)
 
         Globals.rdes = 0
         Globals.tdes = 0
@@ -217,7 +220,7 @@ class Player:
         World.save()
         key_reprint()
         sig_alon()
-        return {}
+        return None
 
     @turn
     def go(self, direction_id):
@@ -469,6 +472,75 @@ class Player:
 
         return {'messages': list(messages)}
 
+    def on_after_messages(self, interrupt=True):
+        def check_invisibility():
+            if not Globals.me_ivct:
+                return
+
+            Globals.me_ivct -= 1
+
+            if Globals.me_ivct != 1:
+                return
+
+            self.character.visible = 0
+            self.character.save()
+
+        def check_calibrate():
+            if not Globals.me_cal:
+                return
+
+            Globals.me_cal = False
+            calibme()
+
+        def check_summon():
+            if not Globals.tdes:
+                return
+            dosumm(Globals.ades)
+
+        def check_in_fight():
+            if not Globals.in_fight:
+                return
+            if Globals.fighting.room_id != self.room_id:
+                Globals.in_fight = 0
+                Globals.fighting = None
+            if not Globals.fighting.is_created:
+                Globals.in_fight = 0
+                Globals.fighting = None
+            if interrupt and Globals.in_fight:
+                Globals.in_fight = 0
+                hitplayer(Globals.fighting, Globals.wpnheld)
+
+        def check_magic_item():
+            if not iswornby(18, self.character_id) and randperc() >= 10:
+                return
+            Globals.my_str += 1
+            if Globals.i_setup:
+                calibme()
+
+        def check_drink():
+            if Globals.me_drunk <= 0:
+                return
+            Globals.me_drunk -= 1
+            if Globals.ail_dumb:
+                return
+            parse("hiccup")
+
+        #
+        current_time = time.time()
+        print("-" * 80)
+        print(current_time, self.__interrupt, (current_time - self.__interrupt) if self.__interrupt else None)
+        interrupt = interrupt or not self.__interrupt or (current_time - self.__interrupt) > 2
+        if interrupt:
+            self.__interrupt = current_time
+
+        check_invisibility()
+        check_calibrate()
+        check_summon()
+        check_in_fight()
+        check_magic_item()
+        forchk()
+        check_drink()
+
     def on_quit(self):
         if Globals.in_fight:
             raise ActionError("^C\n")
@@ -535,10 +607,20 @@ def set_room(room_id):
 # TODO: Implement
 
 
+def calibme(*args):
+    # raise NotImplementedError()
+    print("calibme({})".format(args))
+
+
 def chkcrip(*args):
     # raise NotImplementedError()
     print("chkcrip({})".format(args))
     return False
+
+
+def dosumm(*args):
+    # raise NotImplementedError()
+    print("dosumm({})".format(args))
 
 
 def dumpitems(*args):
@@ -546,14 +628,25 @@ def dumpitems(*args):
     print("dumpitems({})".format(args))
 
 
-def eorte(*args):
+def forchk(*args):
     # raise NotImplementedError()
-    print("eorte({})".format(args))
+    print("forchk({})".format(args))
+
+
+def hitplayer(*args):
+    # raise NotImplementedError()
+    print("hitplayer({})".format(args))
 
 
 def ishere(*args):
     # raise NotImplementedError()
     print("ishere({})".format(args))
+    return False
+
+
+def iswornby(*args):
+    # raise NotImplementedError()
+    print("iswornby({})".format(args))
     return False
 
 
@@ -568,7 +661,7 @@ def loseme(*args):
 
 def mhitplayer(*args):
     # raise NotImplementedError()
-    print("makebfr({})".format(args))
+    print("mhitplayer({})".format(args))
 
 
 def mstoout(*args):
@@ -579,6 +672,11 @@ def mstoout(*args):
 def ohany(*args):
     # raise NotImplementedError()
     print("ohany({})".format(args))
+
+
+def parse(*args):
+    # raise NotImplementedError()
+    print("parse({})".format(args))
 
 
 def pbfr(*args):
