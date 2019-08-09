@@ -4,6 +4,7 @@ from .database import World
 from .globalVars import Globals
 from .models.character import Character
 from .models.item import Item
+from .models.message import Message
 from .models.room import Room
 
 
@@ -31,7 +32,7 @@ class Player:
         # Talker
         World.load()
         self.character_id = Character.add(self.name)
-        rte(self.name)
+        self.read_messages()
         # for c in Character.all():
         #     print(c.serialized)
         World.save()
@@ -53,7 +54,7 @@ class Player:
     def is_dark(self):
         def is_light(item_id):
             item = Item.get(item_id)
-            if item_id != 32 and not otstbit(item_id, 13):
+            if item_id != 32 and not item.is_light:
                 return False
             if ishere(item_id):
                 return True
@@ -100,7 +101,7 @@ class Player:
     def carry(self):
         if self.is_wizard:
             return self.character.carry
-        return (item for item in self.character.carry if not isdest(item))
+        return (item for item in self.character.carry if not item.is_destroyed)
 
     @property
     def available_characters(self):
@@ -167,6 +168,21 @@ class Player:
         setname(character)
         return True
 
+    def read_messages(self):
+        World.load()
+
+        for block in Message.read_from(self.message_id):
+            mstoout(block, self)
+
+        self.message_id = Message.last_message_id()
+
+        update(self)
+        eorte()
+
+        Globals.rdes = 0
+        Globals.tdes = 0
+        Globals.vdes = 0
+
     def go(self, direction_id):
         if Globals.in_fight > 0:
             raise ActionError(
@@ -228,7 +244,7 @@ class Player:
         if Globals.is_forced:
             raise ActionError("You can\'t be forced to do that")
 
-        rte(self.name)
+        self.read_messages()
 
         if Globals.in_fight:
             raise ActionError("Not in the middle of a fight!")
@@ -503,10 +519,9 @@ def dumpitems(*args):
     print("dumpitems({})".format(args))
 
 
-def isdest(*args):
+def eorte(*args):
     # raise NotImplementedError()
-    print("isdest({})".format(args))
-    return random.randrange(100) > 50
+    print("eorte({})".format(args))
 
 
 def ishere(*args):
@@ -519,38 +534,25 @@ def loseme(*args):
     raise NotImplementedError()
 
 
-def makebfr(*args):
-    # raise NotImplementedError()
-    print("makebfr({})".format(args))
-
-
 def mhitplayer(*args):
     # raise NotImplementedError()
     print("makebfr({})".format(args))
 
 
-def ohany(*args):
-    raise NotImplementedError()
-
-
-def otstbit(*args):
-    raise NotImplementedError()
-
-
-def putmeon(*args):
+def mstoout(*args):
     # raise NotImplementedError()
-    print("putmeon({})".format(args))
+    print("mstoout({})".format(args))
+
+
+def ohany(*args):
+    # raise NotImplementedError()
+    print("ohany({})".format(args))
 
 
 def randperc(*args):
     # raise NotImplementedError()
     print("randperc({})".format(args))
     return 0
-
-
-def rte(*args):
-    # raise NotImplementedError()
-    print("rte({})".format(args))
 
 
 def saveme(*args):
@@ -586,3 +588,8 @@ def sig_init():
 def special(*args):
     # raise NotImplementedError()
     print("special({})".format(args))
+
+
+def update(*args):
+    # raise NotImplementedError()
+    print("update({})".format(args))

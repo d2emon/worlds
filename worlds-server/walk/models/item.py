@@ -38,6 +38,7 @@ class Item(Model):
         # Flags
         is_destroyed=False,
         has_connected=False,
+        is_light=False,
     ):
         super().__init__()
         self.item_id = item_id
@@ -54,6 +55,7 @@ class Item(Model):
 
         self.__is_destroyed = is_destroyed
         self.__has_connected = has_connected
+        self.is_light = is_light
 
     @classmethod
     def database(cls):

@@ -461,6 +461,8 @@ class Items(ListDatabase):
             # Flags
             'is_destroyed': False,
             'has_connected': has_connected,
+            # 2-12
+            'is_light': False,
         }
 
     @classmethod

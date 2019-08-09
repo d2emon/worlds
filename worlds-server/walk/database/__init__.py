@@ -51,6 +51,7 @@ class World:
             raise StopGame("Cannot find World file")
 
         data = self.__data.all()
+        self.messages = data['messages']
         self.items = data['items']  # ? objinfo[4 * numobs]
         self.players = data['players']  # ? ublock[16 * 48]
 

@@ -42,12 +42,13 @@ Sectors 1-n  in pairs ie [128 words]
 
 # fl_com = None
 
-# def rte(name):
-
+from ..player import read_messages as rte
 from ..database import connect as openlock
 
 # def findstart(unit):
-# def findend(unit):
+
+from ..database.world import last_message_id as findend
+
 # def talker(name):
 
 # rd_qd = 0
@@ -275,36 +276,7 @@ if(in_fight) in_fight-=1;
     }
  
 FILE *fl_com;
-extern long findstart();
-extern long findend();
  
- rte(name)
- char *name;
-    {
-    extern long cms;
-    extern long vdes,tdes,rdes;
-    extern FILE *fl_com;
-    extern long debug_mode;
-    FILE *unit;
-    long too,ct,block[128];
-    unit=openworld();
-    fl_com=unit;
-    if (unit==NULL) crapup("AberMUD: FILE_ACCESS : Access failed\n");
-    if (cms== -1) cms=findend(unit);
-    too=findend(unit);
-    ct=cms;
-    while(ct<too)
-       {
-       readmsg(unit,block,ct);
-       mstoout(block,name);
-       ct++;
-       }
-    cms=ct;
-    update(name);
-    eorte();
-    rdes=0;tdes=0;vdes=0;
-    }
-    
 long findstart(unit)
  FILE *unit;
     {
@@ -312,15 +284,6 @@ long findstart(unit)
     sec_read(unit,bk,0,1);
     return(bk[0]);
     }
- 
-long findend(unit)
- FILE *unit;
-    {
-    long bk[3];
-    sec_read(unit,bk,0,2);
-    return(bk[1]);
-    }
- 
  
  talker(name)
  char *name;

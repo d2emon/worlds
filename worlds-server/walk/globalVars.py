@@ -9,3 +9,6 @@ class Globals:
     out_ms = ""
     tty = 0
     wd_there = ""
+    rdes = 0
+    vdes = 0
+    tdes = 0
