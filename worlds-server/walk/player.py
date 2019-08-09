@@ -192,7 +192,6 @@ class Player:
         Globals.tdes = 0
         Globals.vdes = 0
 
-    @turn
     def wait(self):
         if not Globals.sig_active:
             return None
@@ -414,16 +413,9 @@ class Player:
 
     # Events
 
-    def on_before_turn(self):
-        pbfr()
-        # sendmsg(name)
-
-    def on_after_turn(self):
-        if Globals.rd_qd:
-            self.read_messages()
-            Globals.rd_qd = False
-        World.save()
-        pbfr()
+    def on_error(self):
+        loseme()
+        return {'fatalError': 255}
 
     def on_look(self):
         turn_undead = self.has_item(45)
@@ -461,9 +453,26 @@ class Player:
 
         return {'messages': list(messages)}
 
+    def on_quit(self):
+        if Globals.in_fight:
+            raise ActionError("^C\n")
+        loseme()
+        raise StopGame("Byeeeeeeeeee  ...........")
+
     def on_stop_game(self):
         pbfr()
         Globals.pr_due = False  # So we dont get a prompt after the exit
+
+    def on_before_turn(self):
+        pbfr()
+        sendmsg(self)
+
+    def on_after_turn(self):
+        if Globals.rd_qd:
+            self.read_messages()
+            Globals.rd_qd = False
+        World.save()
+        pbfr()
 
 
 def check_fight(player, mobile):
@@ -507,45 +516,6 @@ def set_room(room_id):
     return Player.player().set_room(room_id)
 
 
-# Signals
-
-
-def sig_ctrlc():
-    if Globals.in_fight:
-        raise ActionError("^C\n")
-    loseme()
-    raise StopGame("Byeeeeeeeeee  ...........")
-
-
-def sig_oops():
-    loseme()
-    return {'code': 255}
-
-
-def sig_hup():
-    return sig_oops()
-
-
-def sig_int():
-    return sig_ctrlc()
-
-
-def sig_term():
-    return sig_ctrlc()
-
-
-def sig_tstp():
-    return None
-
-
-def sig_quit():
-    return None
-
-
-def sig_cont():
-    return sig_oops()
-
-
 # TODO: Implement
 
 
@@ -569,6 +539,11 @@ def ishere(*args):
     # raise NotImplementedError()
     print("ishere({})".format(args))
     return False
+
+
+def key_reprint(*args):
+    # raise NotImplementedError()
+    print("key_reprint({})".format(args))
 
 
 def loseme(*args):
@@ -606,6 +581,11 @@ def saveme(*args):
     print("saveme({})".format(args))
 
 
+def sendmsg(*args):
+    # raise NotImplementedError()
+    print("sendmsg({})".format(args))
+
+
 def sendsys(*args):
     # raise NotImplementedError()
     print("sendsys({})".format(args))
@@ -624,17 +604,6 @@ def sig_aloff():
 def sig_alon():
     # raise NotImplementedError()
     print("sig_alon")
-
-
-def sig_init():
-    return {
-        'SIGHUP': sig_oops,
-        'SIGINT': sig_ctrlc,
-        'SIGTERM': sig_ctrlc,
-        'SIGTSTP': None,
-        'SIGQUIT': None,
-        'SIGCONT': sig_oops,
-    }
 
 
 def special(*args):

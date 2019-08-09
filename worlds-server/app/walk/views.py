@@ -3,7 +3,7 @@ from flask import jsonify, request
 from walk.exceptions import ActionError, StopGame
 from walk.globalVars import Globals
 from walk.parser import Parser
-from walk.player import Player, sig_oops, sig_ctrlc
+from walk.player import Player
 from .. import app
 from . import blueprint
 
@@ -33,12 +33,22 @@ def on_stop(message):
 
 @blueprint.route('/oops', methods=['GET'])
 def oops():
-    return jsonify(sig_oops())
+    try:
+        return jsonify(Player.player().on_error() or {})
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
 
 
 @blueprint.route('/ctrlc', methods=['GET'])
 def ctrlc():
-    return jsonify(sig_ctrlc())
+    try:
+        return jsonify(Player.player().on_quit() or {})
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
 
 
 @blueprint.route('/start/<name>', methods=['GET'])
