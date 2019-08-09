@@ -26,6 +26,8 @@
         v-html="room.html"
       />
 
+      {{messages}}
+
       <v-layout raw wrap>
         <v-flex md6>
           <v-list>
@@ -90,6 +92,7 @@ export default {
       'debugMode',
       'player',
       'room',
+      'messages',
     ]),
   },
   methods: {

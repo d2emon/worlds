@@ -27,8 +27,10 @@ def on_error(message):
 
 
 def on_stop(message):
-    Player.player().on_stop_game()
-    return jsonify({'crapup': str(message)})
+    return jsonify({
+        'messages': Player.player().on_stop_game(),
+        'crapup': str(message),
+    })
 
 
 @blueprint.route('/oops', methods=['GET'])
@@ -92,12 +94,7 @@ def quit_system():
 @blueprint.route('/look', methods=['GET'])
 def look():
     try:
-        room = Player.player().look()
-        return jsonify({
-            'result': room.get('result'),
-            'error': room.get('error'),
-            'room': room,
-        })
+        return jsonify(Player.player().look())
     except ActionError as e:
         return on_error(e)
     except StopGame as e:

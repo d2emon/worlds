@@ -11,9 +11,12 @@ from .models.room import Room
 
 def turn(f):
     def wrapper(player, *args, **kwargs):
-        player.on_before_turn()
-        result = f(player, *args, **kwargs)
-        player.on_after_turn()
+        messages = []
+        messages += player.on_before_turn()
+        result = f(player, *args, **kwargs) or {}
+        messages += player.on_after_turn()
+
+        result['messages'] = messages
         return result
     return wrapper
 
@@ -198,7 +201,6 @@ class Player:
         return True
 
     def read_messages(self, interrupt=False):
-        print("Read Messages")
         World.load()
 
         for block in Message.read_from(self.message_id):
@@ -210,6 +212,36 @@ class Player:
         Globals.rdes = 0
         Globals.tdes = 0
         Globals.vdes = 0
+
+    def get_text(self):
+        result = []
+
+        World.save()
+
+        if len(Globals.sysbuf):
+            Globals.pr_due = True
+            if Globals.pr_qcr:
+                result.append("\n")
+
+        Globals.pr_qcr = False
+
+        if Globals.log_fl is not None:
+            result.append(dcprnt(Globals.sysbuf, Globals.log_fl, iskb=False))
+
+        if Globals.snoopd is not None:
+            fln = opensnoop(Globals.snoopd.name, "a")
+            if fln is not None:
+                result.append(dcprnt(Globals.sysbuf, fln, iskb=False))
+                # disconnect(fln)
+
+        result.append(dcprnt(Globals.sysbuf, None, iskb=True))
+
+        Globals.sysbuf = ""  # clear buffer
+
+        if Globals.snoopt is not None:
+            result.append(viewsnoop())
+
+        return result
 
     def wait(self):
         if not Globals.sig_active:
@@ -330,7 +362,8 @@ class Player:
 
         World.load()
 
-        response = {
+        error = False
+        room_data = {
             'no_brief': self.room.no_brief,
             'is_dark': self.room.is_dark,
             'death': self.room.death_room,
@@ -339,33 +372,32 @@ class Player:
         }
         messages = []
         if self.is_dark:
-            response.update({'error': "It is dark"})
+            error = "It is dark"
         elif Globals.ail_blind:
-            response.update({'error': "You are blind... you can't see a thing!"})
+            error = "You are blind... you can't see a thing!"
         else:
-            response.update({
+            room_data.update({
                 'title': self.room.title,
                 'text': self.room.description,
             })
-            response.update(self.room.list_items(self))
+            room_data.update(self.room.list_items(self))
 
             if Globals.curmode == 1:
-                response.update({'characters': list(Character.list_characters(self))})
+                room_data.update({'characters': list(Character.list_characters(self))})
 
         messages += self.on_look().get('messages', [])
 
-        response.update({'messages': messages})
+        room_data.update({'messages': messages})
         if self.is_wizard:
-            response.update({'name': self.room.name})
+            room_data.update({'name': self.room.name})
         if self.is_god:
-            response.update({'room_id': self.room.room_id})
+            room_data.update({'room_id': self.room.room_id})
             # Secret
-            response.update({
+            room_data.update({
                 'zone': (self.room.zone.name, self.room.in_zone),
                 'exits': [e.room_to for e in self.room.exits],
                 'outdoors': self.room.outdoors,
             })
-        response.update({'result': not response.get('error')})
 
         # error
         # messages
@@ -374,6 +406,9 @@ class Player:
         # title
         # text
         # items
+        response = {'room':  room_data}
+        if error:
+            response.update({'error': error})
         return response
 
     @turn
@@ -548,19 +583,21 @@ class Player:
         raise StopGame("Byeeeeeeeeee  ...........")
 
     def on_stop_game(self):
-        pbfr(self)
+        result = self.get_text()
         Globals.pr_due = False  # So we dont get a prompt after the exit
+        return result
 
     def on_before_turn(self):
-        pbfr()
+        result = self.get_text()
         sendmsg(self)
+        return result
 
     def on_after_turn(self):
         if Globals.rd_qd:
             self.read_messages()
             Globals.rd_qd = False
         World.save()
-        pbfr()
+        return self.get_text()
 
 
 def check_fight(player, mobile):
@@ -616,6 +653,16 @@ def chkcrip(*args):
     # raise NotImplementedError()
     print("chkcrip({})".format(args))
     return False
+
+
+def dcprnt(source, dest, **kwargs):
+    # raise NotImplementedError()
+    print("dcprnt({}, {}, {})".format(source, dest, kwargs))
+    if not source:
+        return None
+    if dest is None:
+        return "dcprnt({}, {}, {})".format(source, dest, kwargs)
+    return None
 
 
 def dosumm(*args):
@@ -674,14 +721,15 @@ def ohany(*args):
     print("ohany({})".format(args))
 
 
+def opensnoop(*args):
+    # raise NotImplementedError()
+    print("opensnoop({})".format(args))
+    return None
+
+
 def parse(*args):
     # raise NotImplementedError()
     print("parse({})".format(args))
-
-
-def pbfr(*args):
-    # raise NotImplementedError()
-    print("pbfr({})".format(args))
 
 
 def randperc(*args):
@@ -728,3 +776,8 @@ def special(*args):
 def update(*args):
     # raise NotImplementedError()
     print("update({})".format(args))
+
+
+def viewsnoop(*args):
+    # raise NotImplementedError()
+    print("viewsnoop({})".format(args))

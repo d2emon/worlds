@@ -27,7 +27,7 @@ from ..player import make_buffer as makebfr
 
 # long pr_qcr;
 
-# def pbfr():
+from ..player import get_text as pbfr
 
 # long iskb=1;
 
@@ -274,37 +274,6 @@ void logcom()
     }
 
 long pr_qcr; 
-
-void pbfr()
-    {
-    FILE *fln;
-    long mu;
-    block_alarm();
-    closeworld();
-    if(strlen(sysbuf)) pr_due=1;
-    if((strlen(sysbuf))&&(pr_qcr)) putchar('\n');
-    pr_qcr=0;
-    if(log_fl!=NULL)
-       {
-       iskb=0;
-       dcprnt(sysbuf,log_fl);
-       }
-    if(snoopd!=-1)
-       {
-       fln=opensnoop(pname(snoopd),"a");
-       if(fln>0)
-          {
-iskb=0;
-          dcprnt(sysbuf,fln);
-          fcloselock(fln);
-          }
-       }
-    iskb=1;
-    dcprnt(sysbuf,stdout);
-    sysbuf[0]=0; /* clear buffer */
-    if(snoopt!=-1) viewsnoop();
-    unblock_alarm();
-    }
 
 long iskb=1;
 

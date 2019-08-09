@@ -6,6 +6,7 @@ class Globals:
     i_setup = False
     in_fight = False
     is_forced = False
+    log_fl = None
     me_cal = False
     me_drunk = False
     me_ivct = 0
@@ -15,6 +16,9 @@ class Globals:
     pr_due = False
     rd_qd = False
     sig_active = False
+    snoopd = None
+    snoopt = None
+    sysbuf = ""
     tty = 0
     wd_there = ""
     wpnheld = None

@@ -19,6 +19,7 @@ const state = {
   },
   room: null,
   exits: null,
+  messages: [],
 };
 
 const getters = {
@@ -34,6 +35,8 @@ const mutations = {
   setDebugMode: (state, debugMode) => { state.debugMode = debugMode; },
   setRoom: (state, room) => { state.room = room; },
   setExits: (state, exits) => { state.exits = exits; },
+  clearMessages: state => { state.messages = []; },
+  setMessages: (state, messages) => { state.messages.push(...messages); },
 };
 
 const actions = {
@@ -44,11 +47,26 @@ const actions = {
     return onMessage ? onMessage() : null;
   },
 
+  getMessages: ({}, response) => {
+    console.log('self.get_text()', response);
+    return Promise.resolve(response);
+  },
+  beforeAction: ({ dispatch }) => dispatch('getMessages')
+    .then(() => console.log('sendmsg(self)')),
+  afterAction: ({ dispatch }, response) => {
+    // if (state.rd_qd) {
+    //   dispatch('readMessages');
+    //   commit('setRdQd', False);
+    // }
+    // World.save()
+    return dispatch('getMessages', response);
+  },
+
   restart: ({ dispatch, state }) => Promise.all([
     walkService.getStart(state.name),
     dispatch('modalMessage', 'Entering Game ....'),
   ])
-    .then(([response, ]) => dispatch('processResponse', response))
+    .then(([response]) => dispatch('processResponse', response))
     .then(response => dispatch('getRoom').then(() => response))
     .then(({ message }) => message && dispatch('modalMessage', message)),
 
@@ -65,27 +83,36 @@ const actions = {
     })
     .then(() => dispatch('fetchExits')),
 
-  wait: ({ dispatch }) => walkService
-    .getWait()
+  wait: ({ dispatch }) => dispatch('beforeAction')
+    .then(() => walkService.getWait())
+    .then(response => dispatch('afterAction', response))
     .then(response => dispatch('processResponse', response))
     .then(() => dispatch('getRoom')),
-  goDirection: ({ dispatch }, direction) => walkService
-    .getGoDirection(direction)
-    .then(response => dispatch('processResponse', response))
+  goDirection: ({ commit, dispatch }, direction) => dispatch('beforeAction')
+    .then(() => walkService.getGoDirection(direction))
+    .then(response => dispatch('afterAction', response))
+    .then((response) => {
+      commit('clearMessages');
+      dispatch('processResponse', response);
+    })
     .then(() => dispatch('getRoom')),
-  jump: ({ dispatch }) => walkService
-    .getJump()
+  jump: ({ dispatch }) => dispatch('beforeAction')
+    .then(() => walkService.getJump())
+    .then(response => dispatch('afterAction', response))
     .then(response => dispatch('processResponse', response))
     .then(({ message }) => message && dispatch('modalMessage', message))
     .then(() => dispatch('getRoom')),
-  quitGame: ({ dispatch }) => walkService
-    .getQuit()
+  quitGame: ({ dispatch }) => dispatch('beforeAction')
+    .then(() => walkService.getQuit())
+    .then(response => dispatch('afterAction', response))
     .then(({ error, ...response }) => dispatch('modalMessage', error || 'Ok').then(() => response))
     .then(response => dispatch('processResponse', response))
     .then(() => dispatch('restart')),
-  fetchExits: ({ commit }) => walkService
-    .getExits()
+  fetchExits: ({ commit, dispatch }) => dispatch('beforeAction')
+    .then(() => walkService.getExits())
+    .then(response => dispatch('afterAction', response))
     // .then(({ exits, ...data}) => { console.log(exits, data); return { exits }; })
+    .then(response => dispatch('processResponse', response))
     .then(({ exits }) => commit('setExits', exits)),
 
   setDebugMode: ({ getters, commit }, debugMode) => {
@@ -97,20 +124,23 @@ const actions = {
     message,
     onMessage: resolve,
   })),
-  processResponse: ({ dispatch }, {
+  processResponse: ({ commit, dispatch }, {
     crapup,
     error,
+    messages,
     ...response
   }) => Promise.resolve()
     /*
     .then(() => console.log({
       crapup,
       error,
+      messages,
       response,
     }))
      */
     .then(() => error && dispatch('modalMessage', error))
     .then(() => crapup && dispatch('modalMessage', `<hr /><div>${crapup}</div><hr />`))
+    .then(() => messages && commit('setMessages', messages))
     .then(() => response),
 };
 
