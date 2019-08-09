@@ -9,6 +9,7 @@ class Globals:
     out_ms = ""
     pr_due = False
     rd_qd = False
+    sig_active = False
     tty = 0
     wd_there = ""
     rdes = 0

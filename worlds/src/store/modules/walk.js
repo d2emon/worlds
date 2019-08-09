@@ -65,6 +65,10 @@ const actions = {
     })
     .then(() => dispatch('fetchExits')),
 
+  wait: ({ dispatch }) => walkService
+    .getWait()
+    .then(response => dispatch('processResponse', response))
+    .then(() => dispatch('getRoom')),
   goDirection: ({ dispatch }, direction) => walkService
     .getGoDirection(direction)
     .then(response => dispatch('processResponse', response))

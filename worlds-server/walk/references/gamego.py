@@ -13,8 +13,7 @@ from ..exceptions import StopGame as crapup
 
 # long interrupt=0;
 
-# def sig_occur():
-
+from ..player import wait as sig_occur
 from ..player import sig_init as sig_init
 from ..player import sig_oops as sig_oops
 from ..player import sig_ctrlc as sig_ctrlc
@@ -76,21 +75,6 @@ sig_aloff()
 }
 
 long interrupt=0;
-
-sig_occur()
-{
-	extern char globme[];
-	if(sig_active==0) return;
-	sig_aloff();
-	openworld();
-	interrupt=1;
-	rte(globme);
-	interrupt=0;
-	on_timing();
-	closeworld();
-	key_reprint();
-	sig_alon();
-}
 
 set_progname(n,text)
 char *text;

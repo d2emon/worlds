@@ -337,6 +337,8 @@ export default {
     },
   },
   data: () => ({
+    timerId: null,
+
     level: 1,
 
     // Special
@@ -358,6 +360,7 @@ export default {
 
       'restart',
 
+      'wait',
       'goDirection',
       'quitGame',
       'getRoom',
@@ -422,6 +425,12 @@ export default {
       this.on_flee_event();
       return this.goDirection(directionId);
     },
+  },
+  mounted() {
+    this.timerId = setInterval(this.wait, 2000);
+  },
+  destroyed() {
+    clearInterval(this.timerId);
   },
 };
 </script>

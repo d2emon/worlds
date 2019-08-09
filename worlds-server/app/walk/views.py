@@ -51,7 +51,7 @@ def start(name):
 @blueprint.route('/wait', methods=['GET'])
 def wait():
     try:
-        return jsonify(Player.player().wait())
+        return jsonify(Player.player().wait() or {})
     except ActionError as e:
         return on_error(e)
     except StopGame as e:

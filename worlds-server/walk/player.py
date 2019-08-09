@@ -177,7 +177,7 @@ class Player:
         setname(character)
         return True
 
-    def read_messages(self):
+    def read_messages(self, interrupt=False):
         World.load()
 
         for block in Message.read_from(self.message_id):
@@ -194,7 +194,15 @@ class Player:
 
     @turn
     def wait(self):
-        pass
+        if not Globals.sig_active:
+            return None
+
+        sig_aloff()
+        self.read_messages(interrupt=True)
+        World.save()
+        key_reprint()
+        sig_alon()
+        return {}
 
     @turn
     def go(self, direction_id):
@@ -608,8 +616,14 @@ def setname(*args):
     print("setname({})".format(args))
 
 
-# def sig_aloff():
-#     raise NotImplementedError()
+def sig_aloff():
+    # raise NotImplementedError()
+    print("sig_aloff")
+
+
+def sig_alon():
+    # raise NotImplementedError()
+    print("sig_alon")
 
 
 def sig_init():
