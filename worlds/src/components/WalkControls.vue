@@ -23,6 +23,12 @@
     <v-container>
       <v-layout row wrap>
         <v-flex xs12>
+          <h4>{{progname}}</h4>
+        </v-flex>
+      </v-layout>
+
+      <v-layout row wrap>
+        <v-flex xs12>
           <h4>Obvious exits are:</h4>
           <div v-if="!exits">None....</div>
         </v-flex>
@@ -98,6 +104,21 @@
           </v-btn>
           <div v-if="exits && exits['d'] !== true">{{exits['d']}}</div>
         </v-flex>
+      </v-layout>
+
+      <v-layout row wrap>
+        <v-text-field
+          label="Command"
+          v-model="command"
+        >
+          <span slot="prepend">{{prompt}}</span>
+          <v-btn
+            slot="append"
+            @click="inputCommand(command)"
+          >
+            Ok
+          </v-btn>
+        </v-text-field>
       </v-layout>
       <v-layout row wrap>
         <v-btn @click="setLevel(1)">Player</v-btn>
@@ -323,6 +344,7 @@ export default {
   computed: {
     ...mapGetters('walk', [
       'isDebugger',
+      'prompt',
     ]),
     ...mapState('walk', [
       'message',
@@ -330,6 +352,8 @@ export default {
       'debugMode',
       'player',
       'exits',
+
+      'progname',
     ]),
     showingMessage: {
       get() { return !!this.message; },
@@ -349,6 +373,8 @@ export default {
     curmode: 0,
     mynum: 1,
     my_sco: 0,
+
+    command: '',
   }),
   methods: {
     ...mapMutations('walk', [
@@ -359,6 +385,7 @@ export default {
       'hideMessage',
 
       'restart',
+      'inputCommand',
 
       'wait',
       'goDirection',
@@ -427,7 +454,7 @@ export default {
     },
   },
   mounted() {
-    this.timerId = setInterval(this.wait, 2000);
+    this.timerId = setInterval(this.wait, 60000);
   },
   destroyed() {
     clearInterval(this.timerId);

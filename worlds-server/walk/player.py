@@ -9,15 +9,22 @@ from .models.message import Message
 from .models.room import Room
 
 
-def turn(f):
-    def wrapper(player, *args, **kwargs):
-        messages = []
-        messages += player.on_before_turn()
-        result = f(player, *args, **kwargs) or {}
-        messages += player.on_after_turn()
+def turn(command=None):
+    def wrapper(f):
+        def wrapped(player, *args, **kwargs):
+            messages = []
 
-        result['messages'] = messages
-        return result
+            messages += player.on_before_turn()
+
+            if command is not None:
+                player.add_command(command)
+            result = f(player, *args, **kwargs) or {}
+
+            messages += player.on_after_turn()
+
+            result['messages'] = list(filter(None, messages))
+            return result
+        return wrapped
     return wrapper
 
 
@@ -42,6 +49,7 @@ class Player:
 
         self.__updated = 0  # lasup
         self.__interrupt = None  # last_io_interrupt
+        self.__text_messages = []
 
         self.__room = None
 
@@ -213,49 +221,66 @@ class Player:
         Globals.tdes = 0
         Globals.vdes = 0
 
+    def __decode(self, dst=None, keyboard=False):
+        return dcprnt(self.__text_messages, dst, iskb=keyboard)
+
     def get_text(self):
         result = []
 
         World.save()
 
-        if len(Globals.sysbuf):
+        if len(self.__text_messages):
             Globals.pr_due = True
             if Globals.pr_qcr:
                 result.append("\n")
-
         Globals.pr_qcr = False
 
         if Globals.log_fl is not None:
-            result.append(dcprnt(Globals.sysbuf, Globals.log_fl, iskb=False))
+            result.append(self.__decode(Globals.log_fl, keyboard=False))
 
         if Globals.snoopd is not None:
             fln = opensnoop(Globals.snoopd.name, "a")
             if fln is not None:
-                result.append(dcprnt(Globals.sysbuf, fln, iskb=False))
+                result.append(self.__decode(fln, keyboard=False))
                 # disconnect(fln)
 
-        result.append(dcprnt(Globals.sysbuf, None, iskb=True))
+        result.append(self.__decode(keyboard=True))
 
-        Globals.sysbuf = ""  # clear buffer
+        # self.__text_messages = []  # clear buffer
 
         if Globals.snoopt is not None:
             result.append(viewsnoop())
 
         return result
 
-    def wait(self):
-        if not Globals.sig_active:
-            return None
+    def add_command(self, command):
+        self.__text_messages.append("[l]{}\n[/l]".format(command))
 
-        sig_aloff()
+        self.read_messages()
+        World.save()
+
+        command = command.lower()
+        result = command and command != ".q"
+        if Globals.curmode:
+            gamecom(command)
+        elif result:
+            special(command, self.name)
+        return result
+
+    def wait(self):
         self.read_messages(interrupt=True)
         World.save()
-        key_reprint()
-        sig_alon()
-        return None
 
-    @turn
+        key_reprint()
+        # return None
+        return {
+            'messages': self.__text_messages,
+        }
+
+    @turn()
     def go(self, direction_id):
+        self.add_command("go {}".format(direction_id))
+
         if Globals.in_fight > 0:
             raise ActionError(
                 "You can't just stroll out of a fight!\n"
@@ -312,7 +337,7 @@ class Player:
         })
         return result
 
-    @turn
+    @turn('quit')
     def quit_game(self):
         if Globals.is_forced:
             raise ActionError("You can\'t be forced to do that")
@@ -350,7 +375,7 @@ class Player:
         saveme()
         raise StopGame('Goodbye')
 
-    @turn
+    @turn('look')
     def look(self):
         World.save()
 
@@ -411,7 +436,7 @@ class Player:
             response.update({'error': error})
         return response
 
-    @turn
+    @turn('jump')
     def jump(self):
         room_id = self.room.jump_to
         if room_id is None:
@@ -447,7 +472,7 @@ class Player:
         )
         return {'result': True}
 
-    @turn
+    @turn('exits')
     def list_exits(self):
         exits = {}
         for e in self.room.exits:
@@ -560,10 +585,7 @@ class Player:
                 return
             parse("hiccup")
 
-        #
         current_time = time.time()
-        print("-" * 80)
-        print(current_time, self.__interrupt, (current_time - self.__interrupt) if self.__interrupt else None)
         interrupt = interrupt or not self.__interrupt or (current_time - self.__interrupt) > 2
         if interrupt:
             self.__interrupt = current_time
@@ -593,9 +615,21 @@ class Player:
         return result
 
     def on_after_turn(self):
+        # Check Fight
+        if Globals.fighting:
+            if not Globals.fighting.is_created or Globals.fighting.room_id != self.room_id:
+                Globals.in_fight = 0
+                Globals.fighting = None
+
+        if Globals.in_fight:
+            Globals.in_fight -= 1
+
+        # Read messages
         if Globals.rd_qd:
             self.read_messages()
             Globals.rd_qd = False
+
+        # Save
         World.save()
         return self.get_text()
 
@@ -680,6 +714,11 @@ def forchk(*args):
     print("forchk({})".format(args))
 
 
+def gamecom(*args):
+    # raise NotImplementedError()
+    print("gamecom({})".format(args))
+
+
 def hitplayer(*args):
     # raise NotImplementedError()
     print("hitplayer({})".format(args))
@@ -756,16 +795,6 @@ def sendsys(*args):
 def setname(*args):
     # raise NotImplementedError()
     print("setname({})".format(args))
-
-
-def sig_aloff():
-    # raise NotImplementedError()
-    print("sig_aloff")
-
-
-def sig_alon():
-    # raise NotImplementedError()
-    print("sig_alon")
 
 
 def special(*args):

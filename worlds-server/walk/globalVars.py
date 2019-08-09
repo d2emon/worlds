@@ -3,6 +3,7 @@ class Globals:
     ail_dumb = False
     curmode = 1
     exittxt = {}
+    fighting = None
     i_setup = False
     in_fight = False
     is_forced = False
@@ -15,10 +16,8 @@ class Globals:
     out_ms = ""
     pr_due = False
     rd_qd = False
-    sig_active = False
     snoopd = None
     snoopt = None
-    sysbuf = ""
     tty = 0
     wd_there = ""
     wpnheld = None

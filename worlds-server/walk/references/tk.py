@@ -35,8 +35,8 @@ Sectors 1-n  in pairs ie [128 words]
 # gurum = 0
 # convflg = 0
 
+from ..player import input_command as sendmsg
 
-# def sendmsg(name):
 # def send2(block):
 # def readmsg(channel,block,num):
 
@@ -153,99 +153,6 @@ if(debug_mode)    bprintf("\n<%d>",block[1]);
 long gurum=0;
 long convflg=0;
  
-sendmsg(name)
- char *name;
-    {
-    extern long debug_mode;
-    extern char *sysbuf;
-    extern long curch,moni,mynum;
-    char prmpt[32];
-    long a;
-extern long tty;
-    char work[200];
-    long w2[35];
-    extern char key_buff[];
-    extern long convflg;
-    extern long my_lev;
-extern long my_str;
-extern long in_fight;
-extern long fighting;
-    extern long curmode;
-    l:pbfr();
-if(tty==4) btmscr();
-strcpy(prmpt,"\r");
-    if(pvis(mynum)) strcat(prmpt,"(");
-    if(debug_mode) strcat(prmpt,"#");
-    if(my_lev>9)strcat(prmpt,"----");
-    switch(convflg)
-       {
-       case 0:
-          strcat(prmpt,">");
-          break;
-       case 1:
-          strcat(prmpt,"\"");
-          break;
-       case 2:
-          strcat(prmpt,"*");
-          break;
-       default:
-          strcat(prmpt,"?");
-          }
-    if(pvis(mynum)) strcat(prmpt,")");
-    pbfr();
-    if(pvis(mynum)>9999) set_progname(0,"-csh");
-    else
-    sprintf(work,"   --}----- ABERMUD -----{--     Playing as %s",name);
-    if(pvis(mynum)==0) set_progname(0,work);
-    sig_alon();
-    key_input(prmpt,80);
-    sig_aloff();
-    strcpy(work,key_buff);
-if(tty==4) topscr();
-strcat(sysbuf,"\001l");
-strcat(sysbuf,work);
-strcat(sysbuf,"\n\001");
-openworld();
-rte(name);
-closeworld();
-    if((convflg)&&(!strcmp(work,"**")))
-       {
-       convflg=0;
-       goto l;
-       }
-    if(!strlen(work)) goto nadj;
-if((strcmp(work,"*"))&&(work[0]=='*')){(work[0]=32);goto nadj;}
-    if(convflg)
-       {
-       strcpy(w2,work);
-       if(convflg==1) sprintf(work,"say %s",w2);
-       else
-          sprintf(work,"tss %s",w2);
-       }
-    nadj:if(curmode==1) gamecom(work);
-    else
-       {
-       if(((strcmp(work,".Q"))&&(strcmp(work,".q")))&& (!!strlen(work)))
-          {
-          a=special(work,name);
-          }
-       }
-if(fighting>-1)
-{
-if(!strlen(pname(fighting))) 
-{
-in_fight=0;
-fighting= -1;
-}
-if(ploc(fighting)!=curch) 
-{
-in_fight=0;
-fighting= -1;
-}
-}
-if(in_fight) in_fight-=1;
-    return((!strcmp(work,".Q"))||(!strcmp(work,".q")));
-    }
  
  send2(block)
  long *block;

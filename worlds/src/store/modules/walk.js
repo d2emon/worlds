@@ -5,6 +5,8 @@ import {
 
 
 const state = {
+  progname: '',
+
   name: 'Player',
 
   message: '',
@@ -13,9 +15,13 @@ const state = {
   brief: false,
   debugMode: false,
 
+  convflg: 0,
+
   player: {
     is_wizard: true,
     is_god: true,
+
+    visible: 0,
   },
   room: null,
   exits: null,
@@ -24,6 +30,19 @@ const state = {
 
 const getters = {
   isDebugger: () => true, // this.ptstflg(this.mynum, 4)
+  prompt: (state) => {
+    let prompt = '';
+    if (state.convflg === 0) prompt = '>';
+    else if (state.convflg === 1) prompt = '"';
+    else if (state.convflg === 2) prompt = '*';
+    else prompt = '?';
+
+    if (state.debugMode) prompt = `#${prompt}`;
+    if (state.player.is_wizard) prompt = `----${prompt}`;
+    if (state.player.visible) prompt = `(${prompt})`;
+
+    return prompt;
+  },
 };
 
 const mutations = {
@@ -37,6 +56,13 @@ const mutations = {
   setExits: (state, exits) => { state.exits = exits; },
   clearMessages: state => { state.messages = []; },
   setMessages: (state, messages) => { state.messages.push(...messages); },
+  updateProgname: (state) => {
+    state.progname = (state.player.visible > 9999)
+      ? '-csh'
+      : state.player.visible
+        ? `   --}----- ABERMUD -----{--     Playing as ${state.name}`
+        : state.progname;
+  },
 };
 
 const actions = {
@@ -47,12 +73,43 @@ const actions = {
     return onMessage ? onMessage() : null;
   },
 
+  inputCommand: ({ commit, dispatch, state }, command) => {
+    const executeCommand = (toExecute) => {
+      console.log(toExecute);
+    };
+
+    const top = () => {
+      /*
+      keyInput(prmpt, 80);
+      return state.keyBuff;
+       */
+      return command;
+    };
+    const onInput = (raw) => {
+      if (state.convflg && raw === '**') {
+        // state.convflg = 0;
+        return '';
+      }
+      if (!raw) return '';
+      if (raw[0] === '*' && raw !== '*') return raw.substring(1);
+      if (state.convflg === 1) return `say ${raw}`;
+      if (state.convflg) return `tss ${raw}`;
+      return raw;
+    };
+
+    return Promise.resolve()
+      .then(() => dispatch('wait')) // ???
+      .then(() => dispatch('getMessages')) // Bottom
+      .then(() => commit('updateProgname')) // Title
+      .then(top)
+      .then(onInput)
+      .then(executeCommand);
+  },
   getMessages: ({}, response) => {
     console.log('self.get_text()', response);
     return Promise.resolve(response);
   },
-  beforeAction: ({ dispatch }) => dispatch('getMessages')
-    .then(() => console.log('sendmsg(self)')),
+  beforeAction: ({ dispatch }) => dispatch('getMessages'),
   afterAction: ({ dispatch }, response) => {
     // if (state.rd_qd) {
     //   dispatch('readMessages');
