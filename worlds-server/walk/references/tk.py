@@ -79,7 +79,8 @@ from ..player import put_on as putmeon
 
 # lasup = 0
 
-# def update(name):
+from ..player import update_character as update
+
 # def revise(cutoff):
 
 from ..actions.player_actions import look_room as lookin
@@ -436,22 +437,6 @@ if(!zapped) saveme();
  
 long lasup=0;
 
- update(name)
- char *name;
-    {
-    extern long mynum,cms;
-    FILE *unit;
-    long xp;
-    extern long lasup;
-    xp=cms-lasup;
-    if(xp<0) xp= -xp;
-    if(xp<10) goto noup;
-    unit=openworld();
-    setppos(mynum,cms);
-    lasup=cms;
-    noup:;
-    }
- 
  revise(cutoff)
  long cutoff;
     {

@@ -26,7 +26,7 @@ class Player:
         # Set Fields
         self.character_id = 0  # mynum
         self.name = "The {}".format(name) if name == "Phantom" else name  # globme
-        self.message_id = -1  # cms
+        self.__message_id = -1  # cms
 
         self.level = 10000  # my_lev
         self.__room_id = random.choice((
@@ -35,6 +35,8 @@ class Player:
 
             # -643,
         ))  # curch
+
+        self.__updated = 0  # lasup
 
         self.__room = None
 
@@ -46,11 +48,27 @@ class Player:
         #     print(c.serialized)
         World.save()
 
-        self.message_id = -1
+        self.__message_id = -1
         special(".g", self.name)
         Globals.i_setup = True
 
         self.__PLAYER = self
+
+    @property
+    def message_id(self):
+        return self.__message_id
+
+    @message_id.setter
+    def message_id(self, value):
+        self.__message_id = value
+
+        if abs(self.__message_id - self.__updated):
+            return
+
+        World.load()
+        self.character.message_id = self.message_id
+        self.character.save()
+        self.__updated = self.message_id
 
     @property
     def character(self):
@@ -184,9 +202,7 @@ class Player:
             mstoout(block, self)
 
         self.message_id = Message.last_message_id()
-
-        update(self)
-        eorte()
+        eorte(interrupt)
 
         Globals.rdes = 0
         Globals.tdes = 0
@@ -414,7 +430,7 @@ class Player:
     # Events
 
     def on_error(self):
-        loseme()
+        loseme(self)
         return {'fatalError': 255}
 
     def on_look(self):
@@ -456,11 +472,11 @@ class Player:
     def on_quit(self):
         if Globals.in_fight:
             raise ActionError("^C\n")
-        loseme()
+        loseme(self)
         raise StopGame("Byeeeeeeeeee  ...........")
 
     def on_stop_game(self):
-        pbfr()
+        pbfr(self)
         Globals.pr_due = False  # So we dont get a prompt after the exit
 
     def on_before_turn(self):
