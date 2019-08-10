@@ -26,6 +26,7 @@
           />
           <v-card-text
             v-if="!brief"
+            class="wiki"
             v-html="room.html"
           />
           <v-layout row wrap>

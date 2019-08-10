@@ -10,6 +10,19 @@ from .models.message import Message
 from .models.room import Room
 
 
+def special(action, player):
+    if not action or action[0] != ".":
+        return
+    code = action[1:].lower()
+
+    if code == "q":
+        return
+    elif code == "g":
+        return player.start()
+    else:
+        raise ActionError("Unknown . option")
+
+
 def turn(command=None):
     def wrapper(f):
         def wrapped(player, *args, **kwargs):
@@ -41,12 +54,10 @@ class Player:
         self.__message_id = -1  # cms
 
         self.level = 10000  # my_lev
-        self.__room_id = random.choice((
-            -5,
-            -183,
+        self.strength = 0
+        self.sex = 0
 
-            # -643,
-        ))  # curch
+        self.__room_id = -5  # curch
 
         self.__updated = 0  # lasup
         self.__interrupt = None  # last_io_interrupt
@@ -62,8 +73,7 @@ class Player:
         #     print(c.serialized)
         World.save()
 
-        self.__message_id = -1
-        special(".g", self.name)
+        self.start()
         Globals.i_setup = True
 
         self.__PLAYER = self
@@ -165,7 +175,7 @@ class Player:
         return cls.__PLAYER
 
     @classmethod
-    def start(cls, name):
+    def restart(cls, name):
         cls.__PLAYER = cls(name)
         return {
             'player': {
@@ -267,20 +277,60 @@ class Player:
             return
 
         self.add_messages("[l]{}\n[/l]".format(command))
-        command = command.lower()
 
         self.read_messages()
         World.save()
 
+        command = command.lower()
         if Globals.curmode:
-            gamecom(command)
-        elif command != ".q":
-            special(command, self.name)
+            return gamecom(command)
+        else:
+            return special(command, self)
 
     # Text Messages
 
     def add_messages(self, *messages):
         self.__text_messages += filter(None, messages)
+
+    # Specials
+
+    def start(self):
+        self.__message_id = -1
+        Globals.curmode = True
+
+        initme()
+
+        World.load()
+        self.character.strength = self.strength
+        self.character.level = self.level
+        self.character.visible = 0 if self.level < 10000 else 10000
+        self.character.weapon = None
+        self.character.sex = self.sex
+        self.character.helping = None
+        self.character.save()
+
+        sendsys(
+            self.name,
+            self.name,
+            -10113,
+            self.room_id,
+            "[s name=\"{name}\"][ {name}  has entered the game ]\n[/s]".format(name=self.name),
+        )
+        self.read_messages()
+        self.room_id = random.choice((
+            # -5,
+            # -183,
+
+            -167,
+        ))  # -5 if randperc() > 50 else -183
+        self.set_room()
+        sendsys(
+            self.name,
+            self.name,
+            -10000,
+            self.room_id,
+            "[s name=\"{name}\"]{name}  has entered the game\n[/s]".format(name=self.name),
+        )
 
     # Actions
 
@@ -557,7 +607,7 @@ class Player:
         def check_magic_item():
             if not iswornby(18, self.character_id) and randperc() >= 10:
                 return
-            Globals.my_str += 1
+            self.strength += 1
             if Globals.i_setup:
                 calibme()
 
@@ -670,6 +720,11 @@ def hitplayer(*args):
     print("hitplayer({})".format(args))
 
 
+def initme(*args):
+    # raise NotImplementedError()
+    print("initme({})".format(args))
+
+
 def ishere(*args):
     # raise NotImplementedError()
     print("ishere({})".format(args))
@@ -713,14 +768,15 @@ def saveme(*args):
     print("saveme({})".format(args))
 
 
+__MESSAGES = []
+
+
 def sendsys(*args):
     # raise NotImplementedError()
     print("sendsys({})".format(args))
-
-
-def special(*args):
-    # raise NotImplementedError()
-    print("special({})".format(args))
+    __MESSAGES.append(args)
+    for m in __MESSAGES:
+        print(m)
 
 
 def update(*args):

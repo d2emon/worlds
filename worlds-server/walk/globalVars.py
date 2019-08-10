@@ -11,7 +11,6 @@ class Globals:
     me_cal = False
     me_drunk = False
     me_ivct = 0
-    my_str = 0
     in_ms = ""
     out_ms = ""
     rd_qd = False
