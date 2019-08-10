@@ -5,7 +5,7 @@ import {
 
 
 const state = {
-  progname: '',
+  progname: '   --}----- ABERMUD -----{--     Playing as Player',
 
   name: 'Player',
 
@@ -54,14 +54,14 @@ const mutations = {
   setDebugMode: (state, debugMode) => { state.debugMode = debugMode; },
   setRoom: (state, room) => { state.room = room; },
   setExits: (state, exits) => { state.exits = exits; },
-  clearMessages: state => { state.messages = []; },
+  clearMessages: state => { /* state.messages = []; */ },
   setMessages: (state, messages) => { state.messages.push(...messages); },
   updateProgname: (state) => {
-    state.progname = (state.player.visible > 9999)
-      ? '-csh'
-      : state.player.visible
-        ? `   --}----- ABERMUD -----{--     Playing as ${state.name}`
-        : state.progname;
+    if (state.player.visible > 9999) {
+      state.progname = '-csh';
+    } else if (!state.player.visible) {
+      state.progname = `   --}----- ABERMUD -----{--     Playing as ${state.name}`;
+    }
   },
 };
 
@@ -74,17 +74,6 @@ const actions = {
   },
 
   inputCommand: ({ commit, dispatch, state }, command) => {
-    const executeCommand = (toExecute) => {
-      console.log(toExecute);
-    };
-
-    const top = () => {
-      /*
-      keyInput(prmpt, 80);
-      return state.keyBuff;
-       */
-      return command;
-    };
     const onInput = (raw) => {
       if (state.convflg && raw === '**') {
         // state.convflg = 0;
@@ -96,12 +85,15 @@ const actions = {
       if (state.convflg) return `tss ${raw}`;
       return raw;
     };
+    const executeCommand = (toExecute) => {
+      console.log(toExecute);
+    };
 
-    return Promise.resolve()
-      .then(() => dispatch('wait')) // ???
+    return dispatch('wait') // ???
       .then(() => dispatch('getMessages')) // Bottom
       .then(() => commit('updateProgname')) // Title
-      .then(top)
+      .then(() => dispatch('getMessages')) // Top
+      .then(() => command.substring(0, 80))
       .then(onInput)
       .then(executeCommand);
   },
@@ -110,14 +102,7 @@ const actions = {
     return Promise.resolve(response);
   },
   beforeAction: ({ dispatch }) => dispatch('getMessages'),
-  afterAction: ({ dispatch }, response) => {
-    // if (state.rd_qd) {
-    //   dispatch('readMessages');
-    //   commit('setRdQd', False);
-    // }
-    // World.save()
-    return dispatch('getMessages', response);
-  },
+  afterAction: ({ dispatch }, response) => dispatch('getMessages', response),
 
   restart: ({ dispatch, state }) => Promise.all([
     walkService.getStart(state.name),
@@ -129,7 +114,10 @@ const actions = {
 
   getRoom: ({ commit, dispatch }) => walkService
     .getRoom()
-    .then(({ room }) => room)
+    .then(({ room, messages }) => {
+      if (messages) commit('setMessages', messages);
+      return room;
+    })
     .then(room => ({
       ...room,
       html: wiki2html(room.text),
@@ -144,7 +132,8 @@ const actions = {
     .then(() => walkService.getWait())
     .then(response => dispatch('afterAction', response))
     .then(response => dispatch('processResponse', response))
-    .then(() => dispatch('getRoom')),
+    .then(() => dispatch('getRoom'))
+    .then(() => dispatch('getMessages')),
   goDirection: ({ commit, dispatch }, direction) => dispatch('beforeAction')
     .then(() => walkService.getGoDirection(direction))
     .then(response => dispatch('afterAction', response))

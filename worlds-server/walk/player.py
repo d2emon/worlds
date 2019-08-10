@@ -20,6 +20,7 @@ def turn(command=None):
                 player.add_command(command)
             result = f(player, *args, **kwargs) or {}
 
+            messages += result.get('messages', [])
             messages += player.on_after_turn()
 
             result['messages'] = list(filter(None, messages))
@@ -229,12 +230,6 @@ class Player:
 
         World.save()
 
-        if len(self.__text_messages):
-            Globals.pr_due = True
-            if Globals.pr_qcr:
-                result.append("\n")
-        Globals.pr_qcr = False
-
         if Globals.log_fl is not None:
             result.append(self.__decode(Globals.log_fl, keyboard=False))
 
@@ -246,7 +241,7 @@ class Player:
 
         result.append(self.__decode(keyboard=True))
 
-        # self.__text_messages = []  # clear buffer
+        self.__text_messages = []  # clear buffer
 
         if Globals.snoopt is not None:
             result.append(viewsnoop())
@@ -331,10 +326,8 @@ class Player:
         )
 
         self.room_id = room.room_id
-        result.update({
-            'result': not result.get('error'),
-            'room': self.set_room(),
-        })
+        result.update({'result': not result.get('error')})
+        result.update(self.set_room())
         return result
 
     @turn('quit')
@@ -605,14 +598,10 @@ class Player:
         raise StopGame("Byeeeeeeeeee  ...........")
 
     def on_stop_game(self):
-        result = self.get_text()
-        Globals.pr_due = False  # So we dont get a prompt after the exit
-        return result
+        return self.get_text()
 
     def on_before_turn(self):
-        result = self.get_text()
-        sendmsg(self)
-        return result
+        return self.get_text()
 
     def on_after_turn(self):
         # Check Fight
@@ -631,6 +620,7 @@ class Player:
 
         # Save
         World.save()
+
         return self.get_text()
 
 
@@ -780,11 +770,6 @@ def randperc(*args):
 def saveme(*args):
     # raise NotImplementedError()
     print("saveme({})".format(args))
-
-
-def sendmsg(*args):
-    # raise NotImplementedError()
-    print("sendmsg({})".format(args))
 
 
 def sendsys(*args):
