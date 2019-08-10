@@ -14,11 +14,14 @@ class Globals:
     my_str = 0
     in_ms = ""
     out_ms = ""
-    pr_due = False
     rd_qd = False
     snoopd = None
     snoopt = None
     tty = 0
+    wd_it = None
+    wd_him = None
+    wd_her = None
+    wd_them = None
     wd_there = ""
     wpnheld = None
     ades = 0

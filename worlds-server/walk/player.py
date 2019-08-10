@@ -3,6 +3,7 @@ import time
 from .exceptions import ActionError, StopGame
 from .database import World
 from .globalVars import Globals
+from .messages import process
 from .models.character import Character
 from .models.item import Item
 from .models.message import Message
@@ -16,11 +17,11 @@ def turn(command=None):
 
             messages += player.on_before_turn()
 
-            if command is not None:
-                player.add_command(command)
+            player.add_command(command)
             result = f(player, *args, **kwargs) or {}
+            for message in result.get('messages', []):
+                player.add_message(message)
 
-            messages += result.get('messages', [])
             messages += player.on_after_turn()
 
             result['messages'] = list(filter(None, messages))
@@ -168,6 +169,27 @@ class Player:
             'message': "Hello {}".format(cls.__PLAYER.name),
         }
 
+    @classmethod
+    def set_pronoun(cls, character):
+        """
+        Assign Him her etc according to who it is
+
+        :param character:
+        :return:
+        """
+        if character is None:
+            return
+
+        if character.sex == 0:
+            Globals.wd_him = character
+        elif character.sex == 1:
+            Globals.wd_her = character
+        elif character.sex == 2:
+            Globals.wd_it = character
+            return
+
+        Globals.wd_them = character
+
     def has_item(self, item_id):
         return self.character.has_item(item_id, include_destroyed=self.is_wizard)
 
@@ -193,22 +215,6 @@ class Player:
         elif helping.room_id != self.room_id:
             return remove_helping(helping.name)
 
-    def can_see_character(self, character):
-        if character is None:
-            return True
-        if self.character_id == character.character_id:
-            return True  # me
-
-        if Globals.ail_blind:
-            return False  # Cant see
-        if self.character.level < character.visible:
-            return False
-        if self.room_id == character.room_id and self.room.is_dark:
-            return False
-
-        setname(character)
-        return True
-
     def read_messages(self, interrupt=False):
         World.load()
 
@@ -222,8 +228,8 @@ class Player:
         Globals.tdes = 0
         Globals.vdes = 0
 
-    def __decode(self, dst=None, keyboard=False):
-        return dcprnt(self.__text_messages, dst, iskb=keyboard)
+    def __decode(self, dst=None, is_keyboard=False):
+        return [process(self, message, dst, is_keyboard=is_keyboard) for message in self.__text_messages]
 
     def get_text(self):
         result = []
@@ -231,15 +237,15 @@ class Player:
         World.save()
 
         if Globals.log_fl is not None:
-            result.append(self.__decode(Globals.log_fl, keyboard=False))
+            result += self.__decode(Globals.log_fl, is_keyboard=False)
 
         if Globals.snoopd is not None:
             fln = opensnoop(Globals.snoopd.name, "a")
             if fln is not None:
-                result.append(self.__decode(fln, keyboard=False))
+                result += self.__decode(fln, is_keyboard=False)
                 # disconnect(fln)
 
-        result.append(self.__decode(keyboard=True))
+        result += self.__decode(is_keyboard=True)
 
         self.__text_messages = []  # clear buffer
 
@@ -249,28 +255,32 @@ class Player:
         return result
 
     def add_command(self, command):
-        self.__text_messages.append("[l]{}\n[/l]".format(command))
+        if not command:
+            return
+
+        self.add_message("[l]{}\n[/l]".format(command))
+        command = command.lower()
 
         self.read_messages()
         World.save()
 
-        command = command.lower()
-        result = command and command != ".q"
         if Globals.curmode:
             gamecom(command)
-        elif result:
+        elif command != ".q":
             special(command, self.name)
-        return result
+
+    # Text Messages
+
+    def add_message(self, message):
+        # quprnt(message)
+        self.__text_messages.append(message)
+
+    # Actions
 
     def wait(self):
         self.read_messages(interrupt=True)
         World.save()
-
-        key_reprint()
-        # return None
-        return {
-            'messages': self.__text_messages,
-        }
+        return {'messages': self.__text_messages}
 
     @turn()
     def go(self, direction_id):
@@ -679,16 +689,6 @@ def chkcrip(*args):
     return False
 
 
-def dcprnt(source, dest, **kwargs):
-    # raise NotImplementedError()
-    print("dcprnt({}, {}, {})".format(source, dest, kwargs))
-    if not source:
-        return None
-    if dest is None:
-        return "dcprnt({}, {}, {})".format(source, dest, kwargs)
-    return None
-
-
 def dosumm(*args):
     # raise NotImplementedError()
     print("dosumm({})".format(args))
@@ -724,11 +724,6 @@ def iswornby(*args):
     # raise NotImplementedError()
     print("iswornby({})".format(args))
     return False
-
-
-def key_reprint(*args):
-    # raise NotImplementedError()
-    print("key_reprint({})".format(args))
 
 
 def loseme(*args):
@@ -775,11 +770,6 @@ def saveme(*args):
 def sendsys(*args):
     # raise NotImplementedError()
     print("sendsys({})".format(args))
-
-
-def setname(*args):
-    # raise NotImplementedError()
-    print("setname({})".format(args))
 
 
 def special(*args):

@@ -55,7 +55,7 @@ const mutations = {
   setRoom: (state, room) => { state.room = room; },
   setExits: (state, exits) => { state.exits = exits; },
   clearMessages: state => { /* state.messages = []; */ },
-  setMessages: (state, messages) => { state.messages.push(...messages); },
+  setMessages: (state, messages) => { state.messages.push(...messages.map(wiki2html)); },
   updateProgname: (state) => {
     if (state.player.visible > 9999) {
       state.progname = '-csh';

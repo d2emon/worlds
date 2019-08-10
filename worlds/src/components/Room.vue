@@ -81,9 +81,8 @@
             :key="`message-${messageId}`"
             v-model="showMessages"
             type="info"
-          >
-            {{message}}
-          </v-alert>
+            v-html="message"
+          />
         </v-flex>
       </v-layout>
     </v-container>

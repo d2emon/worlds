@@ -47,11 +47,12 @@ class Character(Model):
 
     @classmethod
     def list_characters(cls, player):
-        for character in cls.find(player=player):
-            if character.sex:
-                Globals.wd_her = character.name
-            else:
-                Globals.wd_him = character.name
+        for character in cls.find(
+            not_player=player,
+            exists_only=True,
+            room_id=player.room_id,
+            visible_for=player,
+        ):
             yield {
                 'character_id': character.character_id,
                 'name': character.name,
@@ -154,9 +155,21 @@ class Character(Model):
     @classmethod
     def __by_player_can_see(cls, player):
         def f(character):
-            if not player.can_see:
+            if character is None:
+                return True
+            if character.character_id == player.character_id:
+                return True  # me
+            if Globals.ail_blind:
                 return False  # Cant see
-            return character.visible <= player.character.level
+            if player.room_id == character.room_id and player.is_dark:
+                return False
+            # if not player.can_see:
+            #     return False  # Cant see
+            if character.visible > player.character.level:
+                return False
+
+            player.set_pronoun(character)
+            return True
         return f
 
     @classmethod
@@ -174,7 +187,7 @@ class Character(Model):
     @classmethod
     def filters(
         cls,
-        player=None,
+        visible_for=None,
         not_player=None,
         name=None,
         room_id=None,
@@ -183,11 +196,8 @@ class Character(Model):
         player_only=False,
         **kwargs,
     ):
-        if player is not None:
-            not_player = player
-            room_id = player.room_id
-            exists_only = True
-            yield cls.__by_player_can_see(player)
+        if visible_for is not None:
+            yield cls.__by_player_can_see(visible_for)
         if not_player is not None:
             yield cls.__by_not_player(not_player)
         if name is not None:
