@@ -139,6 +139,28 @@ class Character(Model):
     def has_item(self, item_id, include_destroyed=False):
         return any(item for item in self.has_items(include_destroyed) if item.item_id == item_id)
 
+    def check_fight(self, player, undead=True):
+        if self.is_undead and not undead:
+            return
+
+        self.check_move()  # Maybe move it
+
+        if not self.is_created:
+            return
+        if self.room_id != player.room_id:
+            return
+        if player.character.visible:
+            return  # Im invisible
+        if randperc() > 40:
+            return
+
+        yeti = next(Character.find(name="yeti"))
+        if yeti and self.character_id == yeti.character_id and ohany({13: True}):
+            return
+
+        mhitplayer(self, player.character_id)
+        pass
+
     # Search
     @classmethod
     def __by_name(cls, name):
@@ -194,6 +216,7 @@ class Character(Model):
         wizard=None,
         exists_only=False,
         player_only=False,
+        aggressive=False,
         **kwargs,
     ):
         if visible_for is not None:
@@ -210,6 +233,8 @@ class Character(Model):
             yield lambda character: character.is_created
         if player_only:
             yield lambda character: character.character_id < 32
+        if aggressive:
+            yield lambda character: character.is_aggressive
 
 
 def list_characters(player):
@@ -237,3 +262,19 @@ def lobjsat(*args):
     yield {}
     yield {}
     yield {}
+
+
+def mhitplayer(*args):
+    # raise NotImplementedError()
+    print("mhitplayer({})".format(args))
+
+
+def ohany(*args):
+    # raise NotImplementedError()
+    print("ohany({})".format(args))
+
+
+def randperc(*args):
+    # raise NotImplementedError()
+    print("randperc({})".format(args))
+    return 0

@@ -1,8 +1,8 @@
-# def on_timing():
-
-from ..player import on_look as onlook
-from ..player import check_fight as chkfight
-from ..player import check_move as consid_move
+# on_timing()   Player.on_time
+# onlook()      Player.on_look
+# chkfight      Character.check_fight
+# consid_move   Character.check_move
+# helpchckr()   Player.check_help
 
 # def crashcom():
 # def singcom():
@@ -12,19 +12,13 @@ from ..player import check_move as consid_move
 
 # def dircom():
 # def sys_reset():
-from ..item import do_rune as dorune
+
+from ..models.item import rune as dorune
+
 # def pepdrop():
 # def dragget():
 
-from ..player import check_help as helpchkr
-
-
 """
-on_timing()
-{
-	if(randperc()>80) onlook();
-}
-
  crashcom(  )
     {
     extern long my_lev ;

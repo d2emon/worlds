@@ -246,13 +246,14 @@ class Items(ListDatabase):
         ("key", "A small silver key has been dropped here", "", "", "", 0, 50, 0),
         ("soap", "Some soap has been dropped here", "", "", "", 0, 20, 0),
         ("broom", "An old broom has been left here", "", "", "", 0, 20, 0),
+
+        # 110
         (
             "coffin",
             "An ornate coffin is set in the centre of the room. The coffin is open",
             "An ornate coffin is set in the centre of the room.",
             "", "", 1, 0, 1
         ),
-
         ("powerstone", "A magical powerstone has been put here by someone", "", "", "", 0, 100, 0),
         ("shield", "", "", "", "", 0, 0, 1),
         ("shield", "A heavy painted shield has been dropped here", "", "", "", 0, 30, 0),
@@ -262,8 +263,9 @@ class Items(ListDatabase):
         ("pumice", "A piece of pumice has been discarded here", "", "", "", 0, 100, 0),
         ("panel", "A small panel is open in the east wall", "", "", "", 1, 0, 1),
         ("sack", "A very large sack has been left here", "", "", "", 0, 30, 0),
-        ("rod", "A carved ebony rod floats in front of you, humming quietly", "", "", "", 0, 200, 0),
 
+        # 120
+        ("rod", "A carved ebony rod floats in front of you, humming quietly", "", "", "", 0, 200, 0),
         ("powerstone", "A magical powerstone has been placed here", "", "", "", 0, 100, 0),
         (
             "pillar",
@@ -278,8 +280,9 @@ class Items(ListDatabase):
         ("knife", "A small curved surgeons knife has been dropped here", "", "", "", 0, 20, 0),
         ("door", "The door is open", "The door is closed", "The door is locked", "", 2, 0, 1),
         ("door", "The door is open", "The door is closed", "The door is locked", "", 2, 0, 1),
-        ("bar", "An iron bar is set into wall", "", "", "", 0, 0, 1),
 
+        # 130
+        ("bar", "An iron bar is set into wall", "", "", "", 0, 0, 1),
         ("boulder", "A huge boulder rests against one of the walls", "", "", "", 0, 0, 1),
         ("passage", "A secret passage leads eastwards.", "", "", "", 1, 0, 1),
         ("passage", "A secret passage leads westwards.", "", "", "", 1, 0, 1),
@@ -295,8 +298,9 @@ class Items(ListDatabase):
         ),
         ("lever", "A heavy iron lever is set into the south wall", "", "", "", 0, 0, 1),
         ("garland", "A beautiful garland of flowers sends a sweet smell wafting around you", "", "", "", 0, 100, 0),
-        ("grille", "The grille is open.", "The grille is closed.", "", "", 1, 0, 1),
 
+        # 140
+        ("grille", "The grille is open.", "The grille is closed.", "", "", 1, 0, 1),
         ("grille", "The grille is open.", "The grille is closed.", "", "", 1, 0, 1),
         ("coins", "A few coins lie scattered on the ground.", "", "", "", 0, 20, 0),
         ("necklace", "A beautiful necklace has been left here", "", "", "", 0, 200, 0),
@@ -316,8 +320,9 @@ class Items(ListDatabase):
         ),
         ("harp", "A beautiful golden harp has been placed here", "", "", "", 0, 300, 0),
         ("lever", "", "", "", "", 0, 0, 1),
-        ("bridge", "A huge iron drawbridge crosses the lava, and leads west", "", "", "", 0, 0, 1),
 
+        # 150
+        ("bridge", "A huge iron drawbridge crosses the lava, and leads west", "", "", "", 0, 0, 1),
         ("bridge", "A huge iron drawbridge crosses the lava to the east", "", "", "", 0, 0, 1),
         ("bridge", "A crystal bridge leads south across the pool", "", "", "", 1, 0, 1),
         ("bridge", "A crystal bridge leads north across the pool", "", "", "", 1, 0, 1),
@@ -327,8 +332,9 @@ class Items(ListDatabase):
         ("moonstone", "A huge moonstone lies in front of you", "", "", "", 0, 200, 0),
         ("rod", "A black rod marked with a red pentacle has been placed here", "", "", "", 0, 150, 0),
         ("talisman", "A battered silver talisman has been dumped here", "", "", "", 0, 100, 0),
-        ("giant", "A giant snores loudly in one corner", "", "", "", 0, 0, 1),
 
+        # 160
+        ("giant", "A giant snores loudly in one corner", "", "", "", 0, 0, 1),
         ("robe", "A rather worn robe lies here tatty and fraying", "", "", "", 0, 10, 0),
         ("bookcase", "", "", "", "", 0, 0, 1),
         ("powerstone", "A magical powerstone has been placed here", "", "", "", 0, 100, 0),
@@ -338,8 +344,9 @@ class Items(ListDatabase):
         ("branch", "A burning branch has been left here", "An old branch has been dropped here", "", "", 0, 0, 0),
         ("poker", "A heavy iron poker has been left here", "", "", "", 0, 10, 0),
         ("pick", "A small but well made ice pick has been dropped here", "", "", "", 0, 20, 0),
-        ("stick", "A burning stick lies on the ground", "An old stick lies on the ground", "", "", 1, 10, 0),
 
+        # 170
+        ("stick", "A burning stick lies on the ground", "An old stick lies on the ground", "", "", 1, 10, 0),
         ("stone", "", "", "", "", 0, 0, 1),
         ("scimitar", "A long curved scimitar has been placed here", "", "", "", 0, 30, 0),
         ("bag", "A small bag has been dumped in one corner", "", "", "", 0, 20, 0),
@@ -349,13 +356,14 @@ class Items(ListDatabase):
         ("hole", "A hole has been dug south through the snow", "", "", "", 1, 0, 1),
         ("cupboard", "The cupboard is open", "The cupboard is closed", "The cupboard is locked", "", 1, 0, 1),
         ("cupboard", "The cupboard is open", "The cupboard is closed", "The cupboard is locked", "", 1, 0, 1),
+
+        # 180
         (
             "chest",
             "A huge iron bound chest lies open before you",
             "A huge iron bound chest lies before you",
             "", "", 1, 0, 1
         ),
-
         ("coronet", "A small jewelled coronet glitters before you", "", "", "", 0, 300, 0),
         ("key", "An old rusty key lies here", "", "", "", 0, 0, 0),
         ("pillowcase", "A soggy pillowcase has been dumped here", "", "", "", 0, 10, 0),
@@ -375,8 +383,9 @@ class Items(ListDatabase):
         ),
         ("wreath", "An old wreath lies here", "", "", "", 0, 50, 0),
         ("shroud", "A silk shroud has been placed here", "", "", "", 0, 50, 0),
-        ("effigy", "A small stone effigy has been left here", "", "", "", 0, 75, 0),
 
+        # 190
+        ("effigy", "A small stone effigy has been left here", "", "", "", 0, 75, 0),
         ("statuette", "A small gold statuette has stands here, glittering in the light", "", "", "", 0, 75, 0),
         ("chute", "There is a chute in the west wall, too small to climb down.", "", "", "", 0, 0, 1),
         ("chute", "There is a chute in the east wall, too small to climb down.", "", "", "", 0, 0, 1),

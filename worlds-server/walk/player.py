@@ -19,8 +19,7 @@ def turn(command=None):
 
             player.add_command(command)
             result = f(player, *args, **kwargs) or {}
-            for message in result.get('messages', []):
-                player.add_message(message)
+            player.add_messages(*result.get('messages', []))
 
             messages += player.on_after_turn()
 
@@ -140,6 +139,12 @@ class Player:
         return not Globals.ail_blind and not self.is_dark
 
     @property
+    def helping(self):
+        if self.character.helping is None:
+            return None
+        return Character.get(self.character.helping)
+
+    @property
     def carry(self):
         if self.is_wizard:
             return self.character.carry
@@ -202,18 +207,21 @@ class Player:
         self.character.room_id = room_id
         return self.look()
 
-    def check_help(self):
-        def remove_helping(name=''):
-            self.character.helping = None
-            return {'message': "You can no longer help [c]{}[/c]\n".format(name)}
+    def __stop_help(self, name=''):
+        self.character.helping = None
+        self.add_messages("You can no longer help [c]{}[/c]\n".format(name))
 
-        helping = Character.get(self.character.helping)
+    def check_help(self):
+        if self.character.helping is None:
+            return
         if not Globals.i_setup:
             return
-        elif helping is None or not helping.is_created:
-            return remove_helping()
+
+        helping = self.helping
+        if helping is None or not helping.is_created:
+            return self.__stop_help()
         elif helping.room_id != self.room_id:
-            return remove_helping(helping.name)
+            return self.__stop_help(helping.name)
 
     def read_messages(self, interrupt=False):
         World.load()
@@ -258,7 +266,7 @@ class Player:
         if not command:
             return
 
-        self.add_message("[l]{}\n[/l]".format(command))
+        self.add_messages("[l]{}\n[/l]".format(command))
         command = command.lower()
 
         self.read_messages()
@@ -271,14 +279,14 @@ class Player:
 
     # Text Messages
 
-    def add_message(self, message):
-        # quprnt(message)
-        self.__text_messages.append(message)
+    def add_messages(self, *messages):
+        self.__text_messages += filter(None, messages)
 
     # Actions
 
     def wait(self):
         self.read_messages(interrupt=True)
+        self.on_time()
         World.save()
         return {'messages': self.__text_messages}
 
@@ -398,7 +406,7 @@ class Player:
             'items': [],
             'characters': [],
         }
-        messages = []
+
         if self.is_dark:
             error = "It is dark"
         elif Globals.ail_blind:
@@ -413,9 +421,8 @@ class Player:
             if Globals.curmode == 1:
                 room_data.update({'characters': list(Character.list_characters(self))})
 
-        messages += self.on_look().get('messages', [])
+        self.on_look()
 
-        room_data.update({'messages': messages})
         if self.is_wizard:
             room_data.update({'name': self.room.name})
         if self.is_god:
@@ -501,39 +508,13 @@ class Player:
 
     def on_look(self):
         turn_undead = self.has_item(45)
+        for enemy in Character.find(aggressive=True):
+            enemy.check_fight(self, undead=not turn_undead)
 
-        enemies = (
-            "shazareth",
-            "bomber",
-            "owin",
-            "glowin",
-            "smythe",
-            "dio",
-            "rat",
-            "ghoul",
-            "ogre",
-            "riatha",
-            "yeti",
-            "guardian",
-        )
-        for name in enemies:
-            check_fight(self, next(Character.find(name=name)))
+        for item in self.carry:
+            self.add_messages(item.on_wait(self).get('message', ''))
 
-        undead = (
-            "wraith",
-            "zombie",
-        )
-        if not turn_undead:
-            for name in undead:
-                check_fight(self, next(Character.find(name=name)))
-
-        messages = [item.on_wait(self).get('message', '') for item in self.carry]
-        messages = filter(None, messages)
-
-        if self.character.helping is not None:
-            check_help()
-
-        return {'messages': list(messages)}
+        self.check_help()
 
     def on_after_messages(self, interrupt=True):
         def check_invisibility():
@@ -610,6 +591,10 @@ class Player:
     def on_stop_game(self):
         return self.get_text()
 
+    def on_time(self):
+        if randperc() > 80:
+            self.on_look()
+
     def on_before_turn(self):
         return self.get_text()
 
@@ -634,41 +619,12 @@ class Player:
         return self.get_text()
 
 
-def check_fight(player, mobile):
-    if mobile is None:
-        return  # No such being
-
-    mobile.check_move()  # Maybe move it
-    if not mobile.is_created:
-        return
-    if mobile.room_id != player.room_id:
-        return
-    if player.character.visible:
-        return  # Im invisible
-    if randperc() > 40:
-        return
-
-    yeti = next(Character.find(name="yeti"))
-    if yeti and mobile.character_id == yeti.character_id and ohany({13: True}):
-        return
-
-    mhitplayer(mobile, player.character_id)
-
-
-def check_help():
-    return Player.player().check_help()
-
-
 def is_dark():
     return Player.player().is_dark
 
 
 def list_exits():
     return Player.player().list_exits()
-
-
-def on_look():
-    return Player.player().on_look()
 
 
 def set_room(room_id):
@@ -730,19 +686,9 @@ def loseme(*args):
     raise NotImplementedError()
 
 
-def mhitplayer(*args):
-    # raise NotImplementedError()
-    print("mhitplayer({})".format(args))
-
-
 def mstoout(*args):
     # raise NotImplementedError()
     print("mstoout({})".format(args))
-
-
-def ohany(*args):
-    # raise NotImplementedError()
-    print("ohany({})".format(args))
 
 
 def opensnoop(*args):
