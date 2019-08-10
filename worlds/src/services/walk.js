@@ -24,4 +24,7 @@ export default {
   getJump: () => Api
     .get('/walk/jump')
     .then(({ data }) => data),
+  getDig: () => Api
+    .get('/walk/dig')
+    .then(({ data }) => data),
 };

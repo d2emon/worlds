@@ -30,26 +30,20 @@
             v-html="room.html"
           />
           <v-layout row wrap>
-            <v-flex md6>
-              <v-list>
-                <v-list-tile
-                  v-for="item in room.flannel"
-                  :key="`item-${item.item_id}`"
-                >
-                  <span v-if="item.destroyed">--</span>
-                  <span v-if="debugMode">{ {{item.item_id}} }</span>
-                  {{item.text}}
-                </v-list-tile>
-                <v-list-tile v-if="room.weather">{{room.weather}}</v-list-tile>
-                <v-list-tile
-                  v-for="item in room.items"
-                  :key="`item-${item.item_id}`"
-                >
-                  <span v-if="item.destroyed">--</span>
-                  <span v-if="debugMode">{ {{item.item_id}} }</span>
-                  {{item.text}}
-                </v-list-tile>
-              </v-list>
+            <v-flex md12>
+              <game-items
+                :items="room.flannel"
+                :debug="debugMode"
+              />
+              <game-items
+                v-if="room.weather"
+                :items="[{item_id: 0, description: room.weather}]"
+                :debug="debugMode"
+              />
+              <game-items
+                :items="room.items"
+                :debug="debugMode"
+              />
             </v-flex>
             <v-flex md6>
               <div v-if="room.characters">
@@ -98,6 +92,9 @@ import {
 
 export default {
   name: 'Room',
+  components: {
+    GameItems: () => import('@/components/GameItems.vue'),
+  },
   computed: {
     ...mapState('walk', [
       'brief',
@@ -106,7 +103,7 @@ export default {
       'room',
       'messages',
     ]),
-    reversed() { return this.messages.reverse(); }
+    reversed() { return this.messages.reverse(); },
   },
   data: () => ({
     showMessages: true,

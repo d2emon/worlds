@@ -114,7 +114,7 @@ class Character(Model):
         return character.restart(name).character_id
 
     def save(self):
-        self.database().set_item(self.character_id, **self.serialized)
+        self.database().set(self.character_id, **self.serialized)
 
     def restart(self, name):
         self.name = name

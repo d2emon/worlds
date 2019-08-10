@@ -11,12 +11,12 @@ class Weathers(Database):
 
     __ITEMS = {
         NONE: "",
-        RAIN: "[c]It is raining\n[/c]",
-        GENTLE_RAIN: "It is raining, a gentle mist of rain, which sticks to everything around\n"
-                     "you making it glisten and shine. High in the skies above you is a rainbow\n",
-        STORM: "[c]The skies are dark and stormy\n[/c]",
-        SNOW: "[c]It is snowing\n[/c]",
-        BLIZZARD: "[c]A blizzard is howling around you\n[/c]",
+        RAIN: "[c]Идет дождь.\n[/c]",
+        GENTLE_RAIN: "Идет дождь, все вокруг блестит и сверкает, покрытое капельками дождя. "
+                     "Высоко в небе над вами видна радуга.\n",
+        STORM: "[c]Небо темное и грозовое.\n[/c]",
+        SNOW: "[c]Идет снег.\n[/c]",
+        BLIZZARD: "[c]Вокруг вас воет метель.\n[/c]",
     }
 
     def __init__(self):

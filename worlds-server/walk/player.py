@@ -438,6 +438,10 @@ class Player:
 
     @turn('look')
     def look(self):
+        def process_item(item):
+            item.update({'description': process(self, item.get('description', ''))})
+            return item
+
         World.save()
 
         if self.room.death_room:
@@ -466,7 +470,13 @@ class Player:
                 'title': self.room.title,
                 'text': self.room.description,
             })
-            room_data.update(self.room.list_items(self))
+            items = self.room.list_items(self)
+            print(items)
+            room_data.update({
+                'flannel': [process_item(item) for item in items.get('flannel', [])],
+                'weather': process(self, items.get('weather', '')),
+                'items': [process_item(item) for item in items.get('items', [])],
+            })
 
             if Globals.curmode == 1:
                 room_data.update({'characters': list(Character.list_characters(self))})
@@ -549,6 +559,28 @@ class Player:
                 exits[e.direction] = "{}{}".format(room.zone.name, room.in_zone)
                 # result.append("{} : {}{}".format(e.direction, room.zone.name, room.in_zone))
         return {'exits': exits or None}
+
+    @turn('dig')
+    def dig(self):
+        #
+        World.load()
+        #
+        garlic = Item.get(100)
+        hole = Item.get(176)
+        slab = Item.get(186)
+        print(garlic.name, garlic.room_id, self.room_id, garlic.is_destroyed)
+        if garlic.room_id == self.room_id and garlic.is_destroyed:
+            garlic.create()
+            return {'message': "Вы что-то нашли!\n"}
+        if slab.room_id == self.room_id and slab.is_destroyed:
+            slab.create()
+            return {'message': "You uncover a stone slab!\n"}
+        if self.room_id in (-172, -192):
+            if hole.state == 0:
+                return {'message': "You widen the hole, but with little effect.\n"}
+            hole.state = 0
+            return {'message': "You rapidly dig through to another passage.\n"}
+        return {'message': "You find nothing.\n"}
 
     # Events
 

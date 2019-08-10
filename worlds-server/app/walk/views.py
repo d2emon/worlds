@@ -145,3 +145,13 @@ def jump():
         return on_error(e)
     except StopGame as e:
         return on_stop(e)
+
+
+@blueprint.route('/dig', methods=['GET'])
+def dig():
+    try:
+        return jsonify(Player.player().dig())
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)

@@ -53,7 +53,8 @@ class Item(Model):
         self.__carry_flag = carry_flag
         self.__state = state
 
-        self.__is_destroyed = is_destroyed
+        # Flags
+        self.is_destroyed = is_destroyed
         self.__has_connected = has_connected
         self.is_light = is_light
 
@@ -88,10 +89,6 @@ class Item(Model):
         connected = self.connected
         if self.__has_connected and connected is not None:
             connected.state = value
-
-    @property
-    def is_destroyed(self):
-        return self.__is_destroyed
 
     @property
     def connected(self):
@@ -133,9 +130,26 @@ class Item(Model):
     def serialized(self):
         return {
             'item_id': self.item_id,
-            'text': self.description,
-            'destroyed': self.is_destroyed,
+            'name': self.__name,
+            'description': self.__description,
+            'max_state': self.__max_state,
+            'flannel': self.__flannel,
+            'base_value': self.__base_value,
+            'location': self.__location,
+            'carry_flag': self.__carry_flag,
+            'state': self.state,
+            # TODO: Remove It
+            'is_destroyed': self.is_destroyed,
+            'has_connected': self.__has_connected,
+            'is_light': self.is_light,
         }
+
+    def save(self):
+        self.database().set(self.item_id, **self.serialized)
+
+    def create(self):
+        self.is_destroyed = False
+        self.save()
 
     def set_location(self, location, carry_flag):
         self.__location = location

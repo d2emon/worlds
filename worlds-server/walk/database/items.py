@@ -222,7 +222,7 @@ class Items(ListDatabase):
         ("nugget", "A gold nugget twinkles before you", "", "", "", 0, 200, 0),
 
         # 100
-        ("garlic", "Some garlic lies at your feet, its smell wafting upwards", "", "", "", 0, 10, 0),
+        ("чеснок", "У ваших ног лежит чеснок, вы чувствуете его запах", "", "", "", 0, 10, 0),
         (
             "robe",
             "A black robe with two silver lightning bolts down the back has been put here",
@@ -438,11 +438,21 @@ class Items(ListDatabase):
         82: {'room_id': -643},
         # 83-85
         86: {'room_id': -614},
-        # 87-185
+        # 87-99
+        100: {'room_id': -101, 'flags': {0, 6}},  # 100: {'room_id': -102},
+        # 101
+        102: {'room_id': -104},
+        103: {'room_id': -104},
+        104: {'room_id': -107},
+        105: {'room_id': -109},
+        # 106-184
+        185: {'room_id': -109},
         186: {'room_id': -651},
         187: {'room_id': -650},
         188: {'room_id': -650},
         189: {'room_id': -650},
+        190: {'room_id': -109},
+        191: {'room_id': -109},
     }
 
     @classmethod
@@ -453,6 +463,7 @@ class Items(ListDatabase):
             data = None
         initial = cls.__ITEMS_INITIAL.get(item_id, {})
         has_connected = item_id % 2 > 0
+        flags = initial.get('flags', set())
         logger.debug("%s(%s):\t%s %s", item_id, has_connected, data, initial)
         return {
             'item_id': item_id,
@@ -468,18 +479,15 @@ class Items(ListDatabase):
             'carry_flag': 1,
             'state': 0,
             # Flags
-            'is_destroyed': False,
-            'has_connected': has_connected,
+            'is_destroyed': 0 in flags,
+            'has_connected': 1 in flags,
             # 2-12
-            'is_light': False,
+            'is_light': 13 in flags,
         }
 
     @classmethod
     def item(cls, item_id):
         return cls.__item_data(item_id)
-
-    def set(self, items):
-        self.items = items
 
     def reset(self):
         return (self.item(item_id) for item_id in range(self.ITEMS))

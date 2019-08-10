@@ -324,7 +324,11 @@
         <v-btn @click="console.log(185)">Set Magic In</v-btn>
         <v-btn @click="console.log(186)">Set Magic Out</v-btn>
         <v-btn @click="console.log(187)">Emote</v-btn>
-        <v-btn @click="console.log(188)">Dig</v-btn>
+        <v-btn
+          @click="dig"
+        >
+          Dig
+        </v-btn>
         <v-btn @click="console.log(189)">Empty</v-btn>
       </v-layout>
     </v-container>
@@ -394,6 +398,7 @@ export default {
       'fetchExits',
       'jump',
       'setDebugMode',
+      'dig',
     ]),
     setLevel(level) { this.level = level; },
     goButtonColor(direction) {

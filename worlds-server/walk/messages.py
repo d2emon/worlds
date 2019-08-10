@@ -51,6 +51,8 @@ def __not_keyboard(is_keyboard):
 
 
 def process(player, src, dst=None, is_keyboard=True, debug_mode=False):
+    if not src:
+        return src
     src = re.sub(r'\[f\](\w{0,128})\[/f\]', __file_contents(debug_mode), src, flags=re.S)
     src = re.sub(r'\[d\](.*)\[/d\]', __hear(player), src, flags=re.S)
     src = re.sub(r'\[s\s+name=\"(\w{0,23})\"\](.*)\[/s\]', __see(player), src, flags=re.S)

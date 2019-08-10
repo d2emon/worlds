@@ -13,7 +13,7 @@ const state = {
   onMessage: null,
 
   brief: false,
-  debugMode: false,
+  debugMode: true, // false,
 
   convflg: 0,
 
@@ -101,8 +101,12 @@ const actions = {
     console.log('self.get_text()', response);
     return Promise.resolve(response);
   },
-  beforeAction: ({ dispatch }) => dispatch('getMessages'),
+  beforeAction: ({ dispatch }, response) => dispatch('getMessages', response),
   afterAction: ({ dispatch }, response) => dispatch('getMessages', response),
+  doAction: ({ dispatch }, { callback, payload }) => dispatch('beforeAction', payload)
+    .then(callback)
+    .then(response => dispatch('afterAction', response))
+    .then(response => dispatch('processResponse', response)),
 
   restart: ({ dispatch, state }) => Promise.all([
     walkService.getStart(state.name),
@@ -128,38 +132,39 @@ const actions = {
     })
     .then(() => dispatch('fetchExits')),
 
-  wait: ({ dispatch }) => dispatch('beforeAction')
-    .then(() => walkService.getWait())
-    .then(response => dispatch('afterAction', response))
-    .then(response => dispatch('processResponse', response))
-    .then(() => dispatch('getRoom'))
+  wait: ({ dispatch }) => dispatch('doAction', {
+    callback: walkService.getWait,
+  })
     .then(() => dispatch('getMessages')),
-  goDirection: ({ commit, dispatch }, direction) => dispatch('beforeAction')
-    .then(() => walkService.getGoDirection(direction))
-    .then(response => dispatch('afterAction', response))
-    .then((response) => {
-      commit('clearMessages');
-      dispatch('processResponse', response);
-    })
+  goDirection: ({ commit, dispatch }, direction) => dispatch('doAction', {
+    callback: walkService.getGoDirection,
+    payload: direction,
+  })
+    // .then((response) => {
+    //   commit('clearMessages');
+    //   dispatch('processResponse', response);
+    // })
     .then(() => dispatch('getRoom')),
-  jump: ({ dispatch }) => dispatch('beforeAction')
-    .then(() => walkService.getJump())
-    .then(response => dispatch('afterAction', response))
-    .then(response => dispatch('processResponse', response))
+  quitGame: ({ dispatch }) => dispatch('doAction', {
+    callback: walkService.getQuit,
+  })
+    // .then(({ error, ...response }) => dispatch('modalMessage', error || 'Ok').then(() => response))
+    .then(() => dispatch('restart')),
+  jump: ({ dispatch }) => dispatch('doAction', {
+    callback: walkService.getJump,
+  })
     .then(({ message }) => message && dispatch('modalMessage', message))
     .then(() => dispatch('getRoom')),
-  quitGame: ({ dispatch }) => dispatch('beforeAction')
-    .then(() => walkService.getQuit())
-    .then(response => dispatch('afterAction', response))
-    .then(({ error, ...response }) => dispatch('modalMessage', error || 'Ok').then(() => response))
-    .then(response => dispatch('processResponse', response))
-    .then(() => dispatch('restart')),
-  fetchExits: ({ commit, dispatch }) => dispatch('beforeAction')
-    .then(() => walkService.getExits())
-    .then(response => dispatch('afterAction', response))
+  fetchExits: ({ commit, dispatch }) => dispatch('doAction', {
+    callback: walkService.getExits,
+  })
     // .then(({ exits, ...data}) => { console.log(exits, data); return { exits }; })
-    .then(response => dispatch('processResponse', response))
     .then(({ exits }) => commit('setExits', exits)),
+  dig: ({ dispatch }) => dispatch('doAction', {
+    callback: walkService.getDig,
+  })
+    .then(({ message }) => message && dispatch('modalMessage', message))
+    .then(() => dispatch('getRoom')),
 
   setDebugMode: ({ getters, commit }, debugMode) => {
     if (!getters.isDebugger) return;

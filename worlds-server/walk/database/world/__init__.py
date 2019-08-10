@@ -26,5 +26,5 @@ class WorldData(Database):
         self.players.reset()
 
     def set(self, items, players):
-        self.items.set(items)
-        self.players.set(players)
+        self.items.set_all(items)
+        self.players.set_all(players)
