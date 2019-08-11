@@ -18,6 +18,9 @@ export default {
   getQuit: () => Api
     .get('/walk/quit')
     .then(({ data }) => data),
+  getTake: item => Api
+    .get(`/walk/take/${item}`)
+    .then(({ data }) => data),
   getExits: () => Api
     .get('/walk/exits')
     .then(({ data }) => data),

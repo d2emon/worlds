@@ -106,7 +106,13 @@ const actions = {
   doAction: ({ dispatch }, { callback, payload }) => dispatch('beforeAction', payload)
     .then(callback)
     .then(response => dispatch('afterAction', response))
-    .then(response => dispatch('processResponse', response)),
+    .then(response => dispatch('processResponse', response))
+    .then((response) => {
+      console.log(response.message, response);
+      const {message} = response;
+      if (response.message) dispatch('showMessage', {message});
+      return response;
+    }),
 
   restart: ({ dispatch, state }) => Promise.all([
     walkService.getStart(state.name),
@@ -150,6 +156,10 @@ const actions = {
   })
     // .then(({ error, ...response }) => dispatch('modalMessage', error || 'Ok').then(() => response))
     .then(() => dispatch('restart')),
+  take: ({ commit, dispatch }, item) => dispatch('doAction', {
+    callback: walkService.getTake,
+    payload: item,
+  }),
   jump: ({ dispatch }) => dispatch('doAction', {
     callback: walkService.getJump,
   })

@@ -84,6 +84,18 @@ class Character(Model):
         return filter(items_filter, Item.all())
 
     @property
+    def can_carry(self):
+        if self.is_wizard:
+            return True
+        if self.level < 0:
+            return True
+        return len([item for item in self.carry if not item.is_destroyed]) < self.level + 5
+
+    @property
+    def helper(self):
+        return next((c for c in Character.all() if c.helping == self.character_id and c.room_id == self.room_id), None)
+
+    @property
     def serialized(self):
         return {
             'character_id': self.character_id,

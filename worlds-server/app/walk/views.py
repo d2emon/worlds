@@ -1,7 +1,5 @@
-import random
 from flask import jsonify, request
 from walk.exceptions import ActionError, StopGame
-from walk.globalVars import Globals
 from walk.parser import Parser
 from walk.player import Player
 from .. import app
@@ -85,6 +83,44 @@ def go(direction):
 def quit_system():
     try:
         return jsonify(Player.player().quit_game())
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
+
+
+@blueprint.route('/take/', methods=['GET'])
+@blueprint.route('/take/<item>', methods=['GET'])
+def take(item=None):
+    if item is None:
+        return jsonify({'error': "Get what?"})
+
+    player = Player.player()
+    item = player.find_item(slug=item, room_id=player.room_id)
+
+    try:
+        return jsonify(player.take(item))
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
+
+
+@blueprint.route('/take/<item>/from/', methods=['GET'])
+@blueprint.route('/take/<item>/from/<container>', methods=['GET'])
+@blueprint.route('/take/<item>/out/<container>', methods=['GET'])
+def take_from(item, container=None):
+    if container is None:
+        return jsonify({'error': "From what?"})
+
+    player = Player.player()
+    container = player.find_item(slug=container, available_for=player.character)
+    if container is None:
+        return jsonify({'error': "You can't take things from that - it's not here"})
+    item = player.find_item(slug=item, container=container)
+
+    try:
+        return jsonify(player.take(item))
     except ActionError as e:
         return on_error(e)
     except StopGame as e:

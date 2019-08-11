@@ -222,7 +222,7 @@ class Items(ListDatabase):
         ("nugget", "A gold nugget twinkles before you", "", "", "", 0, 200, 0),
 
         # 100
-        ("чеснок", "У ваших ног лежит чеснок, вы чувствуете его запах", "", "", "", 0, 10, 0),
+        ("garlic", "чеснок", "У ваших ног лежит чеснок, вы чувствуете его запах", "", "", "", 0, 10, 0),
         (
             "robe",
             "A black robe with two silver lightning bolts down the back has been put here",
@@ -457,10 +457,15 @@ class Items(ListDatabase):
 
     @classmethod
     def __item_data(cls, item_id):
+        slug = None
         if 0 <= item_id < len(cls.__ITEMS_DATA):
             data = cls.__ITEMS_DATA[item_id]
+            if len(data) > 8:
+                slug = data[0]
+                data = data[1:]
         else:
             data = None
+        name = data[0] if data else ''
         initial = cls.__ITEMS_INITIAL.get(item_id, {})
         has_connected = item_id % 2 > 0
         flags = initial.get('flags', set())
@@ -468,7 +473,8 @@ class Items(ListDatabase):
         return {
             'item_id': item_id,
             # Item Data
-            'name': data[0] if data else '',
+            'name': name,
+            'slug': slug or name,
             'description': data[1:5] if data else [''] * 4,
             'max_state': data[5] if data else 0,
             'flannel': data[7] > 0 if data else False,
@@ -481,7 +487,8 @@ class Items(ListDatabase):
             # Flags
             'is_destroyed': 0 in flags,
             'has_connected': 1 in flags,
-            # 2-12
+            # 2-11
+            'change_on_take': 12 in flags,
             'is_light': 13 in flags,
         }
 

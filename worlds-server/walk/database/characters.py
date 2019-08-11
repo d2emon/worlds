@@ -274,4 +274,4 @@ class Characters(ListDatabase):
         return result
 
     def reset(self):
-        return (self.character(character_id) for character_id in range(self.ITEMS))
+        return (self.character(character_id + 1) for character_id in range(self.ITEMS))

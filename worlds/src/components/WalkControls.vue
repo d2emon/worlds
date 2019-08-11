@@ -150,7 +150,7 @@
         >
           Quit
         </v-btn>
-        <v-btn @click="console.log(9)">Take</v-btn>
+        <!-- v-btn @click="console.log(9)">Take</v-btn -->
         <v-btn @click="console.log(10)">Drop</v-btn>
 
         <v-btn

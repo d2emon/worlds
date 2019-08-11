@@ -33,11 +33,13 @@
             <v-flex md12>
               <game-items
                 :items="room.flannel"
+                :flannel="true"
                 :debug="debugMode"
               />
               <game-items
                 v-if="room.weather"
                 :items="[{item_id: 0, description: room.weather}]"
+                :flannel="true"
                 :debug="debugMode"
               />
               <game-items

@@ -103,12 +103,11 @@ class Player:
 
     @property
     def is_dark(self):
-        def is_light(item_id):
-            item = Item.get(item_id)
-            if item_id != 32 and not item.is_light:
+        def is_light(item):
+            if item.item_id != 32 and not item.is_light:
                 return False
-            if ishere(item_id):
-                return True
+            if item.room_id != self.room_id:
+                return False
             owner = item.owner
             if owner is None or owner.room_id != self.room_id:
                 return False
@@ -118,8 +117,9 @@ class Player:
             return False
         if not self.room.is_dark:
             return False
-        if any(is_light(item_id) for item_id in range(Item.count())):
+        if any(is_light(item) for item in self.find_items()):
             return False
+        return True
 
     @property
     def is_god(self):
@@ -167,6 +167,10 @@ class Player:
             not_player=self.character,
             exists_only=True,
         )
+
+    @property
+    def available_items(self):
+        return Item.find(available_for=self)
 
     @classmethod
     def player(cls, name="Name"):
@@ -286,6 +290,25 @@ class Player:
             return gamecom(command)
         else:
             return special(command, self)
+
+    def get_dragon(self):
+        if self.is_wizard:
+            return None
+        return Character.find(name='dragon', room_id=self.room_id)
+
+    # Search Helpers
+
+    def find_items(self, **kwargs):
+        return Item.find(wizard=self.is_wizard, **kwargs)
+
+    def find_item(self, **kwargs):
+        return next(self.find_items(**kwargs), None)
+
+    def find_characters(self, **kwargs):
+        return Character.find(**kwargs)
+
+    def find_character(self, **kwargs):
+        return next(self.find_items(**kwargs), None)
 
     # Text Messages
 
@@ -436,6 +459,39 @@ class Player:
         saveme()
         raise StopGame('Goodbye')
 
+    @turn('take')
+    def take(self, item):
+        def get_shield():
+            shields = (Item.get(item_id) for item_id in (113, 114))
+            shield = next((shield for shield in shields if shield.is_destroyed), None)
+            if shield is None:
+                raise ActionError("The shields are all to firmly secured to the walls\n")
+            shield.create()
+            return shield
+
+        if item is None:
+            raise ActionError("That is not here.")
+        if item.item_id == 112:
+            item = get_shield()
+        if item.flannel:
+            raise ActionError("You can't take that!\n")
+        if self.get_dragon() is not None:
+            return {}
+        if not self.character.can_carry:
+            raise ActionError("You can't carry any more\n")
+
+        self.add_messages(item.on_before_take(self).get('message', ''))
+        item.set_location(self.character_id, 1)
+        sendsys(
+            self.name,
+            self.name,
+            -10000,
+            self.room_id,
+            "[D]{}[/D][c] takes the {}\n[/c]]".format(self.name, item.name),
+        )
+        self.add_messages(item.on_after_take(self).get('message', ''))
+        return {'message': "Ok..."}
+
     @turn('look')
     def look(self):
         def process_item(item):
@@ -471,7 +527,6 @@ class Player:
                 'text': self.room.description,
             })
             items = self.room.list_items(self)
-            print(items)
             room_data.update({
                 'flannel': [process_item(item) for item in items.get('flannel', [])],
                 'weather': process(self, items.get('weather', '')),
@@ -565,16 +620,18 @@ class Player:
         #
         World.load()
         #
+
         garlic = Item.get(100)
-        hole = Item.get(176)
-        slab = Item.get(186)
-        print(garlic.name, garlic.room_id, self.room_id, garlic.is_destroyed)
         if garlic.room_id == self.room_id and garlic.is_destroyed:
             garlic.create()
             return {'message': "Вы что-то нашли!\n"}
+
+        slab = Item.get(186)
         if slab.room_id == self.room_id and slab.is_destroyed:
             slab.create()
             return {'message': "You uncover a stone slab!\n"}
+
+        hole = Item.get(176)
         if self.room_id in (-172, -192):
             if hole.state == 0:
                 return {'message': "You widen the hole, but with little effect.\n"}
@@ -755,12 +812,6 @@ def hitplayer(*args):
 def initme(*args):
     # raise NotImplementedError()
     print("initme({})".format(args))
-
-
-def ishere(*args):
-    # raise NotImplementedError()
-    print("ishere({})".format(args))
-    return False
 
 
 def iswornby(*args):

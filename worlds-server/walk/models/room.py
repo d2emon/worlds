@@ -96,6 +96,7 @@ class Room(Model):
         def serialize_item(item):
             return {
                 'item_id': item.item_id,
+                'slug': item.slug,
                 'description': item.description,
                 'is_destroyed': item.is_destroyed,
             }
