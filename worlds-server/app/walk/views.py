@@ -127,6 +127,16 @@ def take_from(item, container=None):
         return on_stop(e)
 
 
+@blueprint.route('/inventory', methods=['GET'])
+def inventory():
+    try:
+        return jsonify(Player.player().get_inventory())
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
+
+
 @blueprint.route('/look', methods=['GET'])
 def look():
     try:

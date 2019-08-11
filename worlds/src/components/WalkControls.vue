@@ -23,12 +23,6 @@
     <v-container>
       <v-layout row wrap>
         <v-flex xs12>
-          <h4>{{progname}}</h4>
-        </v-flex>
-      </v-layout>
-
-      <v-layout row wrap>
-        <v-flex xs12>
           <h4>Obvious exits are:</h4>
           <div v-if="!exits">None....</div>
         </v-flex>
@@ -150,14 +144,10 @@
         >
           Quit
         </v-btn>
-        <!-- v-btn @click="console.log(9)">Take</v-btn -->
+        <!-- v-btn @click="take">Take</v-btn -->
         <v-btn @click="console.log(10)">Drop</v-btn>
 
-        <v-btn
-          @click="getRoom"
-        >
-          Look
-        </v-btn>
+        <!-- v-btn @click="getRoom">Look</v-btn -->
         <v-btn @click="console.log(12)">Inventory</v-btn>
         <v-btn @click="console.log(13)">Who</v-btn>
         <v-btn @click="console.log(14)">Reset</v-btn>

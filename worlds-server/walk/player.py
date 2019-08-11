@@ -297,7 +297,6 @@ class Player:
         return Character.find(name='dragon', room_id=self.room_id)
 
     # Search Helpers
-
     def find_items(self, **kwargs):
         return Item.find(wizard=self.is_wizard, **kwargs)
 
@@ -311,12 +310,10 @@ class Player:
         return next(self.find_items(**kwargs), None)
 
     # Text Messages
-
     def add_messages(self, *messages):
         self.__text_messages += filter(None, messages)
 
     # Specials
-
     def start(self):
         self.__message_id = -1
         Globals.curmode = True
@@ -356,7 +353,6 @@ class Player:
         )
 
     # Actions
-
     def wait(self):
         self.read_messages(interrupt=True)
         self.on_time()
@@ -491,6 +487,10 @@ class Player:
         )
         self.add_messages(item.on_after_take(self).get('message', ''))
         return {'message': "Ok..."}
+
+    @turn('inventory')
+    def get_inventory(self):
+        return {'items': list(self.character.items)}
 
     @turn('look')
     def look(self):

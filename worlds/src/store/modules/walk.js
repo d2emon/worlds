@@ -25,6 +25,7 @@ const state = {
   },
   room: null,
   exits: null,
+  inventory: [],
   messages: [],
 };
 

@@ -124,16 +124,6 @@ class Item(Model):
     def connected(self):
         return self.get(self.item_id ^ 1)
 
-    @classmethod
-    def list_by_flannel(cls, items, flannel):
-        for item in cls.find(
-            items=items,
-            flannel=flannel,
-        ):
-            # OLONGT NOTE TO BE ADDED
-            Globals.wd_it = item.name
-            yield item
-
     @property
     def location(self):
         return self.__location
@@ -163,6 +153,16 @@ class Item(Model):
         return self.location
 
     @property
+    def __serialized(self):
+        return {
+            'item_id': self.item_id,
+            'slug': self.slug,
+            'name': self.name,
+            'worn': False,  # item.worn_by and carrier and item.worn_by.character_id == carrier.charater_id
+            'is_destroyed': self.is_destroyed,
+        }
+
+    @property
     def serialized(self):
         return {
             'item_id': self.item_id,
@@ -181,6 +181,34 @@ class Item(Model):
             'change_on_take': self.__change_on_take,
             'is_light': self.is_light,
         }
+
+    @classmethod
+    def list_by_owner(cls, owner):
+        """
+        Carried Loc!
+        :return:
+        """
+        for item in cls.find(carrier=owner):
+            yield item.__serialized
+
+    @classmethod
+    def list_by_container(cls, container):
+        """
+        Carried Loc!
+        :return:
+        """
+        for item in cls.find(container=container):
+            yield item.__serialized
+
+    @classmethod
+    def list_by_flannel(cls, items, flannel):
+        for item in cls.find(
+            items=items,
+            flannel=flannel,
+        ):
+            # OLONGT NOTE TO BE ADDED
+            Globals.wd_it = item.name
+            yield item
 
     def save(self):
         self.database().set(self.item_id, **self.serialized)
@@ -288,6 +316,7 @@ class Item(Model):
         slug=None,
         available_for=None,  # fobna
         container=None,  # fobnin
+        carrier=None,
         room_id=None,  # fobnh
         **kwargs,
     ):
@@ -304,6 +333,8 @@ class Item(Model):
             yield cls.__by_available(available_for)
         if container is not None:
             yield cls.__by_container(container)
+        if carrier is not None:
+            yield cls.__by_carrier(container)
         if room_id is not None:
             yield cls.__by_room_id(room_id)
         if slug is not None:

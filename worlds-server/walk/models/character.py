@@ -45,21 +45,6 @@ class Character(Model):
     def database(cls):
         return World.instance.players
 
-    @classmethod
-    def list_characters(cls, player):
-        for character in cls.find(
-            not_player=player,
-            exists_only=True,
-            room_id=player.room_id,
-            visible_for=player,
-        ):
-            yield {
-                'character_id': character.character_id,
-                'name': character.name,
-                'level': disl4(character.level, character.sex),
-                'items': list(lobjsat(character.character_id)),
-            }
-
     @property
     def is_created(self):
         return len(self.name) > 0
@@ -73,15 +58,12 @@ class Character(Model):
         return self.level >= self.GOD_LEVEL
 
     @property
+    def items(self):
+        return Item.list_by_owner(self)
+
+    @property
     def carry(self):
-        def items_filter(i):
-            if i is None:
-                return False
-            owner = i.carried_by
-            if owner is None:
-                return False
-            return owner == self.character_id
-        return filter(items_filter, Item.all())
+        return Item.find(carrier=self)
 
     @property
     def can_carry(self):
@@ -112,6 +94,21 @@ class Character(Model):
             'is_aggressive': self.is_aggressive,
             'is_undead': self.is_undead,
         }
+
+    @classmethod
+    def list_characters(cls, player):
+        for character in cls.find(
+            not_player=player,
+            exists_only=True,
+            room_id=player.room_id,
+            visible_for=player,
+        ):
+            yield {
+                'character_id': character.character_id,
+                'name': character.name,
+                'level': disl4(character.level, character.sex),
+                'items': list(character.items),
+            }
 
     @classmethod
     def add(cls, name):
@@ -266,14 +263,6 @@ def is_dest(*args):
     # raise NotImplementedError()
     print("is_dest({})".format(args))
     return False
-
-
-def lobjsat(*args):
-    # raise NotImplementedError()
-    print("lobjsat({})".format(args))
-    yield {}
-    yield {}
-    yield {}
 
 
 def mhitplayer(*args):
