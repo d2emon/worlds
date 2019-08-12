@@ -26,7 +26,7 @@ export default new Router({
       component: () => import('@/views/World.vue'),
     },
     {
-      path: '/generated',
+      path: '/generated/:thing?',
       name: 'Generated',
       component: () => import('@/views/Geneverse.vue'),
     },

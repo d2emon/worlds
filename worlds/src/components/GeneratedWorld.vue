@@ -10,7 +10,7 @@
           <v-list-tile
             v-for="(item, id) in generated.children"
             :key="`item-${id}`"
-            @click="generateChild(item)"
+            :to="`/generated/${item}`"
           >
             <v-list-tile-content>
               <v-list-tile-title v-text="item" />
@@ -34,6 +34,9 @@ export default {
   components: {
     World: () => import('@/components/World.vue'),
   },
+  props: [
+    'thing',
+  ],
   computed: {
     ...mapState('generate', [
       'generated',
@@ -47,8 +50,13 @@ export default {
       this.getGenerated(child);
     },
   },
+  watch: {
+    thing() {
+      this.getGenerated(this.thing || 'universe');
+    },
+  },
   mounted() {
-    this.getGenerated('universe');
+    this.getGenerated(this.thing || 'universe');
   },
 };
 </script>
