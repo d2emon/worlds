@@ -482,7 +482,7 @@ class Items(ListDatabase):
             # World Item
             'location': initial.get('room_id', 0),
             # 1-2
-            'carry_flag': 1,
+            'carry_flag': 0,
             'state': 0,
             # Flags
             'is_destroyed': 0 in flags,

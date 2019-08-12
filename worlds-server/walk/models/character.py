@@ -43,6 +43,9 @@ class Character(Model):
 
     @classmethod
     def database(cls):
+        #
+        World.load()
+        #
         return World.instance.players
 
     @property
@@ -63,7 +66,7 @@ class Character(Model):
 
     @property
     def carry(self):
-        return Item.find(carrier=self)
+        return Item.find(owner=self)
 
     @property
     def can_carry(self):

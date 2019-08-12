@@ -21,6 +21,9 @@ export default {
   getTake: item => Api
     .get(`/walk/take/${item}`)
     .then(({ data }) => data),
+  getInventory: () => Api
+    .get('/walk/inventory')
+    .then(({ data }) => data),
   getExits: () => Api
     .get('/walk/exits')
     .then(({ data }) => data),

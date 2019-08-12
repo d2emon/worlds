@@ -129,12 +129,6 @@ class Item(Model):
         return self.__location
 
     @property
-    def carried_by(self):
-        if self.__carry_flag not in (0, 2):
-            return None
-        return self.location or None
-
-    @property
     def contained_in(self):
         if self.__carry_flag != 3:
             return None
@@ -142,15 +136,15 @@ class Item(Model):
 
     @property
     def room_id(self):
-        if self.__carry_flag != 1:
+        if self.__carry_flag != 0:
             return None
         return self.location
 
     @property
     def owner(self):
-        if self.__carry_flag not in (0, 3):
+        if self.__carry_flag not in (1, 2):
             return None
-        return self.location
+        return self.location or None
 
     @property
     def __serialized(self):
@@ -188,7 +182,7 @@ class Item(Model):
         Carried Loc!
         :return:
         """
-        for item in cls.find(carrier=owner):
+        for item in owner.carry:
             yield item.__serialized
 
     @classmethod
@@ -288,12 +282,12 @@ class Item(Model):
         #     return 113
         # if item.item_id == 112 and player.carry(114):
         #     return 114
-        return lambda item: cls.__by_room_id(character.room_id) or item.carried_by == character.character_id
+        return lambda item: cls.__by_room_id(character.room_id) or item.owner == character.character_id
 
     # 2-3
     @classmethod
-    def __by_carrier(cls, character):
-        return lambda item: character and item.carried_by == character.character_id
+    def __by_owner(cls, character):
+        return lambda item: character and item.owner == character.character_id
 
     # 4
     @classmethod
@@ -316,7 +310,7 @@ class Item(Model):
         slug=None,
         available_for=None,  # fobna
         container=None,  # fobnin
-        carrier=None,
+        owner=None,
         room_id=None,  # fobnh
         **kwargs,
     ):
@@ -333,8 +327,8 @@ class Item(Model):
             yield cls.__by_available(available_for)
         if container is not None:
             yield cls.__by_container(container)
-        if carrier is not None:
-            yield cls.__by_carrier(container)
+        if owner is not None:
+            yield cls.__by_owner(owner)
         if room_id is not None:
             yield cls.__by_room_id(room_id)
         if slug is not None:
