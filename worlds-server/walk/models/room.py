@@ -25,11 +25,13 @@ class Room(Model):
         room_id,
         title=None,
         exits=(),
+        jump_to=None,
         description=None,
         death_room=False,
         no_brief=False,
         is_dark=False,
         outdoors=False,
+        climate_id=0,
         zone="TCHAN",
         # permissions="r"
     ):
@@ -37,6 +39,7 @@ class Room(Model):
         self.__room_id = room_id
         self.title = title
         self.__exits = exits
+        self.jump_to = jump_to
         self.__description = description
         self.death_room = death_room
         self.no_brief = no_brief
@@ -45,6 +48,7 @@ class Room(Model):
         self.__zone_name = zone
 
         self.__zone = None
+        self.weather = Weather.get(climate_id) if self.outdoors else None
 
     @property
     def description(self):
@@ -75,10 +79,6 @@ class Room(Model):
         return self.__room_id
 
     @property
-    def weather(self):
-        return Weather.get()
-
-    @property
     def zone(self):
         if self.__zone is None:
             self.__zone = Zone.by_name(self.__zone_name)
@@ -93,6 +93,13 @@ class Room(Model):
         return Character.find(room_id=self.room_id)
 
     def list_items(self, player):
+        def serialize_item(item):
+            return {
+                'item_id': item.item_id,
+                'slug': item.slug,
+                'description': item.description,
+                'is_destroyed': item.is_destroyed,
+            }
         items = list(Item.find(
             wizard=player.is_wizard,
             room_id=self.room_id,
@@ -100,9 +107,9 @@ class Room(Model):
             description=True,
         ))
         return {
-            'flannel': [item.serialized for item in Item.list_by_flannel(items, True)],
-            'weather': self.outdoors and self.weather.get_description(self),
-            'items': [item.serialized for item in Item.list_by_flannel(items, False)],
+            'flannel': list(map(serialize_item, Item.list_by_flannel(items, True))),
+            'weather': self.weather and self.weather.description,
+            'items': list(map(serialize_item, Item.list_by_flannel(items, False))),
         }
 
     # Events

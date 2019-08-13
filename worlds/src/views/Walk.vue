@@ -1,13 +1,23 @@
 <template>
-  <v-layout justify-center>
+  <v-layout justify-center wrap>
+    <v-flex xs12>
+      <v-container>
+        <h4>{{progname}}</h4>
+      </v-container>
+    </v-flex>
     <v-flex xs12 sm3>
       <v-container>
         <walk-controls />
       </v-container>
     </v-flex>
-    <v-flex xs12 sm9>
+    <v-flex xs12 sm6>
       <v-container>
         <room />
+      </v-container>
+    </v-flex>
+    <v-flex xs12 sm3>
+      <v-container>
+        <inventory />
       </v-container>
     </v-flex>
   </v-layout>
@@ -24,6 +34,10 @@ export default {
   components: {
     WalkControls: () => import('@/components/WalkControls.vue'),
     Room: () => import('@/components/Room.vue'),
+    Inventory: () => import('@/components/Inventory.vue'),
+  },
+  computed: {
+    ...mapState('walk', ['progname']),
   },
   methods: {
     ...mapActions('walk', [

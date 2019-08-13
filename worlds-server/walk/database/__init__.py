@@ -1,6 +1,7 @@
 from ..exceptions import DatabaseError, StopGame
 from .logger import logger
 # Databases
+from .climates import Climates
 from .exits import Exits
 from .reset_data import ResetData
 from .rooms import Rooms
@@ -10,6 +11,7 @@ from . import names
 
 
 __databases = {
+    names.CLIMATES: Climates(),
     names.EXAMINES: "EXAMINES",
     names.EXITS: Exits(),
     names.LOG: "LOG",
@@ -49,6 +51,7 @@ class World:
             raise StopGame("Cannot find World file")
 
         data = self.__data.all()
+        self.messages = data['messages']
         self.items = data['items']  # ? objinfo[4 * numobs]
         self.players = data['players']  # ? ublock[16 * 48]
 

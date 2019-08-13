@@ -1,19 +1,18 @@
 from ..database import Database
 from ..characters import Characters
 from ..items import Items
+from .messages import Messages
 
 
 class WorldData(Database):
     def __init__(self):
-        self.value0 = 1
-        self.value1 = 1
+        self.messages = Messages()
         self.items = Items()
         self.players = Characters()
 
     def all(self):
         return {
-            0: self.value0,
-            1: self.value1,
+            'messages': self.messages,
             'items': self.items,
             'players': self.players,
         }
@@ -22,11 +21,10 @@ class WorldData(Database):
         return None
 
     def reset(self):
-        self.value0 = 1
-        self.value1 = 1
+        self.messages.reset()
         self.items.reset()
         self.players.reset()
 
     def set(self, items, players):
-        self.items.set(items)
-        self.players.set(players)
+        self.items.set_all(items)
+        self.players.set_all(players)

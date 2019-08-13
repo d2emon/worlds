@@ -17,59 +17,69 @@
         v-text="room.title"
       />
 
-      <v-card-text
-        v-if="room.error"
-        v-text="room.error"
-      />
-      <v-card-text
-        v-if="!brief"
-        v-html="room.html"
-      />
-
-      <v-layout raw wrap>
-        <v-flex md6>
-          <v-list>
-            <v-list-tile
-              v-for="item in room.flannel"
-              :key="`item-${item.item_id}`"
-            >
-              <span v-if="item.destroyed">--</span>
-              <span v-if="debugMode">{ {{item.item_id}} }</span>
-              {{item.text}}
-            </v-list-tile>
-            <v-list-tile v-if="room.weather">{{room.weather}}</v-list-tile>
-            <v-list-tile
-              v-for="item in room.items"
-              :key="`item-${item.item_id}`"
-            >
-              <span v-if="item.destroyed">--</span>
-              <span v-if="debugMode">{ {{item.item_id}} }</span>
-              {{item.text}}
-            </v-list-tile>
-          </v-list>
-        </v-flex>
-        <v-flex md6>
-          <div v-if="room.characters">
-            <div
-              v-for="character in room.characters"
-              :key="`char-${character.character_id}`"
-            >
-              <div>
-                {{character.name}}
-                <span v-if="debugMode">{ {{character.character_id}} }</span>
-                {{character.level}}
-                 is here carrying
-              </div>
-              <v-list v-if="character.items">
-                <v-list-tile
-                  v-for="(item, item_id) in character.items"
-                  :key="`char-${character.character_id}-item-${item_id}`"
+      <v-layout row wrap>
+        <v-flex sm8>
+          <v-alert
+            v-if="room.error"
+            type="error"
+            v-text="room.error"
+          />
+          <v-card-text
+            v-if="!brief"
+            class="wiki"
+            v-html="room.html"
+          />
+          <v-layout row wrap>
+            <v-flex md12>
+              <game-items
+                :items="room.flannel"
+                :flannel="true"
+                :debug="debugMode"
+              />
+              <game-items
+                v-if="room.weather"
+                :items="[{item_id: 0, description: room.weather}]"
+                :flannel="true"
+                :debug="debugMode"
+              />
+              <game-items
+                :items="room.items"
+                :debug="debugMode"
+              />
+            </v-flex>
+            <v-flex md6>
+              <div v-if="room.characters">
+                <div
+                  v-for="character in room.characters"
+                  :key="`char-${character.character_id}`"
                 >
-                  {{item}}
-                </v-list-tile>
-              </v-list>
-            </div>
-          </div>
+                  <div>
+                    {{character.name}}
+                    <span v-if="debugMode">{ {{character.character_id}} }</span>
+                    {{character.level}}
+                     is here carrying
+                  </div>
+                  <v-list v-if="character.items">
+                    <v-list-tile
+                      v-for="(item, item_id) in character.items"
+                      :key="`char-${character.character_id}-item-${item_id}`"
+                    >
+                      {{item}}
+                    </v-list-tile>
+                  </v-list>
+                </div>
+              </div>
+            </v-flex>
+          </v-layout>
+        </v-flex>
+        <v-flex sm4>
+          <v-alert
+            v-for="(message, messageId) in reversed"
+            :key="`message-${messageId}`"
+            v-model="showMessages"
+            type="info"
+            v-html="message"
+          />
         </v-flex>
       </v-layout>
     </v-container>
@@ -84,14 +94,22 @@ import {
 
 export default {
   name: 'Room',
+  components: {
+    GameItems: () => import('@/components/GameItems.vue'),
+  },
   computed: {
     ...mapState('walk', [
       'brief',
       'debugMode',
       'player',
       'room',
+      'messages',
     ]),
+    reversed() { return this.messages.reverse(); },
   },
+  data: () => ({
+    showMessages: true,
+  }),
   methods: {
     ...mapMutations('walk', ['setBrief']),
   },

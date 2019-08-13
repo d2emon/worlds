@@ -6,8 +6,7 @@ This file holds the basic communications routines
 # oddcat = 0
 # talkfl = 0
 
-# cms = -1
-
+# cms       player
 # curch     player
 # globme    player
 
@@ -36,17 +35,20 @@ Sectors 1-n  in pairs ie [128 words]
 # gurum = 0
 # convflg = 0
 
+from ..player import input_command as sendmsg
 
-# def sendmsg(name):
 # def send2(block):
 # def readmsg(channel,block,num):
 
 # fl_com = None
 
-# def rte(name):
+from ..player import read_messages as rte
 from ..database import connect as openlock
+
 # def findstart(unit):
-# def findend(unit):
+
+from ..database.world import last_message_id as findend
+
 # def talker(name):
 
 # rd_qd = 0
@@ -71,13 +73,14 @@ from ..database import connect as openlock
 # mynum player
 
 from ..player import set_room as trapch
+from ..player import put_on as putmeon
 
-# def putmeon(name):
 # def loseme(name):
 
-# lasup = 0
+# lasup player
 
-# def update(name):
+from ..player import update_character as update
+
 # def revise(cutoff):
 
 from ..actions.player_actions import look_room as lookin
@@ -150,99 +153,6 @@ if(debug_mode)    bprintf("\n<%d>",block[1]);
 long gurum=0;
 long convflg=0;
  
-sendmsg(name)
- char *name;
-    {
-    extern long debug_mode;
-    extern char *sysbuf;
-    extern long curch,moni,mynum;
-    char prmpt[32];
-    long a;
-extern long tty;
-    char work[200];
-    long w2[35];
-    extern char key_buff[];
-    extern long convflg;
-    extern long my_lev;
-extern long my_str;
-extern long in_fight;
-extern long fighting;
-    extern long curmode;
-    l:pbfr();
-if(tty==4) btmscr();
-strcpy(prmpt,"\r");
-    if(pvis(mynum)) strcat(prmpt,"(");
-    if(debug_mode) strcat(prmpt,"#");
-    if(my_lev>9)strcat(prmpt,"----");
-    switch(convflg)
-       {
-       case 0:
-          strcat(prmpt,">");
-          break;
-       case 1:
-          strcat(prmpt,"\"");
-          break;
-       case 2:
-          strcat(prmpt,"*");
-          break;
-       default:
-          strcat(prmpt,"?");
-          }
-    if(pvis(mynum)) strcat(prmpt,")");
-    pbfr();
-    if(pvis(mynum)>9999) set_progname(0,"-csh");
-    else
-    sprintf(work,"   --}----- ABERMUD -----{--     Playing as %s",name);
-    if(pvis(mynum)==0) set_progname(0,work);
-    sig_alon();
-    key_input(prmpt,80);
-    sig_aloff();
-    strcpy(work,key_buff);
-if(tty==4) topscr();
-strcat(sysbuf,"\001l");
-strcat(sysbuf,work);
-strcat(sysbuf,"\n\001");
-openworld();
-rte(name);
-closeworld();
-    if((convflg)&&(!strcmp(work,"**")))
-       {
-       convflg=0;
-       goto l;
-       }
-    if(!strlen(work)) goto nadj;
-if((strcmp(work,"*"))&&(work[0]=='*')){(work[0]=32);goto nadj;}
-    if(convflg)
-       {
-       strcpy(w2,work);
-       if(convflg==1) sprintf(work,"say %s",w2);
-       else
-          sprintf(work,"tss %s",w2);
-       }
-    nadj:if(curmode==1) gamecom(work);
-    else
-       {
-       if(((strcmp(work,".Q"))&&(strcmp(work,".q")))&& (!!strlen(work)))
-          {
-          a=special(work,name);
-          }
-       }
-if(fighting>-1)
-{
-if(!strlen(pname(fighting))) 
-{
-in_fight=0;
-fighting= -1;
-}
-if(ploc(fighting)!=curch) 
-{
-in_fight=0;
-fighting= -1;
-}
-}
-if(in_fight) in_fight-=1;
-    return((!strcmp(work,".Q"))||(!strcmp(work,".q")));
-    }
  
  send2(block)
  long *block;
@@ -274,36 +184,7 @@ if(in_fight) in_fight-=1;
     }
  
 FILE *fl_com;
-extern long findstart();
-extern long findend();
  
- rte(name)
- char *name;
-    {
-    extern long cms;
-    extern long vdes,tdes,rdes;
-    extern FILE *fl_com;
-    extern long debug_mode;
-    FILE *unit;
-    long too,ct,block[128];
-    unit=openworld();
-    fl_com=unit;
-    if (unit==NULL) crapup("AberMUD: FILE_ACCESS : Access failed\n");
-    if (cms== -1) cms=findend(unit);
-    too=findend(unit);
-    ct=cms;
-    while(ct<too)
-       {
-       readmsg(unit,block,ct);
-       mstoout(block,name);
-       ct++;
-       }
-    cms=ct;
-    update(name);
-    eorte();
-    rdes=0;tdes=0;vdes=0;
-    }
-    
 long findstart(unit)
  FILE *unit;
     {
@@ -312,46 +193,6 @@ long findstart(unit)
     return(bk[0]);
     }
  
-long findend(unit)
- FILE *unit;
-    {
-    long bk[3];
-    sec_read(unit,bk,0,2);
-    return(bk[1]);
-    }
- 
- 
- talker(name)
- char *name;
-    {
-    extern long curch,cms;
-    extern long mynum;
-    extern long maxu;
-    extern long rd_qd;
-    FILE *fl;
-    char string[128];
-    extern char globme[];
-    makebfr();
-    	cms= -1;putmeon(name);
-    if(openworld()==NULL) crapup("Sorry AberMUD is currently unavailable");
-    if (mynum>=maxu) {printf("\nSorry AberMUD is full at the moment\n");return(0);}
-    strcpy(globme,name);
-    rte(name);
-    	closeworld();
-    cms= -1;
-    special(".g",name);
-    i_setup=1;
-    while(1)
-       {
-       pbfr();
-       sendmsg(name);
-       if(rd_qd) rte(name);
-       rd_qd=0;
-       closeworld();
-       pbfr();
-       }
-    }
-    
 long rd_qd=0;
  
  cleanup(inpbk)
@@ -476,45 +317,6 @@ if(!strcmp(lowercase(nam1+4),lowercase(luser))) return(1);
     return(!strcmp(lowercase(nam1),lowercase(luser)));
     }
  
- putmeon(name)
- char *name;
-    {
-    extern long mynum,curch;
-    extern long maxu;
-    long ct,f;
-    FILE *unit;
-    extern long iamon;
-    iamon=0;
-    unit=openworld();
-    ct=0;
-    f=0;
-    if(fpbn(name)!= -1)
-       {
-       crapup("You are already on the system - you may only be on once at a time");
-       }
-    while((f==0)&&(ct<maxu))
-       {
-       if (!strlen(pname(ct))) f=1;
-       else
-          ct++;
-       }
-    if(ct==maxu)
-       {
-       mynum=maxu;
-       return;
-       }
-    strcpy(pname(ct),name);
-    setploc(ct,curch);
-    setppos(ct,-1);
-    setplev(ct,1);
-    setpvis(ct,0);
-    setpstr(ct,-1);
-    setpwpn(ct,-1);
-    setpsex(ct,0);
-    mynum=ct;
-iamon=1;
-    }
- 
  loseme(name)
  char *name;
     {
@@ -538,24 +340,6 @@ sendsys(globme,globme,-10113,0,bk);
     	closeworld();
 if(!zapped) saveme();
     	chksnp();
-    }
- 
-long lasup=0;
-
- update(name)
- char *name;
-    {
-    extern long mynum,cms;
-    FILE *unit;
-    long xp;
-    extern long lasup;
-    xp=cms-lasup;
-    if(xp<0) xp= -xp;
-    if(xp<10) goto noup;
-    unit=openworld();
-    setppos(mynum,cms);
-    lasup=cms;
-    noup:;
     }
  
  revise(cutoff)

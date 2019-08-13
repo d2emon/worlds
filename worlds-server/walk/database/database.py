@@ -13,8 +13,14 @@ class ListDatabase(Database):
     def all(self):
         yield from self.items
 
+    def set_all(self, items):
+        self.items = items
+
     def get(self, item_id):
         return lambda: self.items[item_id]
+
+    def set(self, index, **data):
+        self.items[index].update(data)
 
     def reset(self):
         raise NotImplementedError
@@ -23,7 +29,7 @@ class ListDatabase(Database):
 class WorldDatabase(ListDatabase):
     ITEMS = 0
 
-    def set(self, items):
+    def set_all(self, items):
         self.items = items
 
     def reset(self):

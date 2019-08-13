@@ -38,6 +38,24 @@ class Rooms(Database):
             return False
 
     @classmethod
+    def __climate_id(cls, room_id):
+        if -199 >= room_id >= -179:
+            return 1
+        elif -100 >= room_id >= -178:
+            return 2
+        elif -178 > room_id > -199:
+            return 3
+        return 0
+
+    @classmethod
+    def __jump_to(cls, room_id):
+        return {
+            -643: -633,
+            -1050: -662,
+            -1082: -1053,
+        }.get(room_id)
+
+    @classmethod
     def __zone(cls, room_id):
         return cls.ZONES.by_room_id(room_id)
 
@@ -48,11 +66,13 @@ class Rooms(Database):
             'zone': cls.__zone(room_id).get('name'),
             'title': None,
             'exits': [],
+            'jump_to': cls.__jump_to(room_id),
             'description': None,
             'death_room': False,
             'no_brief': False,
             'is_dark': cls.__is_dark(room_id),
             'outdoors': cls.__outdoors(room_id),
+            'climate_id': cls.__climate_id(room_id),
         }
 
     @classmethod

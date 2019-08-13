@@ -99,6 +99,21 @@
           <div v-if="exits && exits['d'] !== true">{{exits['d']}}</div>
         </v-flex>
       </v-layout>
+
+      <v-layout row wrap>
+        <v-text-field
+          label="Command"
+          v-model="command"
+        >
+          <span slot="prepend">{{prompt}}</span>
+          <v-btn
+            slot="append"
+            @click="inputCommand(command)"
+          >
+            Ok
+          </v-btn>
+        </v-text-field>
+      </v-layout>
       <v-layout row wrap>
         <v-btn @click="setLevel(1)">Player</v-btn>
         <v-btn @click="setLevel(10)">Wizard</v-btn>
@@ -129,14 +144,10 @@
         >
           Quit
         </v-btn>
-        <v-btn @click="console.log(9)">Take</v-btn>
+        <!-- v-btn @click="take">Take</v-btn -->
         <v-btn @click="console.log(10)">Drop</v-btn>
 
-        <v-btn
-          @click="getRoom"
-        >
-          Look
-        </v-btn>
+        <!-- v-btn @click="getRoom">Look</v-btn -->
         <v-btn @click="console.log(12)">Inventory</v-btn>
         <v-btn @click="console.log(13)">Who</v-btn>
         <v-btn @click="console.log(14)">Reset</v-btn>
@@ -275,7 +286,11 @@
         />
 
         <v-btn @click="console.log(171)">Debug</v-btn>
-        <v-btn @click="console.log(172)">Jump</v-btn>
+        <v-btn
+          @click="jump"
+        >
+          Jump
+        </v-btn>
         <v-btn
           @click="doMap"
         >
@@ -299,7 +314,11 @@
         <v-btn @click="console.log(185)">Set Magic In</v-btn>
         <v-btn @click="console.log(186)">Set Magic Out</v-btn>
         <v-btn @click="console.log(187)">Emote</v-btn>
-        <v-btn @click="console.log(188)">Dig</v-btn>
+        <v-btn
+          @click="dig"
+        >
+          Dig
+        </v-btn>
         <v-btn @click="console.log(189)">Empty</v-btn>
       </v-layout>
     </v-container>
@@ -319,6 +338,7 @@ export default {
   computed: {
     ...mapGetters('walk', [
       'isDebugger',
+      'prompt',
     ]),
     ...mapState('walk', [
       'message',
@@ -326,6 +346,8 @@ export default {
       'debugMode',
       'player',
       'exits',
+
+      'progname',
     ]),
     showingMessage: {
       get() { return !!this.message; },
@@ -333,6 +355,8 @@ export default {
     },
   },
   data: () => ({
+    timerId: null,
+
     level: 1,
 
     // Special
@@ -343,6 +367,8 @@ export default {
     curmode: 0,
     mynum: 1,
     my_sco: 0,
+
+    command: '',
   }),
   methods: {
     ...mapMutations('walk', [
@@ -353,12 +379,16 @@ export default {
       'hideMessage',
 
       'restart',
+      'inputCommand',
 
+      'wait',
       'goDirection',
       'quitGame',
       'getRoom',
       'fetchExits',
+      'jump',
       'setDebugMode',
+      'dig',
     ]),
     setLevel(level) { this.level = level; },
     goButtonColor(direction) {
@@ -417,6 +447,12 @@ export default {
       this.on_flee_event();
       return this.goDirection(directionId);
     },
+  },
+  mounted() {
+    this.timerId = setInterval(this.wait, 60000);
+  },
+  destroyed() {
+    clearInterval(this.timerId);
   },
 };
 </script>

@@ -1,10 +1,7 @@
-import random
 from flask import jsonify, request
-from walk.actions import quit_game
 from walk.exceptions import ActionError, StopGame
-from walk.globalVars import Globals
 from walk.parser import Parser
-from walk.player import Player, sig_oops, sig_ctrlc
+from walk.player import Player
 from .. import app
 from . import blueprint
 
@@ -28,31 +25,47 @@ def on_error(message):
 
 
 def on_stop(message):
-    pbfr()
-    # Globals.pr_due = 0  # So we dont get a prompt after the exit
-    keysetback()
     return jsonify({
-        'text': "pbfr()",
+        'messages': Player.player().on_stop_game(),
         'crapup': str(message),
     })
 
 
 @blueprint.route('/oops', methods=['GET'])
 def oops():
-    return jsonify(sig_oops())
+    try:
+        return jsonify(Player.player().on_error() or {})
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
 
 
 @blueprint.route('/ctrlc', methods=['GET'])
 def ctrlc():
-    return jsonify(sig_ctrlc())
+    try:
+        return jsonify(Player.player().on_quit() or {})
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
 
 
 @blueprint.route('/start/<name>', methods=['GET'])
 def start(name):
-    response = Player(name).start(name)
-    player = response.get('player', {})
-    app.logger.info("GAME ENTRY: %s[%s]", player.get('name'), request.remote_addr)
+    response = Player.restart(name)
+    app.logger.info("GAME ENTRY: %s[%s]", Player.player().name, request.remote_addr)
     return jsonify(response)
+
+
+@blueprint.route('/wait', methods=['GET'])
+def wait():
+    try:
+        return jsonify(Player.player().wait() or {})
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
 
 
 @blueprint.route('/go/<direction>', methods=['GET'])
@@ -76,15 +89,58 @@ def quit_system():
         return on_stop(e)
 
 
+@blueprint.route('/take/', methods=['GET'])
+@blueprint.route('/take/<item>', methods=['GET'])
+def take(item=None):
+    if item is None:
+        return jsonify({'error': "Get what?"})
+
+    player = Player.player()
+    item = player.find_item(slug=item, room_id=player.room_id)
+
+    try:
+        return jsonify(player.take(item))
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
+
+
+@blueprint.route('/take/<item>/from/', methods=['GET'])
+@blueprint.route('/take/<item>/from/<container>', methods=['GET'])
+@blueprint.route('/take/<item>/out/<container>', methods=['GET'])
+def take_from(item, container=None):
+    if container is None:
+        return jsonify({'error': "From what?"})
+
+    player = Player.player()
+    container = player.find_item(slug=container, available_for=player.character)
+    if container is None:
+        return jsonify({'error': "You can't take things from that - it's not here"})
+    item = player.find_item(slug=item, container=container)
+
+    try:
+        return jsonify(player.take(item))
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
+
+
+@blueprint.route('/inventory', methods=['GET'])
+def inventory():
+    try:
+        return jsonify(Player.player().get_inventory())
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)
+
+
 @blueprint.route('/look', methods=['GET'])
 def look():
     try:
-        room = Player.player().look()
-        return jsonify({
-            'result': room.get('result'),
-            'error': room.get('error'),
-            'room': room,
-        })
+        return jsonify(Player.player().look())
     except ActionError as e:
         return on_error(e)
     except StopGame as e:
@@ -137,14 +193,11 @@ def jump():
         return on_stop(e)
 
 
-# Not Implemented
-
-
-def keysetback(*args):
-    # raise NotImplementedError()
-    print("keysetback({})".format(args))
-
-
-def pbfr(*args):
-    # raise NotImplementedError()
-    print("pbfr({})".format(args))
+@blueprint.route('/dig', methods=['GET'])
+def dig():
+    try:
+        return jsonify(Player.player().dig())
+    except ActionError as e:
+        return on_error(e)
+    except StopGame as e:
+        return on_stop(e)

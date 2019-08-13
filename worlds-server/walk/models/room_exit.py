@@ -87,7 +87,7 @@ class Exit(Model):
         if door is None:
             room_id = self.room_to
         elif door.state > 0:
-            return self.__on_door_closed
+            return self.__on_door_closed(player)
         else:
             connected = door.connected  # other door side
             room_id = connected.location if connected else 0

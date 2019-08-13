@@ -1,10 +1,45 @@
 import random
-from .exceptions import ActionError, DatabaseError, StopGame
+import time
+from .exceptions import ActionError, StopGame
 from .database import World
 from .globalVars import Globals
+from .messages import process
 from .models.character import Character
 from .models.item import Item
+from .models.message import Message
 from .models.room import Room
+
+
+def special(action, player):
+    if not action or action[0] != ".":
+        return
+    code = action[1:].lower()
+
+    if code == "q":
+        return
+    elif code == "g":
+        return player.start()
+    else:
+        raise ActionError("Unknown . option")
+
+
+def turn(command=None):
+    def wrapper(f):
+        def wrapped(player, *args, **kwargs):
+            messages = []
+
+            messages += player.on_before_turn()
+
+            player.add_command(command)
+            result = f(player, *args, **kwargs) or {}
+            player.add_messages(*result.get('messages', []))
+
+            messages += player.on_after_turn()
+
+            result['messages'] = list(filter(None, messages))
+            return result
+        return wrapped
+    return wrapper
 
 
 class Player:
@@ -13,57 +48,66 @@ class Player:
     MAX_PLAYER = 16
 
     def __init__(self, name):
+        # Set Fields
         self.character_id = 0  # mynum
         self.name = "The {}".format(name) if name == "Phantom" else name  # globme
+        self.__message_id = -1  # cms
 
         self.level = 10000  # my_lev
-        self.__room_id = random.choice((
-            -5,
-            -183,
+        self.strength = 0
+        self.sex = 0
 
-            # -600,
-        ))  # curch
+        self.__room_id = -5  # curch
+
+        self.__updated = 0  # lasup
+        self.__interrupt = None  # last_io_interrupt
+        self.__text_messages = []
 
         self.__room = None
 
-        Globals.tty = 0
-        # if tty == 4:
-        #     initbbc()
-        #     initscr()
-        #     topscr()
-
         # Talker
-        makebfr()
-        Globals.cms = -1
-        putmeon(self.name)
-
-        try:
-            World.load()
-        except DatabaseError:
-            raise StopGame("Sorry AberMUD is currently unavailable")
-        if self.character_id >= self.MAX_PLAYER:
-            raise StopGame("\nSorry AberMUD is full at the moment\n")
-        rte(self.name)
+        World.load()
+        self.character_id = Character.add(self.name)
+        self.read_messages()
+        # for c in Character.all():
+        #     print(c.serialized)
         World.save()
 
-        Globals.cms = -1
-        special(".g", self.name)
+        self.start()
         Globals.i_setup = True
 
         self.__PLAYER = self
 
     @property
+    def message_id(self):
+        return self.__message_id
+
+    @message_id.setter
+    def message_id(self, value):
+        self.__message_id = value
+
+        if abs(self.__message_id - self.__updated):
+            return
+
+        World.load()
+        self.character.message_id = self.message_id
+        self.character.save()
+        self.__updated = self.message_id
+
+    @property
     def character(self):
+        #
+        World.load()
+        #
         return Character.get(self.character_id)
 
     @property
     def is_dark(self):
-        def is_light(item_id):
-            item = Item.get(item_id)
-            if item_id != 32 and not otstbit(item_id, 13):
+        def is_light(item):
+            if item.item_id != 32 and not item.is_light:
                 return False
-            if ishere(item_id):
-                return True
+            if item.room_id != self.room_id:
+                return False
             owner = item.owner
             if owner is None or owner.room_id != self.room_id:
                 return False
@@ -73,8 +117,9 @@ class Player:
             return False
         if not self.room.is_dark:
             return False
-        if any(is_light(item_id) for item_id in range(Item.count())):
+        if any(is_light(item) for item in self.find_items()):
             return False
+        return True
 
     @property
     def is_god(self):
@@ -104,10 +149,16 @@ class Player:
         return not Globals.ail_blind and not self.is_dark
 
     @property
+    def helping(self):
+        if self.character.helping is None:
+            return None
+        return Character.get(self.character.helping)
+
+    @property
     def carry(self):
         if self.is_wizard:
             return self.character.carry
-        return (item for item in self.character.carry if not isdest(item))
+        return (item for item in self.character.carry if not item.is_destroyed)
 
     @property
     def available_characters(self):
@@ -117,6 +168,10 @@ class Player:
             exists_only=True,
         )
 
+    @property
+    def available_items(self):
+        return Item.find(available_for=self)
+
     @classmethod
     def player(cls, name="Name"):
         if cls.__PLAYER is None:
@@ -124,7 +179,7 @@ class Player:
         return cls.__PLAYER
 
     @classmethod
-    def start(cls, name):
+    def restart(cls, name):
         cls.__PLAYER = cls(name)
         return {
             'player': {
@@ -132,6 +187,27 @@ class Player:
             },
             'message': "Hello {}".format(cls.__PLAYER.name),
         }
+
+    @classmethod
+    def set_pronoun(cls, character):
+        """
+        Assign Him her etc according to who it is
+
+        :param character:
+        :return:
+        """
+        if character is None:
+            return
+
+        if character.sex == 0:
+            Globals.wd_him = character
+        elif character.sex == 1:
+            Globals.wd_her = character
+        elif character.sex == 2:
+            Globals.wd_it = character
+            return
+
+        Globals.wd_them = character
 
     def has_item(self, item_id):
         return self.character.has_item(item_id, include_destroyed=self.is_wizard)
@@ -145,36 +221,148 @@ class Player:
         self.character.room_id = room_id
         return self.look()
 
-    def check_help(self):
-        def remove_helping(name=''):
-            self.character.helping = None
-            return {'message': "You can no longer help [c]{}[/c]\n".format(name)}
+    def __stop_help(self, name=''):
+        self.character.helping = None
+        self.add_messages("You can no longer help [c]{}[/c]\n".format(name))
 
-        helping = Character.get(self.character.helping)
+    def check_help(self):
+        if self.character.helping is None:
+            return
         if not Globals.i_setup:
             return
-        elif helping is None or not helping.is_created:
-            return remove_helping()
+
+        helping = self.helping
+        if helping is None or not helping.is_created:
+            return self.__stop_help()
         elif helping.room_id != self.room_id:
-            return remove_helping(helping.name)
+            return self.__stop_help(helping.name)
 
-    def can_see_character(self, character):
-        if character is None:
-            return True
-        if self.character_id == character.character_id:
-            return True  # me
+    def read_messages(self, interrupt=False):
+        World.load()
 
-        if Globals.ail_blind:
-            return False  # Cant see
-        if self.character.level < character.visible:
-            return False
-        if self.room_id == character.room_id and self.room.is_dark:
-            return False
+        for block in Message.read_from(self.message_id):
+            mstoout(block, self)
 
-        setname(character)
-        return True
+        self.message_id = Message.last_message_id()
+        self.on_after_messages(interrupt=interrupt)
 
+        Globals.rdes = 0
+        Globals.tdes = 0
+        Globals.vdes = 0
+
+    def __decode(self, dst=None, is_keyboard=False):
+        return [process(self, message, dst, is_keyboard=is_keyboard) for message in self.__text_messages]
+
+    def get_text(self):
+        result = []
+
+        World.save()
+
+        if Globals.log_fl is not None:
+            result += self.__decode(Globals.log_fl, is_keyboard=False)
+
+        if Globals.snoopd is not None:
+            fln = opensnoop(Globals.snoopd.name, "a")
+            if fln is not None:
+                result += self.__decode(fln, is_keyboard=False)
+                # disconnect(fln)
+
+        result += self.__decode(is_keyboard=True)
+
+        self.__text_messages = []  # clear buffer
+
+        if Globals.snoopt is not None:
+            result.append(viewsnoop())
+
+        return result
+
+    def add_command(self, command):
+        if not command:
+            return
+
+        self.add_messages("[l]{}\n[/l]".format(command))
+
+        self.read_messages()
+        World.save()
+
+        command = command.lower()
+        if Globals.curmode:
+            return gamecom(command)
+        else:
+            return special(command, self)
+
+    def get_dragon(self):
+        if self.is_wizard:
+            return None
+        return Character.find(name='dragon', room_id=self.room_id)
+
+    # Search Helpers
+    def find_items(self, **kwargs):
+        return Item.find(wizard=self.is_wizard, **kwargs)
+
+    def find_item(self, **kwargs):
+        return next(self.find_items(**kwargs), None)
+
+    def find_characters(self, **kwargs):
+        return Character.find(**kwargs)
+
+    def find_character(self, **kwargs):
+        return next(self.find_items(**kwargs), None)
+
+    # Text Messages
+    def add_messages(self, *messages):
+        self.__text_messages += filter(None, messages)
+
+    # Specials
+    def start(self):
+        self.__message_id = -1
+        Globals.curmode = True
+
+        initme()
+
+        World.load()
+        self.character.strength = self.strength
+        self.character.level = self.level
+        self.character.visible = 0 if self.level < 10000 else 10000
+        self.character.weapon = None
+        self.character.sex = self.sex
+        self.character.helping = None
+        self.character.save()
+
+        sendsys(
+            self.name,
+            self.name,
+            -10113,
+            self.room_id,
+            "[s name=\"{name}\"][ {name}  has entered the game ]\n[/s]".format(name=self.name),
+        )
+        self.read_messages()
+        self.room_id = random.choice((
+            # -5,
+            # -183,
+
+            -167,
+        ))  # -5 if randperc() > 50 else -183
+        self.set_room()
+        sendsys(
+            self.name,
+            self.name,
+            -10000,
+            self.room_id,
+            "[s name=\"{name}\"]{name}  has entered the game\n[/s]".format(name=self.name),
+        )
+
+    # Actions
+    def wait(self):
+        self.read_messages(interrupt=True)
+        self.on_time()
+        World.save()
+        return {'messages': self.__text_messages}
+
+    @turn()
     def go(self, direction_id):
+        self.add_command("go {}".format(direction_id))
+
         if Globals.in_fight > 0:
             raise ActionError(
                 "You can't just stroll out of a fight!\n"
@@ -225,17 +413,16 @@ class Player:
         )
 
         self.room_id = room.room_id
-        result.update({
-            'result': not result.get('error'),
-            'room': self.set_room(),
-        })
+        result.update({'result': not result.get('error')})
+        result.update(self.set_room())
         return result
 
+    @turn('quit')
     def quit_game(self):
         if Globals.is_forced:
             raise ActionError("You can\'t be forced to do that")
 
-        rte(self.name)
+        self.read_messages()
 
         if Globals.in_fight:
             raise ActionError("Not in the middle of a fight!")
@@ -268,7 +455,49 @@ class Player:
         saveme()
         raise StopGame('Goodbye')
 
+    @turn('take')
+    def take(self, item):
+        def get_shield():
+            shields = (Item.get(item_id) for item_id in (113, 114))
+            shield = next((shield for shield in shields if shield.is_destroyed), None)
+            if shield is None:
+                raise ActionError("The shields are all to firmly secured to the walls\n")
+            shield.create()
+            return shield
+
+        if item is None:
+            raise ActionError("That is not here.")
+        if item.item_id == 112:
+            item = get_shield()
+        if item.flannel:
+            raise ActionError("You can't take that!\n")
+        if self.get_dragon() is not None:
+            return {}
+        if not self.character.can_carry:
+            raise ActionError("You can't carry any more\n")
+
+        self.add_messages(item.on_before_take(self).get('message', ''))
+        item.set_location(self.character_id, 1)
+        sendsys(
+            self.name,
+            self.name,
+            -10000,
+            self.room_id,
+            "[D]{}[/D][c] takes the {}\n[/c]]".format(self.name, item.name),
+        )
+        self.add_messages(item.on_after_take(self).get('message', ''))
+        return {'message': "Ok..."}
+
+    @turn('inventory')
+    def get_inventory(self):
+        return {'items': list(self.character.items)}
+
+    @turn('look')
     def look(self):
+        def process_item(item):
+            item.update({'description': process(self, item.get('description', ''))})
+            return item
+
         World.save()
 
         if self.room.death_room:
@@ -279,42 +508,46 @@ class Player:
 
         World.load()
 
-        response = {
+        error = False
+        room_data = {
             'no_brief': self.room.no_brief,
             'is_dark': self.room.is_dark,
             'death': self.room.death_room,
             'items': [],
             'characters': [],
         }
-        messages = []
+
         if self.is_dark:
-            response.update({'error': "It is dark"})
+            error = "It is dark"
         elif Globals.ail_blind:
-            response.update({'error': "You are blind... you can't see a thing!"})
+            error = "You are blind... you can't see a thing!"
         else:
-            response.update({
+            room_data.update({
                 'title': self.room.title,
                 'text': self.room.description,
             })
-            response.update(self.room.list_items(self))
+            items = self.room.list_items(self)
+            room_data.update({
+                'flannel': [process_item(item) for item in items.get('flannel', [])],
+                'weather': process(self, items.get('weather', '')),
+                'items': [process_item(item) for item in items.get('items', [])],
+            })
 
             if Globals.curmode == 1:
-                response.update({'characters': list(Character.list_characters(self))})
+                room_data.update({'characters': list(Character.list_characters(self))})
 
-        messages += self.on_look().get('messages', [])
+        self.on_look()
 
-        response.update({'messages': messages})
         if self.is_wizard:
-            response.update({'name': self.room.name})
+            room_data.update({'name': self.room.name})
         if self.is_god:
-            response.update({'room_id': self.room.room_id})
+            room_data.update({'room_id': self.room.room_id})
             # Secret
-            response.update({
+            room_data.update({
                 'zone': (self.room.zone.name, self.room.in_zone),
                 'exits': [e.room_to for e in self.room.exits],
                 'outdoors': self.room.outdoors,
             })
-        response.update({'result': not response.get('error')})
 
         # error
         # messages
@@ -323,29 +556,29 @@ class Player:
         # title
         # text
         # items
+        response = {'room':  room_data}
+        if error:
+            response.update({'error': error})
         return response
 
+    @turn('jump')
     def jump(self):
-        jumtb = {
-            -643: -633,
-            -1050: -662,
-            -1082: -1053,
-        }
-
-        a = 0
-        ms = ""
-        room_id = jumtb.get(self.room_id)
+        room_id = self.room.jump_to
         if room_id is None:
             return {'message': "Wheeeeee....\n"}
 
+        #
+        World.load()
+        #
         umbrella = Item.get(1)
-        if not self.is_wizard and not self.has_item(umbrella.item_id) or umbrella.state == 0:
+        if not self.is_wizard and (not self.has_item(umbrella.item_id) or umbrella.state == 0):
             self.__room_id = room_id
             loseme()
             return {
                 'message': "Wheeeeeeeeeeeeeeeee  <<<<SPLAT>>>>\nYou seem to be splattered all over the place\n",
                 'crapup': "I suppose you could be scraped up - with a spatula",
             }
+
         sendsys(
             self.name,
             self.name,
@@ -353,7 +586,8 @@ class Player:
             self.room_id,
             "[s name=\"{}\"]{} has just left\n[/s]".format(self.name, self.name),
         )
-        self.__room_id = room_id
+        self.room_id = room_id
+        self.set_room()
         sendsys(
             self.name,
             self.name,
@@ -361,9 +595,9 @@ class Player:
             self.room_id,
             "[s name=\"{}\"]{} has just dropped in\n[/s]".format(self.name, self.name),
         )
-        self.set_room(self.__room_id)
-        return {}
+        return {'result': True}
 
+    @turn('exits')
     def list_exits(self):
         exits = {}
         for e in self.room.exits:
@@ -381,68 +615,147 @@ class Player:
                 # result.append("{} : {}{}".format(e.direction, room.zone.name, room.in_zone))
         return {'exits': exits or None}
 
+    @turn('dig')
+    def dig(self):
+        #
+        World.load()
+        #
+
+        garlic = Item.get(100)
+        if garlic.room_id == self.room_id and garlic.is_destroyed:
+            garlic.create()
+            return {'message': "Вы что-то нашли!\n"}
+
+        slab = Item.get(186)
+        if slab.room_id == self.room_id and slab.is_destroyed:
+            slab.create()
+            return {'message': "You uncover a stone slab!\n"}
+
+        hole = Item.get(176)
+        if self.room_id in (-172, -192):
+            if hole.state == 0:
+                return {'message': "You widen the hole, but with little effect.\n"}
+            hole.state = 0
+            return {'message': "You rapidly dig through to another passage.\n"}
+        return {'message': "You find nothing.\n"}
+
     # Events
+
+    def on_error(self):
+        loseme(self)
+        return {'fatalError': 255}
 
     def on_look(self):
         turn_undead = self.has_item(45)
+        for enemy in Character.find(aggressive=True):
+            enemy.check_fight(self, undead=not turn_undead)
 
-        enemies = (
-            "shazareth",
-            "bomber",
-            "owin",
-            "glowin",
-            "smythe",
-            "dio",
-            "rat",
-            "ghoul",
-            "ogre",
-            "riatha",
-            "yeti",
-            "guardian",
-        )
-        for name in enemies:
-            check_fight(self, next(Character.find(name=name)))
+        for item in self.carry:
+            self.add_messages(item.on_wait(self).get('message', ''))
 
-        undead = (
-            "wraith",
-            "zombie",
-        )
-        if not turn_undead:
-            for name in undead:
-                check_fight(self, next(Character.find(name=name)))
+        self.check_help()
 
-        messages = [item.on_wait(self).get('message', '') for item in self.carry]
-        messages = filter(None, messages)
+    def on_after_messages(self, interrupt=True):
+        def check_invisibility():
+            if not Globals.me_ivct:
+                return
 
-        if self.character.helping is not None:
-            check_help()
+            Globals.me_ivct -= 1
 
-        return {'messages': list(messages)}
+            if Globals.me_ivct != 1:
+                return
 
+            self.character.visible = 0
+            self.character.save()
 
-def check_fight(player, mobile):
-    if mobile is None:
-        return  # No such being
+        def check_calibrate():
+            if not Globals.me_cal:
+                return
 
-    mobile.check_move()  # Maybe move it
-    if not mobile.is_created:
-        return
-    if mobile.room_id != player.room_id:
-        return
-    if player.character.visible:
-        return  # Im invisible
-    if randperc() > 40:
-        return
+            Globals.me_cal = False
+            calibme()
 
-    yeti = next(Character.find(name="yeti"))
-    if yeti and mobile.character_id == yeti.character_id and ohany({13: True}):
-        return
+        def check_summon():
+            if not Globals.tdes:
+                return
+            dosumm(Globals.ades)
 
-    mhitplayer(mobile, player.character_id)
+        def check_in_fight():
+            if not Globals.in_fight:
+                return
+            if Globals.fighting.room_id != self.room_id:
+                Globals.in_fight = 0
+                Globals.fighting = None
+            if not Globals.fighting.is_created:
+                Globals.in_fight = 0
+                Globals.fighting = None
+            if interrupt and Globals.in_fight:
+                Globals.in_fight = 0
+                hitplayer(Globals.fighting, Globals.wpnheld)
 
+        def check_magic_item():
+            if not iswornby(18, self.character_id) and randperc() >= 10:
+                return
+            self.strength += 1
+            if Globals.i_setup:
+                calibme()
 
-def check_help():
-    return Player.player().check_help()
+        def check_drink():
+            if Globals.me_drunk <= 0:
+                return
+            Globals.me_drunk -= 1
+            if Globals.ail_dumb:
+                return
+            parse("hiccup")
+
+        current_time = time.time()
+        interrupt = interrupt or not self.__interrupt or (current_time - self.__interrupt) > 2
+        if interrupt:
+            self.__interrupt = current_time
+
+        check_invisibility()
+        check_calibrate()
+        check_summon()
+        check_in_fight()
+        check_magic_item()
+        forchk()
+        check_drink()
+
+    def on_quit(self):
+        if Globals.in_fight:
+            raise ActionError("^C\n")
+        loseme(self)
+        raise StopGame("Byeeeeeeeeee  ...........")
+
+    def on_stop_game(self):
+        return self.get_text()
+
+    def on_time(self):
+        if randperc() > 80:
+            self.on_look()
+
+    def on_before_turn(self):
+        return self.get_text()
+
+    def on_after_turn(self):
+        # Check Fight
+        if Globals.fighting:
+            if not Globals.fighting.is_created or Globals.fighting.room_id != self.room_id:
+                Globals.in_fight = 0
+                Globals.fighting = None
+
+        if Globals.in_fight:
+            Globals.in_fight -= 1
+
+        # Read messages
+        if Globals.rd_qd:
+            self.read_messages()
+            Globals.rd_qd = False
+
+        # Save
+        World.save()
+
+        return self.get_text()
 
 
 def is_dark():
@@ -453,54 +766,16 @@ def list_exits():
     return Player.player().list_exits()
 
 
-def on_look():
-    return Player.player().on_look()
-
-
 def set_room(room_id):
     return Player.player().set_room(room_id)
 
 
-# Signals
-
-
-def sig_ctrlc():
-    if Globals.in_fight:
-        raise ActionError("^C\n")
-    loseme()
-    raise StopGame("Byeeeeeeeeee  ...........")
-
-
-def sig_oops():
-    loseme()
-    return {'code': 255}
-
-
-def sig_hup():
-    return sig_oops()
-
-
-def sig_int():
-    return sig_ctrlc()
-
-
-def sig_term():
-    return sig_ctrlc()
-
-
-def sig_tstp():
-    return None
-
-
-def sig_quit():
-    return None
-
-
-def sig_cont():
-    return sig_oops()
-
-
 # TODO: Implement
+
+
+def calibme(*args):
+    # raise NotImplementedError()
+    print("calibme({})".format(args))
 
 
 def chkcrip(*args):
@@ -509,20 +784,39 @@ def chkcrip(*args):
     return False
 
 
+def dosumm(*args):
+    # raise NotImplementedError()
+    print("dosumm({})".format(args))
+
+
 def dumpitems(*args):
     # raise NotImplementedError()
     print("dumpitems({})".format(args))
 
 
-def isdest(*args):
+def forchk(*args):
     # raise NotImplementedError()
-    print("isdest({})".format(args))
-    return random.randrange(100) > 50
+    print("forchk({})".format(args))
 
 
-def ishere(*args):
+def gamecom(*args):
     # raise NotImplementedError()
-    print("ishere({})".format(args))
+    print("gamecom({})".format(args))
+
+
+def hitplayer(*args):
+    # raise NotImplementedError()
+    print("hitplayer({})".format(args))
+
+
+def initme(*args):
+    # raise NotImplementedError()
+    print("initme({})".format(args))
+
+
+def iswornby(*args):
+    # raise NotImplementedError()
+    print("iswornby({})".format(args))
     return False
 
 
@@ -530,27 +824,20 @@ def loseme(*args):
     raise NotImplementedError()
 
 
-def makebfr(*args):
+def mstoout(*args):
     # raise NotImplementedError()
-    print("makebfr({})".format(args))
+    print("mstoout({})".format(args))
 
 
-def mhitplayer(*args):
+def opensnoop(*args):
     # raise NotImplementedError()
-    print("makebfr({})".format(args))
+    print("opensnoop({})".format(args))
+    return None
 
 
-def ohany(*args):
-    raise NotImplementedError()
-
-
-def otstbit(*args):
-    raise NotImplementedError()
-
-
-def putmeon(*args):
+def parse(*args):
     # raise NotImplementedError()
-    print("putmeon({})".format(args))
+    print("parse({})".format(args))
 
 
 def randperc(*args):
@@ -559,41 +846,27 @@ def randperc(*args):
     return 0
 
 
-def rte(*args):
-    # raise NotImplementedError()
-    print("rte({})".format(args))
-
-
 def saveme(*args):
     # raise NotImplementedError()
     print("saveme({})".format(args))
 
 
+__MESSAGES = []
+
+
 def sendsys(*args):
     # raise NotImplementedError()
     print("sendsys({})".format(args))
+    __MESSAGES.append(args)
+    for m in __MESSAGES:
+        print(m)
 
 
-def setname(*args):
+def update(*args):
     # raise NotImplementedError()
-    print("setname({})".format(args))
+    print("update({})".format(args))
 
 
-# def sig_aloff():
-#     raise NotImplementedError()
-
-
-def sig_init():
-    return {
-        'SIGHUP': sig_oops,
-        'SIGINT': sig_ctrlc,
-        'SIGTERM': sig_ctrlc,
-        'SIGTSTP': None,
-        'SIGQUIT': None,
-        'SIGCONT': sig_oops,
-    }
-
-
-def special(*args):
+def viewsnoop(*args):
     # raise NotImplementedError()
-    print("special({})".format(args))
+    print("viewsnoop({})".format(args))

@@ -1,38 +1,15 @@
-# long pr_due=0;
+from ..messages import process as dcprnt  # The main loop
 
-# def bprintf(args,arg1,arg2,arg3,arg4,arg5,arg6,arg7):
+# bprintf   Player.add_message
+# seeplayer Character.find(player=player)
+# sysbuf    Player.__text_messages
+# pbfr      Player.get_text
 
-# The main loop
-
-# def dcprnt(str, file):
-# def pfile(str,ct,file):
-# def pndeaf(str,ct,file):
-# def pcansee(str,ct,file):
-# def prname(str,ct,file):
-# def int pndark(str,ct,file):
-# def tocontinue(str,ct,x,mx):
-
-from ..character import see_player as seeplayer
-
-# def ppndeaf(str,ct,file):
-# def ppnblind(str,ct,file):
-
-# char *sysbuf=NULL;
-
-# def makebfr():
+# setname   Player.__set_pronoun
 
 # FILE * log_fl= 0; /* 0 = not logging */
 
 # def logcom():
-
-# long pr_qcr;
-
-# def pbfr():
-
-# long iskb=1;
-
-# def quprnt(x):
-# # def pnotkb(str,ct,file):
 
 # long snoopd= -1;
 
@@ -44,209 +21,8 @@ from ..character import see_player as seeplayer
 # def snoopcom():
 # def viewsnoop():
 # def chksnp():
-# def setname(x):  /* Assign Him her etc according to who it is */
 
 """
-long pr_due=0;
-
-void bprintf(args,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
-char *args,*arg1,*arg2,*arg3,*arg4,*arg5,*arg6,*arg7;
-    {
-    char x[256],a[40];  /* Max 240 chars/msg */
-    long ct;
-    sprintf(x,args,arg1,arg2,arg3,arg4,arg5,arg6);
-if(strlen(x)>235)
-{
-syslog("Bprintf Short Buffer overflow");
-crapup("Internal Error in BPRINTF");
-}
-    /* Now we have a string of chars expanded */
-    quprnt(x);
-    }
-
- /* The main loop */
-
-void dcprnt(str,file)
- char *str;
- FILE *file;
-    {
-    long ct;
-    ct=0;
-    while(str[ct])
-       {
-       if(str[ct]!='\001'){fputc(str[ct++],file);continue;}
-       ct++;
-       switch(str[ct++])
-          {
-          case 'f':
-             ct=pfile(str,ct,file);continue;
-          case 'd':
-             ct=pndeaf(str,ct,file);continue;
-          case 's':
-             ct=pcansee(str,ct,file);continue;
-          case 'p':
-             ct=prname(str,ct,file);continue;
-          case 'c':
-             ct=pndark(str,ct,file);continue;
-          case 'P':
-             ct=ppndeaf(str,ct,file);continue;
-          case 'D':
-             ct=ppnblind(str,ct,file);continue;
-          case 'l':
-             ct=pnotkb(str,ct,file);continue;
-          default:
-             strcpy(str,"");
-             loseme();crapup("Internal $ control sequence error\n");
-             }
-       }
-    }
-
-int pfile(str,ct,file)
- char *str;
- FILE *file;
-    {
-    extern long debug_mode;
-    char x[128];
-    ct=tocontinue(str,ct,x,128);
-    if(debug_mode) fprintf(file,"[FILE %s ]\n",str);
-    f_listfl(x,file);
-    return(ct);
-    }
-
-int pndeaf(str,ct,file)
- char *str;
- FILE *file;
-    {
-    char x[256];
-    extern long ail_deaf;
-    ct=tocontinue(str,ct,x,256);
-    if(!ail_deaf)fprintf(file,"%s",x);
-    return(ct);
-    }
-
- pcansee(str,ct,file)
- char *str;
- FILE *file;
-    {
-    char x[25];
-    char z[257];
-    long a;
-    ct=tocontinue(str,ct,x,23);
-    a=fpbns(x);
-    if(!seeplayer(a))
-       {
-       ct=tocontinue(str,ct,z,256);
-       return(ct);
-       }
-    ct=tocontinue(str,ct,z,256);
-    fprintf(file,"%s",z);
-    return(ct);
-    }
-
- prname(str,ct,file)
- char *str;
- FILE *file;
-    {
-    char x[24];
-    ct=tocontinue(str,ct,x,24);
-    if(!seeplayer(fpbns(x)))
-    fprintf(file,"Someone");
-    else
-      fprintf(file,"%s",x);
-    return(ct);
-    }
-
-
-int pndark(str,ct,file)
- char *str;
- FILE *file;
-    {
-    char x[257];
-    extern long ail_blind;
-    ct=tocontinue(str,ct,x,256);
-    if((!isdark())&&(ail_blind==0))
-    fprintf(file,"%s",x);
-    return(ct);
-    }
-
-int tocontinue(str,ct,x,mx)
- char *str;
- long ct;
- char *x;
- long mx;
-    {
-    long s;
-    s=0;
-    while(str[ct]!='\001')
-       {
-       x[s++]=str[ct++];
-       }
-    x[s]=0;
-if(s>=mx)
-{
-syslog("IO_TOcontinue overrun");
-strcpy(str,"");
-crapup("Buffer OverRun in IO_TOcontinue");
-}
-    return(ct+1);
-    }
-
-int seeplayer(x)
-    {
-    extern long mynum;
-    extern long ail_blind;
-    extern long curch;
-    if(x==-1) return(1);
-    if(mynum==x) {return(1);} /* me */
-    if(plev(mynum)<pvis(x)) return(0);
-    if(ail_blind) return(0); /* Cant see */
-    if((curch==ploc(x))&&(isdark(curch)))return(0);
-    setname(x);
-    return(1);
-    }
-int ppndeaf(str,ct,file)
- char *str;
- FILE *file;
-    {
-    char x[24];
-    extern long ail_deaf;
-    long a;
-    ct=tocontinue(str,ct,x,24);
-    if(ail_deaf) return(ct);
-    a=fpbns(x);
-    if(seeplayer(a)) fprintf(file,"%s",x);
-    else
-      fprintf(file,"Someone");
-    return(ct);
-    }
-
-int  ppnblind(str,ct,file)
-char *str;
-FILE *file;
-    {
-    extern long ail_blind;
-    char x[24];
-    long a;
-    ct=tocontinue(str,ct,x,24);
-    if(ail_blind) return(ct);
-    a=fpbns(x);
-    if(seeplayer(a)) fprintf(file,"%s",x);
-    else
-       fprintf(file,"Someone");
-    return(ct);
-    }
-
-char *sysbuf=NULL;
-
-void makebfr()
-    {
-    extern char *sysbuf;
-    extern char *malloc();
-    sysbuf=malloc(4096); /* 4K of chars should be enough for worst case */
-    if(sysbuf==NULL) crapup("Out Of Memory");
-    sysbuf[0]=0;
-    }
-    
 FILE * log_fl= 0; /* 0 = not logging */
 
 void logcom()
@@ -271,66 +47,6 @@ void logcom()
        return;
        }
     bprintf("The log will be written to the file 'mud_log'\n");
-    }
-
-long pr_qcr; 
-
-void pbfr()
-    {
-    FILE *fln;
-    long mu;
-    block_alarm();
-    closeworld();
-    if(strlen(sysbuf)) pr_due=1;
-    if((strlen(sysbuf))&&(pr_qcr)) putchar('\n');
-    pr_qcr=0;
-    if(log_fl!=NULL)
-       {
-       iskb=0;
-       dcprnt(sysbuf,log_fl);
-       }
-    if(snoopd!=-1)
-       {
-       fln=opensnoop(pname(snoopd),"a");
-       if(fln>0)
-          {
-iskb=0;
-          dcprnt(sysbuf,fln);
-          fcloselock(fln);
-          }
-       }
-    iskb=1;
-    dcprnt(sysbuf,stdout);
-    sysbuf[0]=0; /* clear buffer */
-    if(snoopt!=-1) viewsnoop();
-    unblock_alarm();
-    }
-
-long iskb=1;
-
-void quprnt(x)
- char *x;
-    {
-    if((strlen(x)+strlen(sysbuf))>4095)
-       {
-       strcpy(sysbuf,"");
-       loseme();
-       syslog("Buffer overflow on user %s",globme);
-       crapup("PANIC - Buffer overflow");
-       }
-    strcat(sysbuf,x);
-    }
-
-int pnotkb(str,ct,file)
- char *str;
- FILE *file;
-    {
-    extern long iskb;
-    char x[128];
-    ct=tocontinue(str,ct,x,127);
-    if(iskb) return(ct);
-    fprintf(file,"%s",x);
-    return(ct);
     }
 
 long snoopd= -1;
@@ -410,23 +126,10 @@ void viewsnoop()
     */
     snoopt=x;
     }
+
 void chksnp()
 {
 if(snoopt==-1) return;
 sendsys(sntn,globme,-400,0,"");
 }
- 
-void setname(x)  /* Assign Him her etc according to who it is */
-long x;
-{
-	if((x>15)&&(x!=fpbns("riatha"))&&(x!=fpbns("shazareth")))
-	{
-		strcpy(wd_it,pname(x));
-		return;
-	}
-	if(psex(x)) strcpy(wd_her,pname(x));
-	else strcpy(wd_him,pname(x));
-	strcpy(wd_them,pname(x));
-}
-
 """

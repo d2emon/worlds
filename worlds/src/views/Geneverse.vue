@@ -1,7 +1,7 @@
 <template>
   <v-layout justify-center>
     <v-flex xs12 sm9>
-      <generated-world />
+      <generated-world :thing="$route.params.thing" />
     </v-flex>
   </v-layout>
 </template>
