@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from walk.exceptions import ActionError, StopGame
+from walk.models.item import Item
 from walk.parser import Parser
 from walk.player import Player
 from .. import app
@@ -31,24 +32,23 @@ def on_stop(message):
     })
 
 
-@blueprint.route('/oops', methods=['GET'])
-def oops():
+def do_action(action, *args, **kwargs):
     try:
-        return jsonify(Player.player().on_error() or {})
+        return jsonify(action(*args, **kwargs) or {})
     except ActionError as e:
         return on_error(e)
     except StopGame as e:
         return on_stop(e)
+
+
+@blueprint.route('/oops', methods=['GET'])
+def oops():
+    return do_action(Player.player().on_error)
 
 
 @blueprint.route('/ctrlc', methods=['GET'])
 def ctrlc():
-    try:
-        return jsonify(Player.player().on_quit() or {})
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+    return do_action(Player.player().on_quit)
 
 
 @blueprint.route('/start/<name>', methods=['GET'])
@@ -60,33 +60,20 @@ def start(name):
 
 @blueprint.route('/wait', methods=['GET'])
 def wait():
-    try:
-        return jsonify(Player.player().wait() or {})
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+    return do_action(Player.player().wait)
 
 
 @blueprint.route('/go/<direction>', methods=['GET'])
 def go(direction):
-    try:
+    def action():
         direction_id = Parser.get_direction_id(direction) - 2
-        return jsonify(Player.player().go(direction_id))
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+        return Player.player().go(direction_id)
+    return do_action(action)
 
 
 @blueprint.route('/quit', methods=['GET'])
 def quit_system():
-    try:
-        return jsonify(Player.player().quit_game())
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+    return do_action(Player.player().quit_game)
 
 
 @blueprint.route('/take/', methods=['GET'])
@@ -94,16 +81,7 @@ def quit_system():
 def take(item=None):
     if item is None:
         return jsonify({'error': "Get what?"})
-
-    player = Player.player()
-    item = player.find_item(slug=item, room_id=player.room_id)
-
-    try:
-        return jsonify(player.take(item))
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+    return do_action(Player.player().take, next(Item.find(slug=item), None))
 
 
 @blueprint.route('/take/<item>/from/', methods=['GET'])
@@ -113,38 +91,31 @@ def take_from(item, container=None):
     if container is None:
         return jsonify({'error': "From what?"})
 
-    player = Player.player()
-    container = player.find_item(slug=container, available_for=player.character)
-    if container is None:
-        return jsonify({'error': "You can't take things from that - it's not here"})
-    item = player.find_item(slug=item, container=container)
+    def action(item_name, container_name):
+        player = Player.player()
+        c = player.find_item(slug=container_name, available_for=player.character)
+        if c is None:
+            return {'error': "You can't take things from that - it's not here"}
+        return player.take(player.find_item(slug=item_name, container=c))
+    return do_action(action, item, container)
 
-    try:
-        return jsonify(player.take(item))
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+
+@blueprint.route('/drop/', methods=['GET'])
+@blueprint.route('/drop/<item>', methods=['GET'])
+def drop(item=None):
+    if item is None:
+        return jsonify({'error': "Drop what?"})
+    return do_action(Player.player().drop, next(Item.find(slug=item), None))
 
 
 @blueprint.route('/inventory', methods=['GET'])
 def inventory():
-    try:
-        return jsonify(Player.player().get_inventory())
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+    return do_action(Player.player().get_inventory)
 
 
 @blueprint.route('/look', methods=['GET'])
 def look():
-    try:
-        return jsonify(Player.player().look())
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+    return do_action(Player.player().look)
 
 
 @blueprint.route('/look/at/<word>', methods=['GET'])
@@ -175,29 +146,14 @@ def look_in(word=None):
 
 @blueprint.route('/exits', methods=['GET'])
 def exits():
-    try:
-        return jsonify(Player.player().list_exits())
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+    return do_action(Player.player().list_exits)
 
 
 @blueprint.route('/jump', methods=['GET'])
 def jump():
-    try:
-        return jsonify(Player.player().jump())
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+    return do_action(Player.player().jump)
 
 
 @blueprint.route('/dig', methods=['GET'])
 def dig():
-    try:
-        return jsonify(Player.player().dig())
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
+    return do_action(Player.player().dig)

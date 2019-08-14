@@ -166,6 +166,11 @@ const actions = {
     payload: item,
   })
     .then(() => dispatch('getRoom')),
+  drop: ({ commit, dispatch }, item) => dispatch('doAction', {
+    callback: walkService.getDrop,
+    payload: item,
+  })
+    .then(() => dispatch('getRoom')),
   inventory: ({ commit }) => walkService
     .getInventory()
     .then(({ items }) => commit('setInventory', items)),

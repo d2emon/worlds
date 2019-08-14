@@ -17,7 +17,7 @@
           <span v-if="item.is_worn">&lt;worn&gt;</span>
         </v-list-tile-content>
         <v-list-tile-action>
-          <!-- v-btn @click="console.log(10)">Drop</v-btn -->
+          <v-btn @click="drop(item.slug)">Drop</v-btn>
         </v-list-tile-action>
       </v-list-tile>
     </v-list>
@@ -28,7 +28,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import {
+  mapState,
+  mapActions,
+} from 'vuex';
 
 export default {
   name: 'Inventory',
@@ -37,6 +40,14 @@ export default {
       'inventory',
       'debugMode',
     ]),
+  },
+  methods: {
+    ...mapActions(
+      'walk',
+      [
+        'drop',
+      ],
+    )
   },
 };
 </script>

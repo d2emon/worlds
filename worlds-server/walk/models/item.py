@@ -5,7 +5,13 @@ from ..globalVars import Globals
 from .model import Model
 
 
-def take_shield(item):
+def drop_rune(player):
+    if not player.is_wizard:
+        raise ActionError("You can't let go of it!")
+    return {}
+
+
+def take_rune(item):
     def f(player):
         if item.state != 1:
             return {}
@@ -15,12 +21,10 @@ def take_shield(item):
     return f
 
 
-def take_treasure(item):
-    def f(player):
-        door = Item.get(20)
-        door.state = 1
-        return {'message': "The door clicks shut....\n"}
-    return f
+def take_treasure(player):
+    door = Item.get(20)
+    door.state = 1
+    return {'message': "The door clicks shut....\n"}
 
 
 def rune(player):
@@ -121,6 +125,10 @@ class Item(Model):
             connected.state = value
 
     @property
+    def value(self):
+        return (tscale() * self.__base_value) / 5
+
+    @property
     def connected(self):
         return self.get(self.item_id ^ 1)
 
@@ -218,9 +226,15 @@ class Item(Model):
 
     # Events
     @property
+    def on_drop(self):
+        if self.item_id == 32:
+            return drop_rune
+        return lambda player: {}
+
+    @property
     def on_before_take(self):
         if self.item_id == 32:
-            return take_shield(self)
+            return take_rune(self)
         return lambda player: {}
 
     def on_after_take(self, player):
@@ -228,7 +242,7 @@ class Item(Model):
             self.state = 0
 
         if self.room_id == -1081:
-            return take_treasure(self)(player)
+            return take_treasure(player)
         return {}
 
     @property
@@ -355,3 +369,9 @@ def randperc(*args):
     # raise NotImplementedError()
     print("randperc({})".format(args))
     return 0
+
+
+def tscale(*args):
+    # raise NotImplementedError()
+    print("tscale({})".format(args))
+    return 1

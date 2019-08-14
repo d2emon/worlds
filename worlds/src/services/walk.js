@@ -2,35 +2,20 @@ import {
   Api,
 } from '@/helpers';
 
+const action = command => args => Api
+  .get(`/walk/${command}${args ? `/${args}` : ''}`)
+  .then(({ data }) => data);
+
 export default {
-  getStart: name => Api
-    .get(`/walk/start/${name}`)
-    .then(({ data }) => data),
-  getRoom: () => Api
-    .get('/walk/look')
-    .then(({ data }) => data),
-  getWait: () => Api
-    .get('/walk/wait')
-    .then(({ data }) => data),
-  getGoDirection: direction => Api
-    .get(`/walk/go/${direction}`)
-    .then(({ data }) => data),
-  getQuit: () => Api
-    .get('/walk/quit')
-    .then(({ data }) => data),
-  getTake: item => Api
-    .get(`/walk/take/${item}`)
-    .then(({ data }) => data),
-  getInventory: () => Api
-    .get('/walk/inventory')
-    .then(({ data }) => data),
-  getExits: () => Api
-    .get('/walk/exits')
-    .then(({ data }) => data),
-  getJump: () => Api
-    .get('/walk/jump')
-    .then(({ data }) => data),
-  getDig: () => Api
-    .get('/walk/dig')
-    .then(({ data }) => data),
+  getStart: action('start'),
+  getRoom: action('look'),
+  getWait: action('wait'),
+  getGoDirection: action('go'),
+  getQuit: action('quit'),
+  getTake: action('take'),
+  getDrop: action('drop'),
+  getInventory: action('inventory'),
+  getExits: action('exits'),
+  getJump: action('jump'),
+  getDig: action('dig'),
 };

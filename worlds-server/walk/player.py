@@ -54,8 +54,9 @@ class Player:
         self.__message_id = -1  # cms
 
         self.level = 10000  # my_lev
-        self.strength = 0
-        self.sex = 0
+        self.strength = 0  # my_str
+        self.score = 0  # my_sco
+        self.sex = 0  # my_sex
 
         self.__room_id = -5  # curch
 
@@ -309,6 +310,9 @@ class Player:
     def find_character(self, **kwargs):
         return next(self.find_items(**kwargs), None)
 
+    def is_valid_item(self, item):
+        return item is not None and (self.is_wizard or not item.is_destroyed)
+
     # Text Messages
     def add_messages(self, *messages):
         self.__text_messages += filter(None, messages)
@@ -461,20 +465,20 @@ class Player:
             shields = (Item.get(item_id) for item_id in (113, 114))
             shield = next((shield for shield in shields if shield.is_destroyed), None)
             if shield is None:
-                raise ActionError("The shields are all to firmly secured to the walls\n")
+                raise ActionError("The shields are all to firmly secured to the walls")
             shield.create()
             return shield
 
-        if item is None:
+        if not self.is_valid_item(item) or item.room_id != self.room_id:
             raise ActionError("That is not here.")
         if item.item_id == 112:
             item = get_shield()
         if item.flannel:
-            raise ActionError("You can't take that!\n")
+            raise ActionError("You can't take that!")
         if self.get_dragon() is not None:
             return {}
         if not self.character.can_carry:
-            raise ActionError("You can't carry any more\n")
+            raise ActionError("You can't carry any more")
 
         self.add_messages(item.on_before_take(self).get('message', ''))
         item.set_location(self.character_id, 1)
@@ -486,6 +490,36 @@ class Player:
             "[D]{}[/D][c] takes the {}\n[/c]]".format(self.name, item.name),
         )
         self.add_messages(item.on_after_take(self).get('message', ''))
+        return {'message': "Ok..."}
+
+    @turn('drop')
+    def drop(self, item):
+        if not self.is_valid_item(item) or item.owner != self.character_id:
+            raise ActionError("You are not carrying that.")
+
+        self.add_messages(item.on_drop(self).get('message', ''))
+        item.set_location(self.room_id, 0)
+        sendsys(
+            self.name,
+            self.name,
+            -10000,
+            self.room_id,
+            "[D]{}[/D][c] drops the {}\n[/c]]".format(self.name, item.name),
+        )
+        if self.room_id in (-5, -183):
+            sendsys(
+                self.name,
+                self.name,
+                -10000,
+                self.room_id,
+                "The {} disappears into the bottomless pit.\n".format(item.name),
+            )
+            self.score += item.value
+            calibme()
+            item.set_location(-6, 0)
+            return {'message': "Ok...\nIt disappears down into the bottomless pit....."}
+
+        # self.add_messages(item.on_after_take(self).get('message', ''))
         return {'message': "Ok..."}
 
     @turn('inventory')

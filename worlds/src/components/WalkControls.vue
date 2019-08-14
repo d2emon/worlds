@@ -144,11 +144,7 @@
         >
           Quit
         </v-btn>
-        <!-- v-btn @click="take">Take</v-btn -->
-        <v-btn @click="console.log(10)">Drop</v-btn>
 
-        <!-- v-btn @click="getRoom">Look</v-btn -->
-        <v-btn @click="console.log(12)">Inventory</v-btn>
         <v-btn @click="console.log(13)">Who</v-btn>
         <v-btn @click="console.log(14)">Reset</v-btn>
         <v-btn @click="console.log(15)">Zap</v-btn>
