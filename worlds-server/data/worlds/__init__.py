@@ -197,11 +197,18 @@ WORLDS_DATA = [
         'slug': 'warhammer-40000',
         'index_page': 'warhammer-40000/index.md',
     },
-    {
-        'title': 'Warhammer Fantasy',
-        'slug': 'warhammer-fantasy',
-        'index_page': 'warhammer-fantasy/index.md',
-    },
+    SluggedWorld(
+        title='Warhammer Fantasy Battles',
+        slug='warhammer-fantasy',
+        image=None,
+
+        links={
+            'en': "https://warhammerfantasy.fandom.com/",
+            'ru': "https://warhammerfantasy.fandom.com/ru/",
+        },
+
+        lurkmore=False,
+    ),
     {
         'title': 'Wilderlands of High Fantasy',
         'image': 'wilderlands-of-high-fantasy/images/WilderlandsOfHighFantasy.jpg',
@@ -249,12 +256,21 @@ WORLDS_DATA = [
         'title': 'Вестерос',
         'index_page': 'vesteros/index.md',
     },
-    {
-        'title': 'Вечный Воитель',
-        'image': 'vechnyy-voitel/images/eternal_warrior.jpg',
-        'slug': 'vechnyy-voitel',
-        'index_page': 'vechnyy-voitel/index.md',
-    },
+    SluggedWorld(
+        title='Вечный Воитель',
+        slug='vechnyy-voitel',
+        image='images/eternal_warrior.jpg',
+
+        wiki={
+            'wikipedia': 'https://ru.wikipedia.org/wiki/%D0%92%D0%B5%D1%87%D0%BD%D1%8B%D0%B9_%D0%92%D0%BE%D0%B8%D1%82%D0%B5%D0%BB%D1%8C',
+            'posmotreli': 'https://posmotre.li/Michael_John_Moorcock',
+            'tanelorn': 'http://moorcock.narod.ru/',
+        },
+
+        pages={
+            'elrik': 'Элрик Мелнибонийский Майкла Муркока и его мир',
+        },
+    ),
     {
         'title': 'Волшебная Страна',
         'image': 'volshebnaya-strana/images/emerald.jpg',
