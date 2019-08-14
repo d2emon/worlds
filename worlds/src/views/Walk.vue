@@ -18,6 +18,7 @@
     <v-flex xs12 sm3>
       <v-container>
         <inventory />
+        {{characters}}
       </v-container>
     </v-flex>
   </v-layout>
@@ -37,7 +38,10 @@ export default {
     Inventory: () => import('@/components/Inventory.vue'),
   },
   computed: {
-    ...mapState('walk', ['progname']),
+    ...mapState('walk', [
+      'progname',
+      'characters',
+    ]),
   },
   methods: {
     ...mapActions('walk', [

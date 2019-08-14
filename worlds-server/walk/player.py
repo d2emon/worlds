@@ -522,6 +522,29 @@ class Player:
         # self.add_messages(item.on_after_take(self).get('message', ''))
         return {'message': "Ok..."}
 
+    @turn('who')
+    def who(self):
+        def character_filter(character):
+            if not character.is_created:
+                return False  # On  Non game mode
+            if character.is_dead:
+                return False
+            if character.visible > self.level:
+                print(character.visible, self.level)
+                return False
+            return True
+
+        characters = list(filter(character_filter, Character.all()))
+        players = [character.serialize for character in characters if character.character_id < 16]
+        if not self.is_wizard:
+            return {'players': players}
+
+        mobiles = [character.serialize for character in characters if character.character_id >= 16]
+        return {
+            'players': players,
+            'mobiles': mobiles,
+        }
+
     @turn('inventory')
     def get_inventory(self):
         return {'items': list(self.character.items)}

@@ -113,6 +113,11 @@ def inventory():
     return do_action(Player.player().get_inventory)
 
 
+@blueprint.route('/who', methods=['GET'])
+def who():
+    return do_action(Player.player().who)
+
+
 @blueprint.route('/look', methods=['GET'])
 def look():
     return do_action(Player.player().look)

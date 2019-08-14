@@ -26,6 +26,7 @@ const state = {
   room: null,
   exits: null,
   inventory: [],
+  characters: null,
   messages: [],
 };
 
@@ -57,7 +58,8 @@ const mutations = {
   setExits: (state, exits) => { state.exits = exits; },
   clearMessages: state => { /* state.messages = []; */ },
   setMessages: (state, messages) => { state.messages.push(...messages.map(wiki2html)); },
-  setInventory: (state, inventory) => { state.inventory = inventory },
+  setInventory: (state, inventory) => { state.inventory = inventory; },
+  setCharacters: (state, characters) => { state.characters = characters; },
   updateProgname: (state) => {
     if (state.player.visible > 9999) {
       state.progname = '-csh';
@@ -141,6 +143,7 @@ const actions = {
     .then(() => {
       dispatch('fetchExits');
       dispatch('inventory');
+      dispatch('who');
     }),
 
   wait: ({ dispatch }) => dispatch('doAction', {
@@ -174,6 +177,9 @@ const actions = {
   inventory: ({ commit }) => walkService
     .getInventory()
     .then(({ items }) => commit('setInventory', items)),
+  who: ({ commit }) => walkService
+    .getWho()
+    .then(({ players, mobiles }) => commit('setCharacters', { players, mobiles })),
   jump: ({ dispatch }) => dispatch('doAction', {
     callback: walkService.getJump,
   })

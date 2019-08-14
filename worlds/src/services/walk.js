@@ -15,6 +15,7 @@ export default {
   getTake: action('take'),
   getDrop: action('drop'),
   getInventory: action('inventory'),
+  getWho: action('who'),
   getExits: action('exits'),
   getJump: action('jump'),
   getDig: action('dig'),

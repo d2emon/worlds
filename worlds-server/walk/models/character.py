@@ -53,6 +53,10 @@ class Character(Model):
         return len(self.name) > 0
 
     @property
+    def is_dead(self):
+        return self.strength < 0
+
+    @property
     def is_wizard(self):
         return self.level >= self.WIZARD_LEVEL
 
@@ -81,6 +85,22 @@ class Character(Model):
         return next((c for c in Character.all() if c.helping == self.character_id and c.room_id == self.room_id), None)
 
     @property
+    def serialize(self):
+        return {
+            'character_id': self.character_id,
+            'name': self.name,
+            'level': disl4(self.level, self.sex),
+            'invisible': self.visible > 0,
+            'absent': self.message_id == -2,
+        }
+        # result = "{} {}".format(self.name, )
+        # if self.visible:
+        #     result = "({})".format(result)
+        # if self.message_id == -2:
+        #     result += " [Absent From Reality]"
+        # return result
+
+    @property
     def serialized(self):
         return {
             'character_id': self.character_id,
@@ -106,12 +126,9 @@ class Character(Model):
             room_id=player.room_id,
             visible_for=player,
         ):
-            yield {
-                'character_id': character.character_id,
-                'name': character.name,
-                'level': disl4(character.level, character.sex),
-                'items': list(character.items),
-            }
+            result = character.serialize
+            result.update({'items': list(character.items)})
+            yield result
 
     @classmethod
     def add(cls, name):
