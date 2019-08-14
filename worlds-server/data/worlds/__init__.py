@@ -382,6 +382,11 @@ WORLDS_DATA = [
             'lurkmore': "http://lurkmore.to/Юрий_Петухов"
         },
     ),
+    SluggedWorld(
+        title='Земноморье',
+        slug='zemnomorye',
+        image='images/Pet9.png',
+    ),
 ]
 # 'image': '3e-logos.gif',
 # 'image': 'hw-logos.gif',
