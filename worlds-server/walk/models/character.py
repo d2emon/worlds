@@ -44,7 +44,7 @@ class Character(Model):
     @classmethod
     def database(cls):
         #
-        World.load()
+        # World.load()
         #
         return World.instance.players
 
@@ -93,12 +93,6 @@ class Character(Model):
             'invisible': self.visible > 0,
             'absent': self.message_id == -2,
         }
-        # result = "{} {}".format(self.name, )
-        # if self.visible:
-        #     result = "({})".format(result)
-        # if self.message_id == -2:
-        #     result += " [Absent From Reality]"
-        # return result
 
     @property
     def serialized(self):
@@ -156,6 +150,21 @@ class Character(Model):
         self.sex = 0
         self.save()
         return self
+
+    def start(
+        self,
+        strength,
+        level,
+        sex,
+    ):
+        World.load()
+        self.strength = strength
+        self.level = level
+        self.visible = 0 if level < 10000 else 10000
+        self.weapon = None
+        self.sex = sex
+        self.helping = None
+        self.save()
 
     def check_move(self):
         pass

@@ -324,14 +324,7 @@ class Player:
 
         initme()
 
-        World.load()
-        self.character.strength = self.strength
-        self.character.level = self.level
-        self.character.visible = 0 if self.level < 10000 else 10000
-        self.character.weapon = None
-        self.character.sex = self.sex
-        self.character.helping = None
-        self.character.save()
+        self.character.start(self.strength, self.level, self.sex)
 
         sendsys(
             self.name,
@@ -530,7 +523,6 @@ class Player:
             if character.is_dead:
                 return False
             if character.visible > self.level:
-                print(character.visible, self.level)
                 return False
             return True
 

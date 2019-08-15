@@ -71,7 +71,7 @@ class World:
         if cls.instance is None:
             return
         cls.instance.__write()
-        cls.instance = None
+        # cls.instance = None
 
 
 def load():
