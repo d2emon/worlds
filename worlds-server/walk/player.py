@@ -338,7 +338,8 @@ class Player:
             # -5,
             # -183,
 
-            -167,
+            # -167,
+            -14510,
         ))  # -5 if randperc() > 50 else -183
         self.set_room()
         sendsys(

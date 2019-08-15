@@ -121,6 +121,8 @@ class Room(Model):
         return lambda player: {}
 
     def go_direction(self, player, direction_id):
+        if direction_id >= len(self.exits):
+            return self
         return self.get(self.exits[direction_id].go(player))
 
 

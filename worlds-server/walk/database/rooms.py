@@ -104,7 +104,10 @@ class Rooms(Database):
             return cls.__parse(room_id, file)
 
     def all(self):
-        return (self.get(-item_id)() for item_id in range(self.__MAX_ROOM))
+        def item_ids():
+            yield from range(self.__MAX_ROOM)
+            yield from range(10000, 20000)
+        return (self.get(-item_id)() for item_id in item_ids())
 
     def get(self, item_id):
         return lambda: self.__load_room(item_id)
