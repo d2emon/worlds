@@ -31,18 +31,22 @@ WORLDS_DATA = [
         'slug': 'blackmoor',
         'index_page': 'blackmoor/index.md',
     },
-    {
-        'title': 'Council of Wyrms',
-        'image': 'council-of-wyrms/images/Council_of_Wyrms.jpg',
-        'slug': 'council-of-wyrms',
-        'index_page': 'council-of-wyrms/index.md',
-    },
-    {
-        'title': 'Creature Crucible',
-        'image': 'creature-crucible/images/cc-logos.gif',
-        'slug': 'creature-crucible',
-        'index_page': 'creature-crucible/index.md',
-    },
+    # {
+    #     'title': 'Council of Wyrms',
+    #     'image': 'council-of-wyrms/images/Council_of_Wyrms.jpg',
+    #     'slug': 'council-of-wyrms',
+    #     'index_page': 'council-of-wyrms/index.md',
+    # },
+    # {
+    #     'title': 'Creature Crucible',
+    #     'image': 'creature-crucible/images/cc-logos.gif',
+    #     'slug': 'creature-crucible',
+    #     'index_page': 'creature-crucible/index.md',
+    # },
+    SluggedWorld(
+        title='Cyberpunk20XX',
+        slug='cyberpunk-20xx',
+    ),
     {
         'title': 'Dangerous Fantasy 2',
         'image': 'dangerous-fantasy-2/images/df2.gif',
@@ -55,12 +59,12 @@ WORLDS_DATA = [
         'slug': 'dark-sun',
         'index_page': 'dark-sun/index.md',
     },
-    {
-        'title': 'Dragon Fist',
-        'image': 'dragon-fist/images/DragonFist.jpg',
-        'slug': 'dragon-fist',
-        'index_page': 'dragon-fist/index.md',
-    },
+    # {
+    #     'title': 'Dragon Fist',
+    #     'image': 'dragon-fist/images/DragonFist.jpg',
+    #     'slug': 'dragon-fist',
+    #     'index_page': 'dragon-fist/index.md',
+    # },
     {
         'title': 'Dragonlance',
         'image': 'dragonlance/images/fa-logos.gif',
@@ -91,12 +95,12 @@ WORLDS_DATA = [
         'slug': 'greyhawk',
         'index_page': 'greyhawk/index.md',
     },
-    {
-        'title': 'Jakandor',
-        'image': 'jakandor/images/Jakandor.jpg',
-        'slug': 'jakandor',
-        'index_page': 'jakandor/index.md',
-    },
+    # {
+    #     'title': 'Jakandor',
+    #     'image': 'jakandor/images/Jakandor.jpg',
+    #     'slug': 'jakandor',
+    #     'index_page': 'jakandor/index.md',
+    # },
     {
         'title': 'Kingdoms of Kalamar',
         'image': 'kingdoms-of-kalamar/images/kk-logos.gif',
@@ -180,6 +184,10 @@ WORLDS_DATA = [
         'slug': 'spelljammer',
         'index_page': 'spelljammer/index.md',
     },
+    SluggedWorld(
+        title='The Elder Scrolls',
+        slug='the-elder-scrolls',
+    ),
     {
         'title': 'Thunder Rift',
         'image': 'thunder-rift/images/ThunderRift.jpg',
@@ -227,6 +235,10 @@ WORLDS_DATA = [
         'slug': 'alisa-seleznyova',
         'index_page': 'alisa-seleznyova/index.md',
     },
+    SluggedWorld(
+        title='Аллоды',
+        slug='allods',
+    ),
     {
         'title': 'Амбер',
         'image': 'amber/images/amber.jpg',
@@ -252,6 +264,10 @@ WORLDS_DATA = [
         'slug': 'beloriya',
         'index_page': 'beloriya/index.md',
     },
+    SluggedWorld(
+        title='Ведьмак',
+        slug='vedmak',
+    ),
     {
         'title': 'Вестерос',
         'index_page': 'vesteros/index.md',
@@ -283,6 +299,10 @@ WORLDS_DATA = [
         'slug': 'geroyskiy-mir',
         'index_page': 'geroyskiy-mir/index.md',
     },
+    SluggedWorld(
+        title='Гиперион',
+        slug='giperion',
+    ),
     {
         'title': 'Дино',
         'slug': 'dino',
@@ -293,6 +313,11 @@ WORLDS_DATA = [
         'slug': 'star-wars',
         'index_page': 'star-wars/index.md',
     },
+    SluggedWorld(
+        title='Земноморье',
+        slug='zemnomorye',
+        image='images/Pet9.png',
+    ),
     {
         'title': 'Кинг',
         'slug': 'king',
@@ -335,6 +360,14 @@ WORLDS_DATA = [
     },
     future_moscow,
     SluggedWorld(
+        title='Нарния',
+        slug='narniya',
+    ),
+    SluggedWorld(
+        title='Невендаар',
+        slug='nevendaar',
+    ),
+    SluggedWorld(
         title='Плоский мир',
         slug='discworld',
         image='images/discworld-wallpaper-768x480.jpg',
@@ -374,6 +407,14 @@ WORLDS_DATA = [
     ),
     spectre,
     SluggedWorld(
+        title='Утиные истории',
+        slug='duck-tales',
+    ),
+    SluggedWorld(
+        title='Этория',
+        slug='etoriya',
+    ),
+    SluggedWorld(
         title='Юрий Петухов',
         slug='yuriy-petuhov',
         image='images/Pet9.png',
@@ -381,11 +422,6 @@ WORLDS_DATA = [
         wiki={
             'lurkmore': "http://lurkmore.to/Юрий_Петухов"
         },
-    ),
-    SluggedWorld(
-        title='Земноморье',
-        slug='zemnomorye',
-        image='images/Pet9.png',
     ),
 ]
 # 'image': '3e-logos.gif',
