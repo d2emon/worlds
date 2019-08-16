@@ -26,7 +26,7 @@ const state = {
   room: null,
   exits: null,
   inventory: [],
-  characters: null,
+  characters: {},
   messages: [],
 };
 

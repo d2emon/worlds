@@ -19,7 +19,7 @@
       <v-container>
         <inventory class="mb-2" />
         <v-card
-          v-if="characters.players && characters.players.length"
+          v-if="characters && characters.players && characters.players.length"
           class="mb-2"
         >
           <v-card-title>
@@ -41,7 +41,7 @@
           </v-list>
         </v-card>
         <v-card
-          v-if="characters.mobiles && characters.mobiles.length"
+          v-if="characters && characters.mobiles && characters.mobiles.length"
           class="mb-2"
         >
           <v-card-title>
