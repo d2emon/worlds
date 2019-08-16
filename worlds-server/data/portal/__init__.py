@@ -55,20 +55,66 @@ def generate():
 
 
 # Classes
+class Creatures:
+    def __init__(
+        self,
+        creature_type=None,
+        signals=None,
+    ):
+        names = generate()
+        self.creature_type = creature_type or names[13]
+        self.signals = signals or names[12]
+
+    def detect(self, distance):
+        return "{} вы {} {}.".format(
+            distance,
+            self.signals,
+            self.creature_type,
+        )
+
+
 class World:
-    def __init__(self, world_type=None, world_description=None, n6=None):
+    def __init__(
+        self,
+        world_type=None,
+        world_description=None,
+        feelings=None,
+        summary=None,
+
+        creature_types=None,
+        creature_signals=None,
+    ):
         names = generate()
         self.world_type = world_type or names[4]
-        self.__description = world_description or names[5]
-        self.__n6 = n6 or names[6]
+        self.__description = world_description or names[5:7]
+        self.__feelings = feelings or names[7:9]
+        self.__summary = summary or names[9:11]
+        self.creatures = Creatures(
+            creature_types,
+            creature_signals,
+        )
 
     @property
     def name(self):
         return "{} мир".format(self.world_type)
 
     @property
+    def feelings(self):
+        return "".join(self.__feelings) + "."
+
+    @property
+    def summary(self):
+        return "Этот мир {}.".format("".join(self.__summary))
+
+    @property
     def description(self):
-        return "{} {}.".format(self.__description, self.__n6)
+        return "\n".join((
+            " ".join(self.__description),
+            " ".join((
+                self.feelings,
+                self.summary
+            )),
+        ))
 
 
 class Portal:
@@ -86,12 +132,13 @@ class Portal:
     def description(self):
         return "{}, {}".format(self.name, self.placement)
 
-    def move(self, movement):
-        return "Вы {} {}. За ним вас встречает {}. {}".format(
+    def move(self, movement, distance):
+        return "Вы {} {}. За ним вас встречает {}. {}\n{}".format(
             movement,
             self.description,
             self.world.name,
             self.world.description,
+            self.world.creatures.detect(distance),
         )
 
 
@@ -99,15 +146,21 @@ def description():
     names = generate()
 
     movement = names[1]
-    world = World(names[4], names[5], names[6])
+    world = World(
+        names[4],
+        names[5:7],
+        names[7:9],
+        names[9:11],
+        names[13],
+        names[12],
+        # names[14:17],
+    )
     p = Portal(names[2], names[3], world)
 
     text = "".join([
-        p.move(names[1]),
+        p.move(names[1], names[11]),
         "\n",
-        "{names[7]}{names[8]}. Этот мир {names[9]}{names[10]}.",
-        "\n",
-        "{names[11]} вам {names[12]} о {names[13]}. {names[14]}, {names[15]}. ",
+        "{names[11]} вы {names[12]} {names[13]}. {names[14]} {names[15]}. ",
         "{names[16]} {names[17][0]} существа, {names[17][1]} существа, ",
         "и что-то похожее на каких-то {names[17][2]} существ.",
         "\n",
