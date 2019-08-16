@@ -116,7 +116,7 @@ def list_data():
                 'hostile': i.hostile,
                 'negative': i.negative,
             })
-            print(s)
+            # print(s)
 
 
 list_data()

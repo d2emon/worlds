@@ -1,3 +1,6 @@
+import json
+import os
+from config import Config
 from ..utils import Database
 from ..wikifiles import wikis
 from .world import World, SluggedWorld
@@ -12,6 +15,70 @@ class WorldsDB(Database):
         return World(**item)
 
 
+class WorldFolder:
+    def __init__(self, slug):
+        self.__title = None
+        self.slug = slug
+        self.__image = None
+        self.__index_page = None
+
+    @property
+    def title(self):
+        if self.__title is None:
+            self.load()
+        return self.__title or self.slug
+
+    @property
+    def image(self):
+        if self.__image is None:
+            self.load()
+        return "{}/images/{}".format(self.slug, self.__image) if self.__image else None
+
+    @property
+    def index_page(self):
+        if self.__index_page is None:
+            self.load()
+        return os.path.join(self.slug, self.__index_page or 'index.md')
+
+    @property
+    def root(self):
+        return os.path.join(Config.WIKI_ROOT, self.slug)
+
+    @property
+    def images(self):
+        return os.path.join(self.root, 'images')
+
+    @property
+    def __world_file(self):
+        return os.path.join(self.root, 'world.json')
+
+    def load(self):
+        if not os.path.isfile(self.__world_file):
+            return
+        with open(self.__world_file, "r", encoding='utf-8') as fp:
+            data = json.load(fp)
+            self.__title = data.get('title', self.slug)
+            self.__image = data.get('image')
+
+    def serialize(self):
+        return {
+            'slug': self.slug,
+            'title': self.title,
+            'image': self.image,
+            'index_page': self.index_page,
+
+            # 'root': self.root,
+            # 'images': self.images,
+        }
+
+
+# worlds = [world for world in os.listdir(Config.WIKI_ROOT)]
+# worlds = [world for world in worlds if os.path.isdir(os.path.join(Config.WIKI_ROOT, world))]
+WORLD_FOLDERS = [
+    WorldFolder(slug)
+    for slug in os.listdir(Config.WIKI_ROOT)
+    if os.path.isdir(os.path.join(Config.WIKI_ROOT, slug))
+]
 WORLDS_DATA = [
     {
         'title': 'Assassin\'s Creed',
@@ -229,12 +296,6 @@ WORLDS_DATA = [
         'slug': 'avenheim',
         'index_page': 'avenheim/index.md',
     },
-    {
-        'title': 'Алиса Селезнева',
-        'image': 'alisa-seleznyova/images/alice.png',
-        'slug': 'alisa-seleznyova',
-        'index_page': 'alisa-seleznyova/index.md',
-    },
     SluggedWorld(
         title='Аллоды',
         slug='allods',
@@ -316,7 +377,7 @@ WORLDS_DATA = [
     SluggedWorld(
         title='Земноморье',
         slug='zemnomorye',
-        image='images/Pet9.png',
+        # image='images/Pet9.png',
     ),
     {
         'title': 'Кинг',
@@ -417,7 +478,7 @@ WORLDS_DATA = [
     SluggedWorld(
         title='Юрий Петухов',
         slug='yuriy-petuhov',
-        image='images/Pet9.png',
+        # image='images/Pet9.png',
 
         wiki={
             'lurkmore': "http://lurkmore.to/Юрий_Петухов"
@@ -430,5 +491,15 @@ WORLDS_DATA = [
 # 'image': 'gz-logos.gif',
 # 'image': 'cm-logos.gif',
 # 'image': 'd20-logos.jpg',
+worlds = [world.fields if isinstance(world, World) else world for world in WORLDS_DATA]
+ITEMS = []
+for w in WORLD_FOLDERS:
+    world = next((world for world in worlds if world.get('slug') == w.slug), None)
+    if world is None:
+        world = {}
+    item = w.serialize()
+    item.update(world)
+    ITEMS.append(item)
 
-WORLDS = WorldsDB([world.fields if isinstance(world, World) else world for world in WORLDS_DATA])
+# WORLDS = WorldsDB([world.fields if isinstance(world, World) else world for world in WORLDS_DATA])
+WORLDS = WorldsDB(ITEMS)
