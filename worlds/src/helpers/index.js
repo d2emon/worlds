@@ -2,8 +2,8 @@ import Axios from './axios_helper';
 import markdown from './markdown';
 import Url from './url';
 
-const localImage = /!\[(.*)]\(\.\/(.*?)\)/g;
-const localLink = /\[(.*)]\(\.\/(.*?)\.md\)/g;
+const localImage = /!\[(.*?)]\(\.\/(.*?)\)/g;
+const localLink = /\[(.*?)]\(\.\/(.*?)\.md\)/g;
 
 export const Api = Axios;
 export const imageUrl = Url.imageUrl;

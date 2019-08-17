@@ -7,7 +7,7 @@ def get_wiki(page):
     if not os.path.exists(filename):
         return None
 
-    with open(filename, "r") as file:
+    with open(filename, "r", encoding='utf-8') as file:
         content = file.read()
 
     return content
