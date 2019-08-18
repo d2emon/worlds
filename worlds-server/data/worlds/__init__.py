@@ -234,12 +234,12 @@ WORLDS_DATA = [
         'slug': 'ravenloft',
         'index_page': 'ravenloft/index.md',
     },
-    {
-        'title': 'S.T.A.L.K.E.R.',
-        'image': 'stalker/images/Stalker.jpg',
-        'slug': 'stalker',
-        'index_page': 'stalker/index.md',
-    },
+    # {
+    #     'title': 'S.T.A.L.K.E.R.',
+    #     'image': 'stalker/images/Stalker.jpg',
+    #     'slug': 'stalker',
+    #     'index_page': 'stalker/index.md',
+    # },
     {
         'title': 'SCP Foundation',
         'slug': 'scp-foundation',
