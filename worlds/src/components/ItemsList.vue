@@ -10,8 +10,7 @@
         v-for="item in cards"
         :key="item.key"
         v-bind="{
-          [item.flex.sm]: true,
-          [item.flex.lg]: true,
+          [item.flex]: true,
         }"
       >
         <v-card
@@ -67,8 +66,10 @@ export default {
     'start-offset',
   ],
   data: () => ({
-    fullRow: 6,
-    row: 6,
+    minSize: 3,
+    maxSize: 6,
+    fullRow: 12,
+    row: 12,
     cards: [],
   }),
   watch: {
@@ -76,7 +77,11 @@ export default {
   },
   methods: {
     getFlex() {
-      const size = Math.floor(Math.random() * (this.row)) + 1;
+      const maxSize = Math.min(this.row, this.maxSize);
+      let size = Math.floor(Math.random() * (maxSize - this.minSize)) + this.minSize;
+      if (this.row - size < this.minSize) {
+        size = this.row;
+      }
       this.row = this.row <= size ? this.fullRow : this.row - size;
       return size;
     },
@@ -87,10 +92,7 @@ export default {
         return {
           key,
           ...item,
-          flex: {
-            sm: `sm${flex * 2}`,
-            lg: `lg${flex}`,
-          },
+          flex: `sm${flex}`,
           // height: (Math.random() > 0.5) ? '200px' : '400px',
         };
       });
