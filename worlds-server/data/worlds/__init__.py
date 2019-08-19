@@ -15,11 +15,25 @@ class WorldsDB(Database):
         return World(**item)
 
 
+class SluggedWorld1(World):
+    def __init__(
+        self,
+
+        **data,
+    ):
+
+        data.update({
+        })
+        super().__init__(**data)
+
+
 class WorldFolder:
     def __init__(self, slug):
         self.__title = None
         self.slug = slug
         self.__image = None
+        self.__wiki = None
+        self.__links = {}
         self.__index_page = None
 
     @property
@@ -49,6 +63,22 @@ class WorldFolder:
         return os.path.join(self.root, 'images')
 
     @property
+    def wiki(self):
+        print(self.__wiki, self.__links)
+        if self.__wiki is not None:
+            return self.__wiki
+
+        # links = links or {}
+        # self.__wiki = wikis(
+        #     title,
+        #     wikipedia=wikipedia,
+        #     lurkmore=lurkmore,
+        #     posmotreli=posmotreli,
+        #     **links,
+        # )
+        return {}
+
+    @property
     def __world_file(self):
         return os.path.join(self.root, 'world.json')
 
@@ -59,6 +89,13 @@ class WorldFolder:
             data = json.load(fp)
             self.__title = data.get('title', self.slug)
             self.__image = data.get('image')
+            self.__wiki = data.get('wiki')
+
+            # wikipedia=True,
+            # lurkmore=True,
+            # posmotreli=True,
+            self.__links = data.get('links', {})
+            # links=None,
 
     def serialize(self):
         return {
@@ -66,6 +103,7 @@ class WorldFolder:
             'title': self.title,
             'image': self.image,
             'index_page': self.index_page,
+            'wiki': self.wiki,
 
             # 'root': self.root,
             # 'images': self.images,
@@ -475,15 +513,15 @@ WORLDS_DATA = [
         title='Этория',
         slug='etoriya',
     ),
-    SluggedWorld(
-        title='Юрий Петухов',
-        slug='yuriy-petuhov',
-        # image='images/Pet9.png',
-
-        wiki={
-            'lurkmore': "http://lurkmore.to/Юрий_Петухов"
-        },
-    ),
+    # SluggedWorld(
+    #     title='Юрий Петухов',
+    #     slug='yuriy-petuhov',
+    #     # image='images/Pet9.png',
+    #
+    #     wiki={
+    #         'lurkmore': "http://lurkmore.to/Юрий_Петухов"
+    #     },
+    # ),
 ]
 # 'image': '3e-logos.gif',
 # 'image': 'hw-logos.gif',
@@ -498,6 +536,7 @@ for w in WORLD_FOLDERS:
     if world is None:
         world = {}
     item = w.serialize()
+    print(item)
     item.update(world)
     ITEMS.append(item)
 
