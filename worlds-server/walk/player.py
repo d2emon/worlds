@@ -1,3 +1,4 @@
+import logging
 import random
 import time
 from .exceptions import ActionError, StopGame
@@ -47,6 +48,8 @@ class Player:
 
     MAX_PLAYER = 16
 
+    UNARMED_DAMAGE = 4
+
     def __init__(self, name):
         # Set Fields
         self.character_id = 0  # mynum
@@ -57,6 +60,10 @@ class Player:
         self.strength = 0  # my_str
         self.score = 0  # my_sco
         self.sex = 0  # my_sex
+
+        self.weapon = None  # wpnheld
+        self.__fight = None  # fighting
+        self.__fight_counter = 0  # in_fight
 
         self.__room_id = -5  # curch
 
@@ -173,6 +180,22 @@ class Player:
     def available_items(self):
         return Item.find(available_for=self)
 
+    @property
+    def in_fight(self):
+        return self.__fight_counter > 0
+
+    @property
+    def to_hit(self):
+        return 40 + 3 * self.level
+
+    @property
+    def damage(self):
+        if self.weapon is None:
+            return self.UNARMED_DAMAGE
+        elif self.weapon.is_weapon:
+            return obyte(self.weapon, 0)
+        return None
+
     @classmethod
     def player(cls, name="Name"):
         if cls.__PLAYER is None:
@@ -209,6 +232,19 @@ class Player:
             return
 
         Globals.wd_them = character
+
+    def start_fight(self, enemy, fight=300):
+        self.__fight = enemy
+        self.__fight_counter = fight
+
+    def stop_fight(self):
+        self.__fight = None
+        self.__fight_counter = 0
+
+    def add_enemy(self, enemy):
+        if self.__fight_counter:
+            raise ActionError("You are already fighting!")
+        self.start_fight(enemy)
 
     def has_item(self, item_id):
         return self.character.has_item(item_id, include_destroyed=self.is_wizard)
@@ -297,6 +333,123 @@ class Player:
             return None
         return Character.find(name='dragon', room_id=self.room_id)
 
+    def hit_player(self, victim, weapon=None):
+        if weapon is None:
+            weapon = self.weapon
+
+        if victim is None or not victim.is_created:
+            return {}
+
+        # Chance to hit stuff
+        result = {}
+        messages = []
+        if weapon is None:
+            self.weapon = None
+        elif not self.has_item(weapon.item_id):
+            messages.append(
+                "You belatedly realise you dont have the {}, "
+                "and are forced to use your hands instead..".format(weapon.name)
+            )
+            self.weapon = None
+        elif weapon.damage is None:
+            self.weapon = None
+            raise ActionError("That's no good as a weapon")
+        else:
+            result.update(weapon.on_attack(self, victim))
+            self.weapon = weapon
+
+        self.add_enemy(victim)
+
+        if min(self.to_hit - victim.armor, 0) > randperc():
+            message = "You hit [p]{}[/p]".format(victim.name)
+            if weapon is not None:
+                message += " with the {}".format(self.weapon.name)
+            messages.append(message)
+            damage = randperc() % self.damage
+
+            new_strength = victim.strength - damage
+            if new_strength < 0:
+                messages.append("Your last blow did the trick")
+                if victim.strength >= 0:
+                    # Bonus?
+                    self.score += victim.xp_value
+                    victim.set_dead()
+                    self.stop_fight()
+
+            self.score += damage * 2
+            calibme()
+        else:
+            messages.append("You missed [p]{}[/p]".format(victim.name))
+            damage = None
+
+        if victim.character_id < 16:
+            sendsys(
+                victim.name,
+                self.name,
+                -10021,
+                self.room_id,
+                [self.character_id, damage, self.weapon.item_id if self.weapon else None],
+            )
+        else:
+            woundmn(victim, damage or 0)
+
+        result.update({'message': "\n".join(messages)})
+        return result
+
+    def receive_damage(self, data, is_me):
+        # bloodrcv
+        if not is_me:
+            return {}
+
+        character_id, damage, weapon_id = data
+        character = Character.get(character_id)
+        if character is None or not character.is_created:
+            return {}
+        weapon = Item.get(weapon_id)
+        if weapon is not None:
+            message_text = " with the {}\n".format(weapon.name)
+        else:
+            message_text = "\n"
+
+        self.add_enemy(character)
+
+        if damage is None:
+            return {'message': "[p]{}[/p] attacks you{}".format(character.name, message_text)}
+
+        message = "You are wounded by [p]{}[/p]{}".format(character.name, message_text)
+
+        if not self.is_wizard:
+            character.on_hit_player(self, damage)
+
+        Globals.me_cal = True  # Queue an update when ready
+
+        if self.strength >= 0:
+            return
+
+        logging.log("{} slain by {}".format(self.name, character.name))
+        dumpitems()
+        loseme()
+        World.save()
+
+        delpers(self.name)
+
+        World.load()
+        sendsys(
+            self.name,
+            self.name,
+            -10000,
+            self.room_id,
+            "[p]{}[/p] has just died.\n".format(self.name),
+        )
+        sendsys(
+            self.name,
+            self.name,
+            -10113,
+            self.room_id,
+            "[ [p]{}[/p] has been slain by [p]{}[/p] ]\n".format(self.name, character.name),
+        )
+        raise StopGame("Oh dear... you seem to be slightly dead")
+
     # Search Helpers
     def find_items(self, **kwargs):
         return Item.find(wizard=self.is_wizard, **kwargs)
@@ -308,7 +461,7 @@ class Player:
         return Character.find(**kwargs)
 
     def find_character(self, **kwargs):
-        return next(self.find_items(**kwargs), None)
+        return next(self.find_characters(**kwargs), None)
 
     def is_valid_item(self, item):
         return item is not None and (self.is_wizard or not item.is_destroyed)
@@ -361,7 +514,7 @@ class Player:
     def go(self, direction_id):
         self.add_command("go {}".format(direction_id))
 
-        if Globals.in_fight > 0:
+        if self.in_fight:
             raise ActionError(
                 "You can't just stroll out of a fight!\n"
                 "If you wish to leave a fight, you must FLEE in a direction\n"
@@ -422,7 +575,7 @@ class Player:
 
         self.read_messages()
 
-        if Globals.in_fight:
+        if self.in_fight:
             raise ActionError("Not in the middle of a fight!")
 
         World.load()
@@ -611,6 +764,33 @@ class Player:
             response.update({'error': error})
         return response
 
+    @turn('wield')
+    def wield(self, item=None):
+        if item is None:
+            raise ActionError("What's one of those?")
+        elif not item.is_weapon:
+            self.weapon = None
+            raise ActionError("That's not a weapon")
+        self.weapon = item
+        calibme()
+        return {'result': "Ok..."}
+
+    @turn('break')
+    def break_item(self, item=None):
+        if item is None:
+            raise ActionError("What is that?")
+        return item.on_break(self)
+
+    @turn('kill')
+    def kill(self, character, weapon=None):
+        if character is None:
+            raise ActionError("You can't do that")
+        if character.character_id == self.character_id:
+            raise ActionError("Come on, it will look better tomorrow...")
+        if character.room_id != self.room_id:
+            raise ActionError("They aren't here")
+        return self.hit_player(character, weapon)
+
     @turn('jump')
     def jump(self):
         room_id = self.room.jump_to
@@ -731,17 +911,13 @@ class Player:
             dosumm(Globals.ades)
 
         def check_in_fight():
-            if not Globals.in_fight:
+            if not self.in_fight:
                 return
-            if Globals.fighting.room_id != self.room_id:
-                Globals.in_fight = 0
-                Globals.fighting = None
-            if not Globals.fighting.is_created:
-                Globals.in_fight = 0
-                Globals.fighting = None
-            if interrupt and Globals.in_fight:
-                Globals.in_fight = 0
-                hitplayer(Globals.fighting, Globals.wpnheld)
+            if self.__fight.room_id != self.room_id or not self.__fight.is_created:
+                self.stop_fight()
+            if interrupt and self.in_fight:
+                self.__fight_counter = 0
+                self.hit_player(self.__fight)
 
         def check_magic_item():
             if not iswornby(18, self.character_id) and randperc() >= 10:
@@ -772,7 +948,7 @@ class Player:
         check_drink()
 
     def on_quit(self):
-        if Globals.in_fight:
+        if self.in_fight:
             raise ActionError("^C\n")
         loseme(self)
         raise StopGame("Byeeeeeeeeee  ...........")
@@ -789,13 +965,12 @@ class Player:
 
     def on_after_turn(self):
         # Check Fight
-        if Globals.fighting:
-            if not Globals.fighting.is_created or Globals.fighting.room_id != self.room_id:
-                Globals.in_fight = 0
-                Globals.fighting = None
+        if self.__fight is not None:
+            if not self.__fight.is_created or self.__fight.room_id != self.room_id:
+                self.stop_fight()
 
-        if Globals.in_fight:
-            Globals.in_fight -= 1
+        if self.in_fight:
+            self.__fight_counter -= 1
 
         # Read messages
         if Globals.rd_qd:
@@ -834,6 +1009,11 @@ def chkcrip(*args):
     return False
 
 
+def delpers(*args):
+    # raise NotImplementedError()
+    print("delpers({})".format(args))
+
+
 def dosumm(*args):
     # raise NotImplementedError()
     print("dosumm({})".format(args))
@@ -854,11 +1034,6 @@ def gamecom(*args):
     print("gamecom({})".format(args))
 
 
-def hitplayer(*args):
-    # raise NotImplementedError()
-    print("hitplayer({})".format(args))
-
-
 def initme(*args):
     # raise NotImplementedError()
     print("initme({})".format(args))
@@ -877,6 +1052,12 @@ def loseme(*args):
 def mstoout(*args):
     # raise NotImplementedError()
     print("mstoout({})".format(args))
+
+
+def obyte(*args):
+    # raise NotImplementedError()
+    print("obyte({})".format(args))
+    return 0
 
 
 def opensnoop(*args):
@@ -920,3 +1101,8 @@ def update(*args):
 def viewsnoop(*args):
     # raise NotImplementedError()
     print("viewsnoop({})".format(args))
+
+
+def woundmn(*args):
+    # raise NotImplementedError()
+    print("woundmn({})".format(args))

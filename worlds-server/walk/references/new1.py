@@ -730,8 +730,7 @@ break ;
 		else my_sco+=10*damof(a);
 	}
 	setpstr(a,-1); /* MARK ALREADY DEAD */
-	in_fight=0;
-	fighting= -1;
+	player.stop()
     }
     if(a>15) woundmn(a,2*my_lev);
 }
@@ -786,8 +785,7 @@ break ;
 		else my_sco+=10*damof(a);
 	}
 	setpstr(a,-1); /* MARK ALREADY DEAD */
-	in_fight=0;
-	fighting= -1;
+	player.stop()
     }    
     sendsys(pname(a),globme,-10109,curch,ar);
     if(a==fpbns("yeti")) {woundmn(a,6*my_lev);return;}
@@ -820,8 +818,7 @@ break ;
 		else my_sco+=10*damof(a);
 	}
 	setpstr(a,-1); /* MARK ALREADY DEAD */
-	in_fight=0;
-	fighting= -1;
+	player.stop()
     }       
     sprintf(ar,"%d",my_lev*2);
     sendsys(pname(a),globme,-10110,curch,ar);

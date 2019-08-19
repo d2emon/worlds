@@ -6,6 +6,13 @@ from .model import Model
 from .item import Item
 
 
+def wraith_hit(player, damage):
+    player.score -= 100 * damage
+    if player.score < 0:
+        player.character.set_dead()
+    return {'message': "You feel weaker, as the wraiths icy touch seems to drain your very life force\n"}
+
+
 class Character(Model):
     MAX_USER = 16
 
@@ -83,6 +90,19 @@ class Character(Model):
     @property
     def helper(self):
         return next((c for c in Character.all() if c.helping == self.character_id and c.room_id == self.room_id), None)
+
+    @property
+    def armor(self):
+        armor = [Item.get(item_id) for item_id in (89, 113, 114)]
+        if any(a for a in armor if a.worn_by(self)):
+            return 10
+        return 0
+
+    @property
+    def xp_value(self):
+        if self.character_id < 16:
+            return self.level * self.level * 100
+        return 10 * damof(self)
 
     @property
     def serialize(self):
@@ -197,7 +217,21 @@ class Character(Model):
             return
 
         mhitplayer(self, player.character_id)
-        pass
+
+    def set_dead(self):
+        # MARK ALREADY DEAD
+        self.strength = -1
+
+    def hit_player(self, player, damage):
+        player.strength -= damage
+        self.on_hit_player(player, damage)
+
+    # Events
+    @property
+    def on_hit_player(self):
+        if self.character_id == 16:
+            return wraith_hit
+        return lambda player, damage: {}
 
     # Search
     @classmethod

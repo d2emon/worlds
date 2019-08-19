@@ -3,9 +3,7 @@ class Globals:
     ail_dumb = False
     curmode = 1
     exittxt = {}
-    fighting = None
     i_setup = False
-    in_fight = False
     is_forced = False
     log_fl = None
     me_cal = False
@@ -22,7 +20,6 @@ class Globals:
     wd_her = None
     wd_them = None
     wd_there = ""
-    wpnheld = None
     ades = 0
     rdes = 0
     vdes = 0

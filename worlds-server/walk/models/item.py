@@ -5,6 +5,13 @@ from ..globalVars import Globals
 from .model import Model
 
 
+def attack_rune(player, victim):
+    item_16 = Item.get(16)
+    if victim is not None and victim.has_item(item_16):
+        raise ActionError("The runesword flashes back away from its target, growling in anger!")
+    return {}
+
+
 def drop_rune(player):
     if not player.is_wizard:
         raise ActionError("You can't let go of it!")
@@ -28,7 +35,7 @@ def take_treasure(player):
 
 
 def rune(player):
-    if Globals.in_fight:
+    if player.in_fight:
         return {}
 
     character = player.find_character(
@@ -42,8 +49,15 @@ def rune(player):
         return {}
     if player.find_character(name=character.name) is None:
         return {}
-    hitplayer(character.character_id, 32)
-    return {'message': "The runesword twists in your hands lashing out savagely\n"}
+
+    messages = ["The runesword twists in your hands lashing out savagely"]
+    result = player.hit_player(character, Item.get(32))
+    messages.append(result.get('message', ''))
+    result.update({
+        'message': None,
+        'messages': messages,
+    })
+    return result
 
 
 class Item(Model):
@@ -64,6 +78,7 @@ class Item(Model):
         has_connected=False,
         change_on_take=False,
         is_light=False,
+        is_weapon=False,
     ):
         super().__init__()
         self.item_id = item_id
@@ -84,6 +99,7 @@ class Item(Model):
         self.__has_connected = has_connected
         self.__change_on_take = change_on_take
         self.is_light = is_light
+        self.is_weapon = is_weapon
 
     @classmethod
     def database(cls):
@@ -182,6 +198,7 @@ class Item(Model):
             'has_connected': self.__has_connected,
             'change_on_take': self.__change_on_take,
             'is_light': self.is_light,
+            'is_weapon': self.is_weapon,
         }
 
     @classmethod
@@ -225,6 +242,18 @@ class Item(Model):
         self.save()
 
     # Events
+    @property
+    def on_attack(self):
+        if self.item_id == 32:
+            return attack_rune
+        return lambda player, victim: {}
+
+    @property
+    def on_break(self):
+        if self.item_id == 171:
+            return sys_reset
+        return lambda player: {'error': "You can't do that"}
+
     @property
     def on_drop(self):
         if self.item_id == 32:
@@ -324,7 +353,7 @@ class Item(Model):
         slug=None,
         available_for=None,  # fobna
         container=None,  # fobnin
-        owner=None,
+        owner=None,  # fobnc
         room_id=None,  # fobnh
         **kwargs,
     ):
@@ -360,15 +389,15 @@ def list_items(player):
 # TODO: Implement
 
 
-def hitplayer(*args):
-    # raise NotImplementedError()
-    print("hitplayer({})".format(args))
-
-
 def randperc(*args):
     # raise NotImplementedError()
     print("randperc({})".format(args))
     return 0
+
+
+def sys_reset(*args):
+    # raise NotImplementedError()
+    print("sys_reset({})".format(args))
 
 
 def tscale(*args):

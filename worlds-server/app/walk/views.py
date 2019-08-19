@@ -108,6 +108,37 @@ def drop(item=None):
     return do_action(Player.player().drop, next(Item.find(slug=item), None))
 
 
+@blueprint.route('/look', methods=['GET'])
+def look():
+    return do_action(Player.player().look)
+
+
+@blueprint.route('/look/at/<word>', methods=['GET'])
+def look_at(word):
+    # examcom()
+    return jsonify({'result': 'Ok'})
+
+
+@blueprint.route('/look/in/', methods=['GET'])
+@blueprint.route('/look/into/', methods=['GET'])
+@blueprint.route('/look/in/<word>', methods=['GET'])
+@blueprint.route('/look/into/<word>', methods=['GET'])
+def look_in(word=None):
+    if word is None:
+        return jsonify({'error': "In what?"})
+
+    # a = fobna(word)
+    # if a is None:
+    #   return jsonify({'error': "What?"})
+    # if not a.bit[14]:
+    #   return jsonify({'error': "That isn't a container"})
+    # if a.bit[2] and a.state != 0:
+    #   return jsonify({'error': "It's closed!"})
+    # bprintf("The %s contains:\n",oname(a))
+    # aobjsat(a,3)
+    return jsonify({'result': 'Ok'})
+
+
 @blueprint.route('/inventory', methods=['GET'])
 def inventory():
     return do_action(Player.player().get_inventory)
@@ -118,15 +149,43 @@ def who():
     return do_action(Player.player().who)
 
 
-@blueprint.route('/look', methods=['GET'])
-def look():
-    return do_action(Player.player().look)
+@blueprint.route('/wield', methods=['GET'])
+@blueprint.route('/wield/<weapon>', methods=['GET'])
+def wield(weapon=None):
+    if weapon is None:
+        return jsonify({'error': "Which weapon do you wish to select though"})
+    player = Player.player()
+    return do_action(
+        player.wield,
+        player.find_item(slug=weapon, owner=player),
+    )
 
 
-@blueprint.route('/look/at/<word>', methods=['GET'])
-def look_at(word):
-    # examcom()
-    return jsonify({'result': 'Ok'})
+@blueprint.route('/break/<item>', methods=['GET'])
+def break_item(item=None):
+    if item is None:
+        return jsonify({'error': "Kill who"})
+    if item == "door":
+        return jsonify({'error': "Who do you think you are, Moog?"})
+    player = Player.player()
+    return do_action(
+        player.break_item,
+        player.find_item(slug=item, available_for=player),
+    )
+
+
+@blueprint.route('/kill', methods=['GET'])
+@blueprint.route('/kill/<victim>', methods=['GET'])
+@blueprint.route('/kill/<victim>/with/<weapon>', methods=['GET'])
+def kill(victim=None, weapon=None):
+    if victim is None:
+        return jsonify({'error': "Kill who"})
+    player = Player.player()
+    return do_action(
+        player.kill,
+        player.find_character(name=victim),
+        player.find_item(slug=weapon, owner=player),
+    )
 
 
 @blueprint.route('/look/in/', methods=['GET'])

@@ -484,12 +484,18 @@ class Items(ListDatabase):
             # 1-2
             'carry_flag': 0,
             'state': 0,
+
             # Flags
             'is_destroyed': 0 in flags,
             'has_connected': 1 in flags,
-            # 2-11
+            # 2
+            # 3
+            # 4-7
+            # 8-11
             'change_on_take': 12 in flags,
             'is_light': 13 in flags,
+            # 14
+            'is_weapon': 15 in flags,
         }
 
     @classmethod
