@@ -43,7 +43,7 @@ class Zones(Database):
         # 1124-2199 Light Indoors
         2299: "LEDGE",
         2499: "INTREE",
-        9999: "UNKNOWN",
+        9999: "DIZZY",
         19999: "ARDA",
         99999: "WASTE",
         # 2200-...  Light Indoors

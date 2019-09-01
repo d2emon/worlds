@@ -488,10 +488,14 @@ class Player:
         )
         self.read_messages()
         self.room_id = random.choice((
-            # -5,
-            # -183,
-
-            # -167,
+            # START
+            -5,
+            # BLIZZARD
+            -183,
+            -167,
+            # DIZZY
+            -2515
+            # ARDA
             -14510,
         ))  # -5 if randperc() > 50 else -183
         self.set_room()
