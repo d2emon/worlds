@@ -1,0 +1,50 @@
+[
+    {
+        "title": "Men awake in Hildórien",
+        "startDate": "1",
+        "description": "Men awake in <span class=\"timelinelocation-Hildorien\">Hildórien</span>",
+        "importance": "55"
+    },
+    {
+        "title": "Fingolfin camps beside Lake Mithrim",
+        "startDate": "2",
+        "description": "<span class=\"timelinecreature-fingolfin\">Fingolfin</span> camps beside <span class=\"timelinelocation-LakeMithrim\">Lake Mithrim</span>",
+        "importance": "54"
+    },
+    {
+        "title": "Fingon rescues Maedhros from Thangorodrim",
+        "startDate": "5",
+        "description": "<span class=\"timelinecreature-fingon\">Fingon</span>, with the help of <span class=\"timelinecreature-thorondor\">Thorondor</span>, rescues Maedhros from <span class=\"timelinelocation-Thangorodrim\">Thangorodrim</span>.",
+        "importance": "64"
+    },
+    {
+        "title": "Fingolfin becomes High King of the Noldor",
+        "startDate": "5",
+        "description": "<span class=\"timelinecreature-maedhros\">Maedhros</span> waives his claim to the High Kingship of the Noldor. <span class=\"timelinecreature-fingolfin\">Fingolfin</span> becomes High King of the Noldor.",
+        "importance": "44"
+    },
+    {
+        "title": "Thingol allows House Finarfin to enter Doriath",
+        "startDate": "6",
+        "description": "Following a visit from <span class=\"timelinecreature-angrod\">Angrod</span>, <span class=\"timelinecreature-thingol\">Thingol</span> allows the House of Finarfin to enter <span class=\"timelinelocation-Doriath\">Doriath</span> due to their close kinship with <span class=\"timelinecreature-thingol\">Thingol</span> via Finarfin's wife, <span class=\"timelinecreature-earwen\">Eärwen</span>",
+        "importance": "54"
+    },
+    {
+        "title": "Noldor permission to occupy Hithlum and Dorthonion",
+        "startDate": "6",
+        "description": "<span class=\"timelinecreature-thingol\">Thingol</span>, as the self-styled Lord of Beleriand, grants the Noldor permission to occupy the <span class=\"timelinelocation-Hithlum\">Hithlum</span> and <span class=\"timelinelocation-Dorthonion\">Dorthonion</span>, as well as the lands to the east of <span class=\"timelinelocation-Doriath\">Doriath</span>.",
+        "importance": "54"
+    },
+    {
+        "title": "Noldor hold council in Mithrim",
+        "startDate": "7",
+        "description": "The Noldor hold a council in <span class=\"timelinelocation-Mithrim\">Mithrim</span> to discuss their relations with the Sindar; <span class=\"timelinecreature-angrod\">Angrod</span> and <span class=\"timelinecreature-caranthir\">Caranthir</span> have an argument. The Sons of Fëanor decide to relocate to <span class=\"timelinelocation-EastBeleriand\">East Beleriand</span>",
+        "importance": "54"
+    },
+    {
+        "title": "Feast of Reuniting",
+        "startDate": "20",
+        "description": "<span class=\"timelinecreature-fingolfin\">Fingolfin</span>, High King of the Noldor, hosts Mereth Aderthad - \"Feast of Reuniting\" - at the <span class=\"timelinelocation-EithelIvrin\">Pools of Ivrin</span>. The joyous occasion was designed to create bonds of friendship amongst all the elves of <span class=\"timelinelocation-Beleriand\">Beleriand</span>.",
+        "importance": "64"
+    }
+]
