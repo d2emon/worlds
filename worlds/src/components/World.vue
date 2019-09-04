@@ -220,8 +220,8 @@ export default {
     encyclo: {
       child: [
         [
-          {id: 1, title: 'Земля', to: 'planet'},
-          {id: 2, title: 'Земная кора и недра Земли. Мир небесных тел', to: 'earth/geology/+/astronomy'},
+          {id: 1, title: 'Земля', to: 'planet-earth'},
+          {id: 2, title: 'Земная кора и недра Земли. Мир небесных тел', to: 'planet-earth/geology/+/astronomy'},
           {id: 3, title: 'Числа и фигуры. Вещество и энергия', to: 'math/+/energy'},
           {id: 4, title: 'Растения и животные', to: 'biology'},
           {id: 5, title: 'Техника', to: 'tech'},
@@ -232,7 +232,7 @@ export default {
           {id: 10, title: 'Зарубежные страны', to: 'countries'},
         ],
         [
-          {id: 1, title: 'Земля', to: 'planet'},
+          {id: 1, title: 'Земля', to: 'planet-earth'},
           {id: 2, title: 'Мир небесных тел. Числа и фигуры', to: 'astronomy/+/math'},
           {id: 3, title: 'Растения и животные', to: 'biology'},
           {id: 4, title: 'Техника и производство', to: 'tech'},
@@ -246,7 +246,7 @@ export default {
           {id: 12, title: 'Наша советская Родина', to: 'motherland'},
         ],
         [
-          {id: 1, title: 'Земля', to: 'planet'},
+          {id: 1, title: 'Земля', to: 'planet-earth'},
           {id: 2, title: 'Мир небесных тел. Числа и фигуры', to: 'astronomy/+/math'},
           {id: 3, title: 'Вещество и энергия', to: 'energy'},
           {id: 4, title: 'Растения и животные', to: 'biology'},

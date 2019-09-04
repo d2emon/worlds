@@ -21,7 +21,7 @@ export default new Router({
       component: () => import('@/views/World.vue'),
     },
     {
-      path: '/world/:slug/planet',
+      path: '/world/:slug/planet-:planet',
       name: 'planet',
       component: () => import('@/views/WorldPlanet.vue'),
     },
