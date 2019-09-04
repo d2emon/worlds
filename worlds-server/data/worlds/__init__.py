@@ -27,6 +27,32 @@ class SluggedWorld1(World):
         super().__init__(**data)
 
 
+class PlanetFolder:
+    def __init__(self, root, name):
+        self.root = root
+        self.name = name
+
+    @property
+    def __planet_file(self):
+        return os.path.join(self.root, self.name, 'planet.json')
+
+    def load(self):
+        print(self.__planet_file)
+        if not os.path.isfile(self.__planet_file):
+            return
+        with open(self.__planet_file, "r", encoding='utf-8') as fp:
+            data = json.load(fp)
+            # self.__title = data.get('title', self.slug)
+            # self.__image = data.get('image')
+            # self.__wiki = data.get('wiki')
+            print(data)
+
+    def serialize(self):
+        return {
+            'name': self.name,
+        }
+
+
 class WorldFolder:
     def __init__(self, slug):
         self.__title = None
@@ -35,6 +61,7 @@ class WorldFolder:
         self.__wiki = None
         self.__links = {}
         self.__index_page = None
+        self.__planets = []
 
     @property
     def title(self):
@@ -47,6 +74,17 @@ class WorldFolder:
         if self.__image is None:
             self.load()
         return "{}/images/{}".format(self.slug, self.__image) if self.__image else None
+
+    @property
+    def planets(self):
+        if self.__planets is None:
+            self.__planets = []
+            print(self.slug)
+            for planet in self.__planets_data:
+                planet.load()
+                print(planet.name, planet.root)
+                self.__planets.append(planet)
+        return self.__planets
 
     @property
     def index_page(self):
@@ -64,7 +102,6 @@ class WorldFolder:
 
     @property
     def wiki(self):
-        print(self.__wiki, self.__links)
         if self.__wiki is not None:
             return self.__wiki
 
@@ -81,6 +118,16 @@ class WorldFolder:
     @property
     def __world_file(self):
         return os.path.join(self.root, 'world.json')
+
+    @property
+    def __planets_data(self):
+        path = os.path.join(self.root, 'planets')
+        if not os.path.exists(path):
+            return
+        for file in os.listdir(path):
+            name = os.path.splitext(os.path.basename(file))[0]
+            print(path, file, name)
+            yield PlanetFolder(path, file)
 
     def load(self):
         if not os.path.isfile(self.__world_file):
@@ -104,6 +151,7 @@ class WorldFolder:
             'image': self.image,
             'index_page': self.index_page,
             'wiki': self.wiki,
+            'planets': self.planets,
 
             # 'root': self.root,
             # 'images': self.images,

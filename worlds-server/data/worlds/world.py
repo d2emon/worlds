@@ -11,6 +11,7 @@ class World:
         index_page=None,
         loader=None,
         pages=None,
+        planets=None,
         slug=None,
         text=None,
         title='',
@@ -23,6 +24,7 @@ class World:
         self.index_page = index_page
         self.__loader = loader
         self.__pages = pages or {}
+        self.__planets = planets or []
         self.slug = slug
         self.__text = text
         self.title = title
@@ -44,6 +46,7 @@ class World:
             'index_page': self.index_page,
             'loader': self.__loader,
             'pages': self.__pages,
+            'planets': self.__planets,
             'slug': self.slug,
             'title': self.title,
             'text': self.__text,
@@ -110,6 +113,7 @@ class World:
             'text': self.text,
             'pages': self.pages,
             'wiki': self.wiki,
+            'planets': self.__planets,
 
             'data': self.additional_data,
         })
