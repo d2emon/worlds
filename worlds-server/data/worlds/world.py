@@ -32,7 +32,6 @@ class World:
         self.wiki = wiki or {}
 
         self.data = data
-        print(self.__planets)
 
     def wiki_loader(self):
         return self.get_wiki()

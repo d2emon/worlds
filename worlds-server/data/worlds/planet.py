@@ -73,13 +73,38 @@ class Planet:
 
     @classmethod
     def load(cls, path, slug):
-        filename = os.path.join(path, slug, 'planet.json')
+        root = os.path.join(path, slug)
+        filename = os.path.join(root, 'planet.json')
         if not os.path.isfile(filename):
             return cls()
         with open(filename, "r", encoding='utf-8') as f:
             data = json.load(f)
+
+            sort_pages = data.get('sortPages', [])
+            pages = {
+                title: {
+                    'order': order,
+                    'title': title,
+                }
+                for (order, title) in enumerate(sort_pages)
+            }
+            unsorted = data.get('about', []) + [
+                {
+                    'title': os.path.splitext(os.path.basename(file))[0],
+                }
+                for file in os.listdir(root)
+                if file.endswith('.md')
+            ]
+            for page in unsorted:
+                title = page.get('title') or page.get('slug')
+                pages[title] = {
+                    'order': len(pages),
+                    **pages.get(title, {}),
+                    **page,
+                }
+
             return cls(
-                about=data.get('about', []),
+                about=sorted(pages.values(), key=lambda __page: __page.get('order')),
                 description=data.get('description'),
                 name=data.get('name', slug),
                 slug=slug,

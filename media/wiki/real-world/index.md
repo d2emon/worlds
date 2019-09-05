@@ -1,6 +1,6 @@
 ## Первое издание
 
-1. [Земля](planets/earth/index.md)
+1. [Земля](planets/Земля/index.md)
 2. [Земля](/#/world/real-world/planet-earth)
 3. [Земля](/#/world/real-world/planet-earth)
 4. [Земля](/#/world/real-world/planet-earth)
@@ -13,7 +13,7 @@
 
 ## Второе издание
 
-1. [Земля](planets/earth/index.md)
+1. [Земля](planets/Земля/index.md)
 2. [Земля](/#/world/real-world/planet-earth)
 3. [Земля](/#/world/real-world/planet-earth)
 4. [Земля](/#/world/real-world/planet-earth)

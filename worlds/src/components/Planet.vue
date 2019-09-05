@@ -4,14 +4,13 @@
       v-if="world"
       :world="world"
     >
-      {{planet}}
       <template
         v-if="planet"
       >
         <v-card-title>
           <h2>
             <router-link
-              :to="`/world/${world.slug}/planet-${planet.slug}`"
+              :to="`${world.url}/${planetURL}`"
               v-text="planet.name"
             ></router-link>
           </h2>
@@ -39,10 +38,10 @@
                 <ul>
                   <li
                     v-for="article in planet.about"
-                    :key="article.slug"
+                    :key="article.title"
                   >
                     <router-link
-                      :to="`/world/${world.title}/planet/${article.slug}`"
+                      :to="`${world.url}/${planetURL}/${article.title}`"
                       v-text="article.title"
                     ></router-link>
                     <ul
@@ -50,10 +49,10 @@
                     >
                       <li
                         v-for="child in article.children"
-                        :key="child.slug"
+                        :key="child.title"
                       >
                         <router-link
-                          :to="`/world/${world.title}/planet/${article.slug}/${child.slug}`"
+                          :to="`${world.url}/${planetURL}/${article.title}/${child.title}`"
                           v-text="child.title"
                         ></router-link>
                       </li>
@@ -642,36 +641,9 @@ export default {
     'world',
     'planet',
   ],
-  data: () => ({
-    /*
-    planet: {
-      name: 'Земля',
-      about: [
-        {slug: 1, title: 'Представление древних народов о Земле'},
-        {slug: 2, title: 'Как впервые измерили окружность Земли'},
-        {slug: 3, title: 'Как уточнялись знания о форме и величине Земли'},
-        {slug: 4, title: 'Суточное вращение Земли. Смена дня и ночи'},
-        {slug: 5, title: 'Как первые кругосветные путешественники потеряли день'},
-        {slug: 6, title: 'Движение Земли вокруг Солнца'},
-        {slug: 7, title: 'Смена времен года'},
-        {
-          slug: 8,
-          title: 'Топографический план и карта',
-          children: [
-            {slug: 81, title: 'Что такое топографический план и карта'},
-            {slug: 82, title: 'Глобус и карта'},
-            {slug: 83, title: 'Типы карт'},
-            {slug: 84, title: 'Картографические проекции'},
-            {slug: 85, title: 'Как создается карта'},
-            {slug: 86, title: 'О чем рассказывает карта'},
-            {slug: 87, title: 'Из истории создания карт'},
-            {slug: 88, title: 'Из истоии русской картографии'},
-            {slug: 89, title: 'Советская картография'},
-          ],
-        },
-      ],
-    },
-    */
-  }),
+  computed: {
+    planetURL() { return this.planet && `planet-${this.planet.slug}`; },
+  },
+  data: () => ({}),
 };
 </script>
