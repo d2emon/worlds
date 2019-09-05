@@ -30,24 +30,24 @@ const actions = {
   getWorlds: ({ commit }) => worldsService
     .getWorlds()
     .then(worlds => commit('setWorlds', worlds)),
-  getWorld: ({ commit }, slug) => worldsService
-    .getWorld(slug)
+  getWorld: ({ commit }, worldId) => worldsService
+    .getWorld(worldId)
     .then(world => ({
       ...world,
       html: wiki2html(world.text, world.slug),
     }))
     .then(world => commit('setWorld', world)),
-  getWiki: ({ commit }, { slug, filename }) => (filename
-    ? worldsService.getWiki(slug, filename)
+  getWiki: ({ commit }, { worldId, pageId }) => (pageId
+    ? worldsService.getWiki(worldId, pageId)
     : Promise.resolve(null)
   )
-    .then(wiki => wiki2html(wiki, slug))
+    .then(wiki => wiki2html(wiki, worldId))
     .then(wiki => commit('setWiki', wiki)),
-  getPlanet: ({ commit }, { world, slug }) => worldsService
-    .getPlanet(world, slug)
+  getPlanet: ({ commit }, { worldId, planetId }) => worldsService
+    .getPlanet(worldId, planetId)
     .then(planet => ({
       ...planet,
-      html: wiki2html(planet.description, world),
+      html: wiki2html(planet.description, worldId),
     }))
     .then(planet => commit('setPlanet', planet)),
 };

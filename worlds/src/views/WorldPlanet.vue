@@ -24,7 +24,6 @@ export default {
   },
   methods: {
     ...mapActions('worlds', [
-      'getWorld',
       'getPlanet',
     ]),
     fetchAll() {
@@ -33,8 +32,8 @@ export default {
         planetId,
       } = this.$route.params;
       this.getPlanet({
-        world: worldId,
-        slug: planetId,
+        worldId,
+        planetId,
       });
     },
   },

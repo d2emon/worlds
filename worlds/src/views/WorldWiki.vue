@@ -27,7 +27,6 @@ export default {
   },
   methods: {
     ...mapActions('worlds', [
-      'getWorld',
       'getWiki',
     ]),
     fetchAll() {
@@ -36,8 +35,8 @@ export default {
         pageId,
       } = this.$route.params;
       this.getWiki({
-        slug: worldId,
-        filename: pageId,
+        worldId,
+        pageId,
       });
     },
   },
