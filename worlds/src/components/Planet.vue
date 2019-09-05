@@ -1,21 +1,17 @@
 <template>
   <v-container>
-    <world-card
-      v-if="world"
-      :world="world"
+    <template
+      v-if="planet"
     >
-      <template
-        v-if="planet"
-      >
-        <v-card-title>
-          <h2>
-            <router-link
-              :to="`${world.url}/${planetURL}`"
-              v-text="planet.name"
-            ></router-link>
-          </h2>
-        </v-card-title>
-        <v-layout row wrap>
+      <v-card-title>
+        <h2>
+          <router-link
+            :to="`${world.url}/${planetURL}`"
+            v-text="planet.name"
+          ></router-link>
+        </h2>
+      </v-card-title>
+      <v-layout row wrap>
           <v-flex xs4>
             <v-container>
               <v-card>
@@ -625,18 +621,14 @@
           <v-flex xs8>
             <slot />
           </v-flex>
-        </v-layout>
-      </template>
-    </world-card>
+      </v-layout>
+    </template>
   </v-container>
 </template>
 
 <script>
 export default {
   name: 'Planet',
-  components: {
-    WorldCard: () => import('@/components/WorldCard.vue'),
-  },
   props: [
     'world',
     'planet',

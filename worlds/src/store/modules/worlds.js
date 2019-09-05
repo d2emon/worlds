@@ -36,22 +36,20 @@ const actions = {
       ...world,
       html: wiki2html(world.text, world.slug),
     }))
-    .then((world) => {
-      commit('setWorld', world);
-      const planet = (world && world.planets && world.planets.length)
-        ? {
-          ...world.planets[0],
-          html: wiki2html(world.planets[0].description, world.slug),
-        }
-        : null;
-      commit('setPlanet', planet);
-    }),
+    .then(world => commit('setWorld', world)),
   getWiki: ({ commit }, { slug, filename }) => (filename
     ? worldsService.getWiki(slug, filename)
     : Promise.resolve(null)
   )
     .then(wiki => wiki2html(wiki, slug))
     .then(wiki => commit('setWiki', wiki)),
+  getPlanet: ({ commit }, { world, slug }) => worldsService
+    .getPlanet(world, slug)
+    .then(planet => ({
+      ...planet,
+      html: wiki2html(planet.description, world),
+    }))
+    .then(planet => commit('setPlanet', planet)),
 };
 
 export default {

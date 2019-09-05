@@ -2,6 +2,7 @@ import {
   Api,
   imageUrl,
   worldUrl,
+  planetUrl,
 } from '@/helpers';
 
 export default {
@@ -38,10 +39,27 @@ export default {
       image: image || imageUrl,
       url: worldUrl(slug),
       wiki,
-      pages,
+      pages: (pages || []).map(page => ({
+        ...page,
+        url: `${worldUrl(slug)}/wiki/${page.url}`,
+      })),
       text,
       planets,
       data,
+    })),
+  getPlanet: (world, planet) => Api
+    .get(`/api/worlds/world/${world}/planet/${planet}`)
+    .then(({ data }) => data.planet)
+    .then(({
+      name,
+      slug,
+      description,
+      about,
+    }) => ({
+      name,
+      url: planetUrl(world, slug),
+      description,
+      about,
     })),
   getWiki: (world, page) => Api
     .get(`/api/worlds/wiki/${world}/${page}`)

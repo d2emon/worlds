@@ -92,7 +92,7 @@ class World:
         return sorted(
             [{
                 'filename': self.__pages.get(file) or file,
-                'url': "{}/{}".format(self.slug, file),
+                'url': file,
             } for file in list_wiki(self.slug)],
             key=lambda item: item['filename'],
         )

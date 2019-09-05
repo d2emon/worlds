@@ -16,17 +16,29 @@ export default new Router({
       component: () => import('@/views/RandomWorld.vue'),
     },
     {
-      path: '/world/:slug',
+      path: '/world/:worldId',
       name: 'world',
       component: () => import('@/views/World.vue'),
+      children: [
+        {
+          path: '',
+          name: 'world-main',
+          component: () => import('@/views/WorldWiki.vue'),
+        },
+        {
+          path: 'wiki/:pageId',
+          name: 'wiki',
+          component: () => import('@/views/WorldWiki.vue'),
+        },
+        {
+          path: 'planet-:planetId',
+          name: 'planet',
+          component: () => import('@/views/WorldPlanet.vue'),
+        },
+      ],
     },
     {
-      path: '/world/:slug/planet-:planet',
-      name: 'planet',
-      component: () => import('@/views/WorldPlanet.vue'),
-    },
-    {
-      path: '/wiki/:slug/:wiki',
+      path: '/wiki/:worldId/:wiki',
       name: 'wiki',
       component: () => import('@/views/World.vue'),
     },

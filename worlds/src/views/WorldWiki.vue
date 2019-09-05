@@ -1,8 +1,11 @@
 <template>
-  <planet
-    :world="world"
-    :planet="planet"
-  />
+  <v-container>
+    <world
+      v-if="world"
+      :world="world"
+      :wiki="wiki"
+    />
+  </v-container>
 </template>
 
 <script>
@@ -12,29 +15,29 @@ import {
 } from 'vuex';
 
 export default {
-  name: 'WorldPlanet',
+  name: 'WorldWiki',
   components: {
-    Planet: () => import('@/components/Planet.vue'),
+    World: () => import('@/components/World.vue'),
   },
   computed: {
     ...mapState('worlds', [
       'world',
-      'planet',
+      'wiki',
     ]),
   },
   methods: {
     ...mapActions('worlds', [
       'getWorld',
-      'getPlanet',
+      'getWiki',
     ]),
     fetchAll() {
       const {
         worldId,
-        planetId,
+        pageId,
       } = this.$route.params;
-      this.getPlanet({
-        world: worldId,
-        slug: planetId,
+      this.getWiki({
+        slug: worldId,
+        filename: pageId,
       });
     },
   },
@@ -44,3 +47,7 @@ export default {
   mounted() { this.fetchAll(); },
 };
 </script>
+
+<style scoped>
+
+</style>

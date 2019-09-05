@@ -2,9 +2,15 @@
   <v-layout justify-center>
     <v-flex xs12 sm9>
       <world-card
+        v-if="world"
         :world="world"
-        :wiki="wiki"
-      />
+      >
+        <!-- world-page
+          :world="world"
+          :wiki="wiki"
+        / -->
+        <router-view />
+      </world-card>
     </v-flex>
   </v-layout>
 </template>
@@ -18,7 +24,8 @@ import {
 export default {
   name: 'World',
   components: {
-    WorldCard: () => import('@/components/World.vue'),
+    WorldCard: () => import('@/components/WorldCard.vue'),
+    WorldPage: () => import('@/components/World.vue'),
   },
   computed: {
     ...mapState('worlds', [
@@ -33,14 +40,16 @@ export default {
     ]),
     fetchAll() {
       const {
-        slug,
+        worldId,
         wiki,
       } = this.$route.params;
-      this.getWiki({
-        slug,
-        filename: wiki,
-      });
-      this.getWorld(slug);
+      this.getWorld(worldId);
+      if (wiki) {
+        this.getWiki({
+          slug: worldId,
+          filename: wiki,
+        });
+      }
     },
   },
   watch: {

@@ -1,90 +1,33 @@
 <template>
   <v-container>
-    <portal v-model="enteringPortal" />
+    <portal
+      v-if="showPortal"
+      v-model="enteringPortal"
+    />
 
-    <v-card
-      v-if="world"
-    >
-      <v-img
-        v-if="world.image"
-        :src="world.image"
-        height="200px"
-      />
-
-      <v-card-actions
-        v-if="world.wiki"
-      >
-        <v-spacer />
-        <v-btn
-          v-for="(href, k) in world.wiki"
-          :key="k"
-          :href="href"
-          target="_blank"
-          :icon="!!wikiLogo[k]"
-          flat
+    <v-layout row wrap>
+      <v-flex xs4>
+        <v-card
+          v-if="world.pages && world.pages.length"
         >
-          <v-avatar
-            v-if="wikiLogo[k]"
-            :size="32"
-          >
-            <img
-              v-if="wikiLogo[k]"
-              :src="wikiLogo[k]"
-              :alt="k"
-            />
-          </v-avatar>
-          <span v-else>
-            {{k}}
-          </span>
-        </v-btn>
-      </v-card-actions>
-
-      <v-container>
-        <v-layout row wrap>
-          <v-flex xs4>
-            <v-card>
-              <v-card-actions>
-                <v-btn
-                  to="/"
-                  icon
-                >
-                  <v-icon>view_module</v-icon>
-                </v-btn>
-                <v-btn
-                  to="/random-world"
-                  icon
-                >
-                  <v-icon>gesture</v-icon>
-                </v-btn>
-              </v-card-actions>
-
-              <v-list>
-                <v-list-tile
-                  :to="world.url"
-                >
-                  <v-list-tile-content>
-                    <v-list-tile-title>
-                      Главная
-                    </v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile
-                  v-for="(page, id) in world.pages"
-                  :key="`page-${id}`"
-                  :to="`/wiki/${page.url}`"
-                  :title="page.filename"
-                >
-                  <v-list-tile-content>
-                    <v-list-tile-title v-text="page.filename" />
-                  </v-list-tile-content>
-                </v-list-tile>
-              </v-list>
-            </v-card>
-            <br />
-
-            <template
-              v-for="(v, id) in encyclo.child"
+          <v-list>
+            <v-list-tile
+              v-for="(page, id) in world.pages"
+              :key="`page-${id}`"
+              :to="page.url"
+              :title="page.filename"
             >
+              <v-list-tile-content>
+                <v-list-tile-title v-text="page.filename" />
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
+        </v-card>
+        <br />
+
+        <template
+          v-for="(v, id) in encyclo.child"
+        >
               <v-card
                 :key="`v${id}`"
               >
@@ -103,16 +46,10 @@
                   </v-list-tile>
                 </v-list>
               </v-card>
-              <br />
-            </template>
-          </v-flex>
-          <v-flex xs8>
-            <v-card-title
-              class="headline"
-              :to="world.to"
-              v-text="world.title"
-            />
-
+          <br />
+        </template>
+      </v-flex>
+        <v-flex xs8>
             <slot />
 
             <!-- Object.keys(world) -->
@@ -175,24 +112,8 @@
                 </v-flex>
               </v-layout>
             </v-container>
-          </v-flex>
-        </v-layout>
-
-      </v-container>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn icon>
-          <v-icon>favorite</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon>bookmark</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon>share</v-icon>
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+        </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
@@ -207,6 +128,7 @@ export default {
     Portal: () => import('@/components/Portal.vue'),
   },
   props: [
+    'showPortal',
     'world',
     'wiki',
   ],
