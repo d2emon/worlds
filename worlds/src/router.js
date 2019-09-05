@@ -23,12 +23,12 @@ export default new Router({
         {
           path: '',
           name: 'world-main',
-          component: () => import('@/views/wiki/WorldWiki.vue'),
+          component: () => import('@/views/wiki/World.vue'),
         },
         {
           path: 'wiki/:pageId',
           name: 'world-wiki',
-          component: () => import('@/views/wiki/WorldWiki.vue'),
+          component: () => import('@/views/wiki/World.vue'),
         },
         {
           path: 'planet-:planetId',
@@ -38,7 +38,7 @@ export default new Router({
             {
               path: '',
               name: 'planet-main',
-              component: () => import('@/views/wiki/Planet.vue'),
+              component: () => import('@/views/WorldPlanetMain.vue'),
             },
             {
               path: 'wiki/:pageId',

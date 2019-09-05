@@ -1,10 +1,10 @@
 <template>
-  <planet
+  <planet-card
     :world="world"
     :planet="planet"
   >
     <router-view />
-  </planet>
+  </planet-card>
 </template>
 
 <script>
@@ -16,7 +16,7 @@ import {
 export default {
   name: 'WorldPlanet',
   components: {
-    Planet: () => import('@/components/Planet.vue'),
+    PlanetCard: () => import('@/components/cards/Planet.vue'),
   },
   computed: {
     ...mapState('worlds', [

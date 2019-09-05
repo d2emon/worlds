@@ -1,30 +1,18 @@
 <template>
   <v-container>
-    <template
+    <v-layout
+      row
+      wrap
       v-if="planet"
     >
-      <v-card-title>
-        <h2>
-          <router-link
-            :to="planet.url"
-            v-text="planet.name"
-          ></router-link>
-        </h2>
-      </v-card-title>
-
-      <v-layout row wrap>
-          <v-flex xs4>
-            <v-container>
-              <v-card>
-                <v-container>
-                  <div
-                    v-html="planet.html"
-                  ></div>
-                </v-container>
-              </v-card>
-            </v-container>
-          </v-flex>
-          <v-flex xs4>
+      <v-flex xs4>
+        <v-container>
+          <div
+            v-html="planet.html"
+          ></div>
+        </v-container>
+      </v-flex>
+      <v-flex xs4>
             <v-container>
               <v-card>
                 <v-card-title>
@@ -341,8 +329,8 @@
                 </v-container>
               </v-card>
             </v-container>
-          </v-flex>
-          <v-flex xs4>
+      </v-flex>
+      <v-flex xs4>
             <v-container>
               <v-card>
                 <v-card-title>
@@ -562,8 +550,8 @@
                 </v-container>
               </v-card>
             </v-container>
-          </v-flex>
-          <v-flex xs4>
+      </v-flex>
+      <v-flex xs4>
             <v-container>
               <v-card>
                 <v-card-title>
@@ -600,30 +588,8 @@
                 </v-container>
               </v-card>
             </v-container>
-          </v-flex>
-          <v-flex xs4>
-            <v-container>
-              <v-card>
-                <v-list>
-                  <v-list-tile
-                    v-for="(page, id) in world.pages"
-                    :key="`page-${id}`"
-                    :to="`/wiki/${page.url}`"
-                    :title="page.filename"
-                  >
-                    <v-list-tile-content>
-                      <v-list-tile-title v-text="page.filename" />
-                    </v-list-tile-content>
-                  </v-list-tile>
-                </v-list>
-              </v-card>
-            </v-container>
-          </v-flex>
-          <v-flex xs8>
-            <slot />
-          </v-flex>
-      </v-layout>
-    </template>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
@@ -631,9 +597,11 @@
 export default {
   name: 'Planet',
   props: [
-    'world',
     'planet',
   ],
-  data: () => ({}),
 };
 </script>
+
+<style scoped>
+
+</style>

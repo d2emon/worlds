@@ -5,10 +5,6 @@
         v-if="world"
         :world="world"
       >
-        <!-- world-page
-          :world="world"
-          :wiki="wiki"
-        / -->
         <router-view />
       </world-card>
     </v-flex>
@@ -24,7 +20,7 @@ import {
 export default {
   name: 'World',
   components: {
-    WorldCard: () => import('@/components/WorldCard.vue'),
+    WorldCard: () => import('@/components/cards/World.vue'),
   },
   computed: {
     ...mapState('worlds', [
