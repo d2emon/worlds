@@ -38,4 +38,9 @@ export default {
 .wiki img {
   height: 200px;
 }
+
+.v-card__title a {
+  text-decoration: none;
+  color: #000000;
+}
 </style>

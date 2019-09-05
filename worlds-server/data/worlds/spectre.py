@@ -3,9 +3,15 @@ from .world import SluggedWorld
 
 
 class Planet:
-    def __init__(self, title, description=""):
-        self.title = title
+    def __init__(self, name, description=""):
+        self.name = name
         self.description = description
+
+    def as_dict(self):
+        return {
+            'name': self.name,
+            'description': self.description,
+        }
 
 
 planets = [
@@ -134,7 +140,7 @@ spectre = Spectre(
 четырем. Возможно, это отсылка с "Третьему обращению к человечеству", в
 котором говорится, что пространство имеет не три, а "Пи" измерений.""",
     ],
-    planets=planets,
+    planets=[planet.as_dict() for planet in planets],
 )
 
 # print("FIELDS", spectre.fields)

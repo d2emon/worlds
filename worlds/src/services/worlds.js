@@ -29,6 +29,7 @@ export default {
       wiki,
       pages,
       text,
+      planets,
       data,
     }) => ({
       title,
@@ -39,6 +40,7 @@ export default {
       wiki,
       pages,
       text,
+      planets,
       data,
     })),
   getWiki: (world, page) => Api

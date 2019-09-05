@@ -1,5 +1,6 @@
 from app import app
 from ..wikifiles import get_wiki, list_wiki, wikis
+from .planet import Planet
 
 
 class World:
@@ -24,13 +25,14 @@ class World:
         self.index_page = index_page
         self.__loader = loader
         self.__pages = pages or {}
-        self.__planets = planets or []
+        self.__planets = list(planets or [])
         self.slug = slug
         self.__text = text
         self.title = title
         self.wiki = wiki or {}
 
         self.data = data
+        print(self.__planets)
 
     def wiki_loader(self):
         return self.get_wiki()
@@ -46,7 +48,7 @@ class World:
             'index_page': self.index_page,
             'loader': self.__loader,
             'pages': self.__pages,
-            'planets': self.__planets,
+            'planets': [planet.fields for planet in self.planets],
             'slug': self.slug,
             'title': self.title,
             'text': self.__text,
@@ -73,6 +75,10 @@ class World:
         if self.__data_loader is not None:
             return self.__data_loader
         return lambda: {}
+
+    @property
+    def planets(self):
+        return (Planet(**data) for data in self.__planets)
 
     @property
     def text(self):
@@ -113,7 +119,7 @@ class World:
             'text': self.text,
             'pages': self.pages,
             'wiki': self.wiki,
-            'planets': self.__planets,
+            'planets': [planet.as_dict() for planet in self.planets],
 
             'data': self.additional_data,
         })

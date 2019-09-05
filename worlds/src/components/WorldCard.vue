@@ -87,10 +87,3 @@ export default {
   }),
 };
 </script>
-
-<style scoped>
-  .v-card__title a {
-    text-decoration: none;
-    color: #000000;
-  }
-</style>

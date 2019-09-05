@@ -3,6 +3,7 @@
     <v-flex xs12 sm9>
       <planet
         :world="world"
+        :planet="planet"
       />
     </v-flex>
   </v-layout>
@@ -22,6 +23,7 @@ export default {
   computed: {
     ...mapState('worlds', [
       'world',
+      'planet',
     ]),
   },
   methods: {

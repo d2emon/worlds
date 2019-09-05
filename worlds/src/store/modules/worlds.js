@@ -8,12 +8,14 @@ const state = {
   portal: [],
   worlds: [],
   world: null,
+  planet: null,
   wiki: '',
 };
 
 const getters = {};
 
 const mutations = {
+  setPlanet: (state, planet) => { state.planet = planet; },
   setPortal: (state, portal) => { state.portal = portal; },
   setWorlds: (state, worlds) => { state.worlds = worlds; },
   setWorld: (state, world) => { state.world = world; },
@@ -34,11 +36,20 @@ const actions = {
       ...world,
       html: wiki2html(world.text, world.slug),
     }))
-    .then(world => commit('setWorld', world)),
-  getWiki: ({commit}, {slug, filename}) => (filename
-      ? worldsService.getWiki(slug, filename)
-      : Promise.resolve(null)
-    )
+    .then((world) => {
+      commit('setWorld', world);
+      const planet = (world && world.planets && world.planets.length)
+        ? {
+          ...world.planets[0],
+          html: wiki2html(world.planets[0].description, world.slug),
+        }
+        : null;
+      commit('setPlanet', planet);
+    }),
+  getWiki: ({ commit }, { slug, filename }) => (filename
+    ? worldsService.getWiki(slug, filename)
+    : Promise.resolve(null)
+  )
     .then(wiki => wiki2html(wiki, slug))
     .then(wiki => commit('setWiki', wiki)),
 };
