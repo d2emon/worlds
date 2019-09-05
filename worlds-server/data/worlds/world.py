@@ -104,6 +104,10 @@ class World:
             filename = "{}/{}.md".format(self.slug, filename)
         return get_wiki(filename)
 
+    def get_planet(self, planet_id):
+        planet = next((planet for planet in self.planets if planet.slug == planet_id), None)
+        return planet.as_dict() if planet else None
+
     def as_dict(self, full=False):
         result = {
             'id': self.__id,

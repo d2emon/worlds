@@ -6,7 +6,7 @@
       <v-card-title>
         <h2>
           <router-link
-            :to="`${world.url}/${planetURL}`"
+            :to="planet.url"
             v-text="planet.name"
           ></router-link>
         </h2>
@@ -37,7 +37,7 @@
                     :key="article.title"
                   >
                     <router-link
-                      :to="`${world.url}/${planetURL}/${article.title}`"
+                      :to="`${planet.url}/${article.title}`"
                       v-text="article.title"
                     ></router-link>
                     <ul
@@ -48,7 +48,7 @@
                         :key="child.title"
                       >
                         <router-link
-                          :to="`${world.url}/${planetURL}/${article.title}/${child.title}`"
+                          :to="`${planet.url}/${article.title}/${child.title}`"
                           v-text="child.title"
                         ></router-link>
                       </li>
@@ -633,9 +633,6 @@ export default {
     'world',
     'planet',
   ],
-  computed: {
-    planetURL() { return this.planet && `planet-${this.planet.slug}`; },
-  },
   data: () => ({}),
 };
 </script>
