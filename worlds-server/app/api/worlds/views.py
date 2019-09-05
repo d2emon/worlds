@@ -3,45 +3,68 @@ from . import blueprint
 from data.worlds import WORLDS, World
 
 
+def world_by_slug(slug):
+    data = WORLDS.by_slug(slug)
+    if data is None:
+        raise FileNotFoundError()
+    return World(**data)
+
+
+def planet_by_slug(world_id, planet_id):
+    item = world_by_slug(world_id).get_planet(planet_id)
+    if item is None:
+        raise FileNotFoundError()
+    return item
+
+
+def wiki_by_slug(world_id=None, planet_id=None, page_id=None):
+    if world_id is None:
+        return None
+    return world_by_slug(world_id).get_wiki(
+        planet_id=planet_id,
+        page_id=page_id,
+    )
+
+
+def try_response(f):
+    try:
+        return jsonify({
+            'status': 'success',
+            **f(),
+        })
+    except FileNotFoundError:
+        return jsonify({'status': 'fail'})
+
+
 @blueprint.route('/', methods=['GET'])
 def worlds():
-    return jsonify({
-        'status': 'success',
+    return try_response(lambda: {
         'worlds': [World(**data).as_dict() for data in WORLDS.all()],
     })
 
 
 @blueprint.route('/world/<world_id>', methods=['GET'])
-def world(world_id):
-    data = WORLDS.by_slug(world_id)
-    if data is None:
-        return jsonify({'status': 'fail'})
-
-    return jsonify({
-        'status': 'success',
-        'world': World(**data).as_dict(full=True),
+def get_world(world_id):
+    return try_response(lambda: {
+        'world': world_by_slug(world_id).as_dict(full=True),
     })
 
 
-@blueprint.route('/world/<world_id>/wiki/<path:page>', methods=['GET'])
-def get_wiki(world_id, page):
-    data = WORLDS.by_slug(world_id)
-    if data is None:
-        return jsonify({'status': 'fail'})
-
-    return jsonify({
-        'status': 'success',
-        'wiki': World(**data).get_wiki(page),
+@blueprint.route('/world/<world_id>/planet/<planet_id>', methods=['GET'])
+def get_planet(world_id, planet_id):
+    return try_response(lambda: {
+        'planet': planet_by_slug(world_id, planet_id).as_dict(),
     })
 
 
-@blueprint.route('/world/<world_id>/planet/<planet>', methods=['GET'])
-def get_planet(world_id, planet):
-    data = WORLDS.by_slug(world_id)
-    if data is None:
-        return jsonify({'status': 'fail'})
-
-    return jsonify({
-        'status': 'success',
-        'planet': World(**data).get_planet(planet),
+@blueprint.route('/wiki/world/<world_id>/planet/<planet_id>/page/<path:page_id>', methods=['GET'])
+@blueprint.route('/wiki/world/<world_id>/page/<path:page_id>', methods=['GET'])
+@blueprint.route('/wiki/page/<path:page_id>', methods=['GET'])
+def get_wiki(world_id=None, planet_id=None, page_id='index'):
+    return try_response(lambda: {
+        'wiki': wiki_by_slug(
+            world_id=world_id,
+            planet_id=planet_id,
+            page_id=page_id,
+        ),
     })

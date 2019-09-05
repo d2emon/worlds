@@ -11,6 +11,7 @@
           ></router-link>
         </h2>
       </v-card-title>
+
       <v-layout row wrap>
           <v-flex xs4>
             <v-container>
@@ -37,7 +38,7 @@
                     :key="article.title"
                   >
                     <router-link
-                      :to="`${planet.url}/${article.title}`"
+                      :to="`${planet.url}/wiki/${article.title}`"
                       v-text="article.title"
                     ></router-link>
                     <ul
@@ -48,7 +49,7 @@
                         :key="child.title"
                       >
                         <router-link
-                          :to="`${planet.url}/${article.title}/${child.title}`"
+                          :to="`${planet.url}/wiki/${article.title}/${child.title}`"
                           v-text="child.title"
                         ></router-link>
                       </li>

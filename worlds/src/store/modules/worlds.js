@@ -34,11 +34,11 @@ const actions = {
     .getWorld(worldId)
     .then(world => ({
       ...world,
-      html: wiki2html(world.text, world.slug),
+      html: wiki2html(world.text, worldId),
     }))
     .then(world => commit('setWorld', world)),
-  getWiki: ({ commit }, { worldId, pageId }) => (pageId
-    ? worldsService.getWiki(worldId, pageId)
+  getWiki: ({ commit }, { worldId, planetId, pageId }) => (pageId
+    ? worldsService.getWiki({ worldId, planetId, pageId })
     : Promise.resolve(null)
   )
     .then(wiki => wiki2html(wiki, worldId))

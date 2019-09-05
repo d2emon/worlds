@@ -23,17 +23,29 @@ export default new Router({
         {
           path: '',
           name: 'world-main',
-          component: () => import('@/views/WorldWiki.vue'),
+          component: () => import('@/views/wiki/WorldWiki.vue'),
         },
         {
           path: 'wiki/:pageId',
-          name: 'wiki',
-          component: () => import('@/views/WorldWiki.vue'),
+          name: 'world-wiki',
+          component: () => import('@/views/wiki/WorldWiki.vue'),
         },
         {
           path: 'planet-:planetId',
           name: 'planet',
           component: () => import('@/views/WorldPlanet.vue'),
+          children: [
+            {
+              path: '',
+              name: 'planet-main',
+              component: () => import('@/views/wiki/Planet.vue'),
+            },
+            {
+              path: 'wiki/:pageId',
+              name: 'planet-wiki',
+              component: () => import('@/views/wiki/Planet.vue'),
+            },
+          ],
         },
       ],
     },

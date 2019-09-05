@@ -61,20 +61,20 @@
 
             <v-card-text
               v-if="wiki"
-              class="wiki"
-              v-html="wiki"
-            />
+            >
+              <wiki :wiki="wiki" />
+            </v-card-text>
             <v-card-text
               v-else-if="world.html"
-              class="wiki"
-              v-html="world.html"
-            />
+            >
+              <wiki :wiki="world.html" />
+            </v-card-text>
             <v-container v-else>
               <v-list>
                 <v-list-tile
                   v-for="(page, id) in world.pages"
                   :key="`page-${id}`"
-                  :to="`/wiki/${page.url}`"
+                  :to="page.url"
                   :title="page.filename"
                 >
                   <v-list-tile-content>
@@ -126,6 +126,7 @@ export default {
   name: 'World',
   components: {
     Portal: () => import('@/components/Portal.vue'),
+    Wiki: () => import('@/components/Wiki.vue'),
   },
   props: [
     'showPortal',

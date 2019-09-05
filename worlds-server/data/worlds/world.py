@@ -1,3 +1,4 @@
+import os
 from app import app
 from ..wikifiles import get_wiki, list_wiki, wikis
 from .planet import Planet
@@ -97,16 +98,22 @@ class World:
             key=lambda item: item['filename'],
         )
 
-    def get_wiki(self, filename=None):
-        if filename is None:
-            filename = self.index_page
-        else:
-            filename = "{}/{}.md".format(self.slug, filename)
-        return get_wiki(filename)
+    def get_wiki(
+        self,
+        page_id=None,
+        planet_id=None
+    ):
+        if page_id is None:
+            return get_wiki(self.index_page)
+
+        path = self.slug
+        if planet_id is not None:
+            path = os.path.join(path, 'planets', planet_id)
+        path = os.path.join(path, "{}.md".format(page_id))
+        return get_wiki(path)
 
     def get_planet(self, planet_id):
-        planet = next((planet for planet in self.planets if planet.slug == planet_id), None)
-        return planet.as_dict() if planet else None
+        return next((planet for planet in self.planets if planet.slug == planet_id), None)
 
     def as_dict(self, full=False):
         result = {

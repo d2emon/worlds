@@ -5,6 +5,26 @@ import {
   planetUrl,
 } from '@/helpers';
 
+const wikiLink = ({
+  worldId,
+  planetId,
+  pageId
+}) => {
+  const urlParts = [
+    '/api/worlds/wiki',
+  ];
+  if (worldId) {
+    urlParts.push(`world/${worldId}`);
+  }
+  if (planetId) {
+    urlParts.push(`planet/${planetId}`);
+  }
+  if (pageId) {
+    urlParts.push(`page/${pageId}`);
+  }
+  return urlParts.join('/');
+};
+
 export default {
   getWorlds: () => Api
     .get('/api/worlds')
@@ -47,8 +67,8 @@ export default {
       planets,
       data,
     })),
-  getPlanet: (world, planet) => Api
-    .get(`/api/worlds/world/${world}/planet/${planet}`)
+  getPlanet: (worldId, planetId) => Api
+    .get(`/api/worlds/world/${worldId}/planet/${planetId}`)
     .then(({ data }) => data.planet)
     .then(({
       name,
@@ -57,11 +77,19 @@ export default {
       about,
     }) => ({
       name,
-      url: planetUrl(world, slug),
+      url: planetUrl(worldId, slug),
       description,
       about,
     })),
-  getWiki: (world, page) => Api
-    .get(`/api/worlds/wiki/${world}/${page}`)
+  getWiki: ({
+    worldId,
+    planetId,
+    pageId,
+  }) => Api
+    .get(wikiLink({
+      worldId,
+      planetId,
+      pageId,
+    }))
     .then(({ data }) => data.wiki),
 };

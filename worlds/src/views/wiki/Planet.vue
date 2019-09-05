@@ -1,10 +1,10 @@
 <template>
-  <planet
-    :world="world"
-    :planet="planet"
-  >
-    <router-view />
-  </planet>
+  <v-container>
+    <wiki
+      v-if="wiki"
+      :wiki="wiki"
+    />
+  </v-container>
 </template>
 
 <script>
@@ -14,28 +14,30 @@ import {
 } from 'vuex';
 
 export default {
-  name: 'WorldPlanet',
+  name: 'Planet',
   components: {
-    Planet: () => import('@/components/Planet.vue'),
+    Wiki: () => import('@/components/Wiki.vue'),
   },
   computed: {
     ...mapState('worlds', [
       'world',
-      'planet',
+      'wiki',
     ]),
   },
   methods: {
     ...mapActions('worlds', [
-      'getPlanet',
+      'getWiki',
     ]),
     fetchAll() {
       const {
         worldId,
         planetId,
+        pageId,
       } = this.$route.params;
-      this.getPlanet({
+      this.getWiki({
         worldId,
         planetId,
+        pageId,
       });
     },
   },
@@ -45,3 +47,7 @@ export default {
   mounted() { this.fetchAll(); },
 };
 </script>
+
+<style scoped>
+
+</style>
