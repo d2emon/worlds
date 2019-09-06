@@ -10,79 +10,62 @@ from .futureMoscow import future_moscow
 from .spectre import spectre
 
 
-class SluggedWorld1(World):
-    def __init__(
-        self,
-
-        **data,
-    ):
-
-        data.update({
-        })
-        super().__init__(**data)
-
-
 class WorldFolder:
-    def __init__(self, slug):
-        self.author = None
-        self.created_at = None
-        self.__image = None
-        self.__index_page = None
-        self.__links = {}
-        self.media = None
-        self.order = None
-        self.origin = None
-        self.slug = slug
-        self.__title = None
-        self.__wiki = None
+    field_names = [
+        'author',
+        'created_at',
+        'image',
+        # 'index_page',
+        '__links',
+        'media',
+        'order',
+        'origin',
+        'slug',
+        'title',
+        'wiki',
+    ]
+    serializable = [
+        'author',
+        'created_at',
+        'image',
+        'media',
+        'index_page',
+        'order',
+        'origin',
+        'slug',
+    ]
 
-    @property
-    def title(self):
-        if self.__title is None:
-            self.load()
-        return self.__title or self.slug
+    def __init__(self, slug):
+        self.is_loaded = False
+        self.fields = {
+            '__links': {},
+            'slug': slug,
+        }
 
     @property
     def image(self):
-        if self.__image is None:
+        if not self.is_loaded:
             self.load()
-        return "{}/images/{}".format(self.slug, self.__image) if self.__image else None
-
-    @property
-    def planets(self):
-        return list(self.__planets_data)
-
-    @property
-    def index_page(self):
-        if self.__index_page is None:
-            self.load()
-        return os.path.join(self.slug, self.__index_page or 'index.md')
-
-    @property
-    def root(self):
-        return os.path.join(Config.WIKI_ROOT, self.slug)
+        image = self.fields.get('image')
+        return "{}/images/{}".format(self.slug, image) if image else None
 
     @property
     def images(self):
         return os.path.join(self.root, 'images')
 
     @property
-    def wiki(self):
-        if self.__wiki is None:
-            # links = links or {}
-            # self.__wiki = wikis(
-            #     title,
-            #     wikipedia=wikipedia,
-            #     lurkmore=lurkmore,
-            #     posmotreli=posmotreli,
-            #     **links,
-            # )
-            self.__wiki = wikis(self.title)
-        return self.__wiki
+    def index_page(self):
+        if not self.is_loaded:
+            self.load()
+        return os.path.join(self.slug, self.fields.get('index_page', 'index.md'))
 
     @property
-    def __world_file(self):
-        return os.path.join(self.root, 'world.json')
+    def links(self):
+        return self.fields.get('__links', {})
+
+    @property
+    def planets(self):
+        return list(self.__planets_data)
 
     @property
     def __planets_data(self):
@@ -92,40 +75,59 @@ class WorldFolder:
         for file in os.listdir(path):
             yield Planet.load(path, os.path.splitext(os.path.basename(file))[0])
 
+    @property
+    def root(self):
+        return os.path.join(Config.WIKI_ROOT, self.slug)
+
+    @property
+    def slug(self):
+        return self.fields.get('slug')
+
+    @property
+    def title(self):
+        if not self.is_loaded:
+            self.load()
+        return self.fields.get('title', self.slug)
+
+    @property
+    def wiki(self):
+        if self.fields.get('wiki') is None:
+            # links = links or {}
+            # self.__wiki = wikis(
+            #     title,
+            #     wikipedia=wikipedia,
+            #     lurkmore=lurkmore,
+            #     posmotreli=posmotreli,
+            #     **links,
+            # )
+            self.fields['wiki'] = wikis(self.title)
+        return self.fields.get('wiki', {})
+
+    @property
+    def __world_file(self):
+        return os.path.join(self.root, 'world.json')
+
     def load(self):
         if not os.path.isfile(self.__world_file):
             return
         with open(self.__world_file, "r", encoding='utf-8') as fp:
             data = json.load(fp)
-            self.author = data.get('author')
-            self.created_at = data.get('createdAt')
-            self.__image = data.get('image')
-            self.media = data.get('media')
-            self.order = data.get('order')
-            self.origin = data.get('origin')
-            self.__title = data.get('title', self.slug)
-            self.__wiki = data.get('wiki')
-
+            self.fields.update({k: data.get(k) for k in self.field_names})
             # wikipedia=True,
             # lurkmore=True,
             # posmotreli=True,
-            self.__links = data.get('links', {})
 
     def serialize(self):
-        return {
-            'author': self.author,
-            'created_at': self.created_at,
+        computed = {
             'image': self.image,
-            'media': self.media,
             'index_page': self.index_page,
-            'order': self.order,
-            'origin': self.origin,
             'planets': [__planet.as_dict() for __planet in self.planets],
-            'slug': self.slug,
             'title': self.title,
             'wiki': self.wiki,
-            # 'root': self.root,
-            # 'images': self.images,
+        }
+        return {
+            **{key: self.fields.get(key) for key in self.serializable},
+            **computed,
         }
 
 
