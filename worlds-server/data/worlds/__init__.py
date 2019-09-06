@@ -512,8 +512,8 @@ WORLDS_DATA = [
             'universes': 'Вселенные',
         },
     ),
-    spectre,
 
+    # spectre,
     # SluggedWorld(
     #     title='Утиные истории',
     #     slug='duck-tales',
