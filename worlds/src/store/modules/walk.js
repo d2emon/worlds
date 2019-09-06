@@ -56,7 +56,7 @@ const mutations = {
   setDebugMode: (state, debugMode) => { state.debugMode = debugMode; },
   setRoom: (state, room) => { state.room = room; },
   setExits: (state, exits) => { state.exits = exits; },
-  clearMessages: state => { /* state.messages = []; */ },
+  clearMessages: (state) => { /* state.messages = []; */ },
   setMessages: (state, messages) => { state.messages.push(...messages.map(wiki2html)); },
   setInventory: (state, inventory) => { state.inventory = inventory; },
   setCharacters: (state, characters) => { state.characters = characters; },
@@ -113,8 +113,8 @@ const actions = {
     .then(response => dispatch('processResponse', response))
     .then((response) => {
       console.log(response.message, response);
-      const {message} = response;
-      if (response.message) dispatch('showMessage', {message});
+      const { message } = response;
+      if (response.message) dispatch('showMessage', { message });
       return response;
     }),
 

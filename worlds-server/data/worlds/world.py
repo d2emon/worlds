@@ -8,11 +8,15 @@ class World:
     def __init__(
         self,
         id=None,
+        author=None,
+        created_at=None,
         data_loader=None,
         image='portal.jpg',
         index_page=None,
         loader=None,
+        media=None,
         order=None,
+        origin=None,
         pages=None,
         planets=None,
         slug=None,
@@ -22,11 +26,15 @@ class World:
         **data,
     ):
         self.id = id
+        self.author = author
+        self.created_at = created_at
         self.__data_loader = data_loader
         self.__image = image
         self.index_page = index_page
         self.__loader = loader
+        self.media = media
         self.order = order
+        self.origin = origin
         self.__pages = pages or {}
         self.__planets = list(planets or [])
         self.slug = slug
@@ -45,11 +53,15 @@ class World:
     @property
     def fields(self):
         result = {
+            'author': self.author,
+            'created_at': self.created_at,
             'data_loader': self.__data_loader,
             'image': self.__image,
             'index_page': self.index_page,
             'loader': self.__loader,
+            'media': self.media,
             'order': self.order,
+            'origin': self.origin,
             'pages': self.__pages,
             'planets': [planet.fields for planet in self.planets],
             'slug': self.slug,
@@ -130,6 +142,10 @@ class World:
             return result
 
         result.update({
+            'author': self.author,
+            'createdAt': self.created_at,
+            'media': self.media,
+            'origin': self.origin,
             'pages': self.pages,
             'planets': [planet.as_dict() for planet in self.planets],
             'text': self.text,

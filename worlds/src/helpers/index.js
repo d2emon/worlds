@@ -7,14 +7,17 @@ const localLink = /\[(.*?)]\(\.\/(.*?)\.md\)/g;
 
 export const Api = Axios;
 
-export const imageUrl = Url.imageUrl;
-export const worldUrl = Url.worldUrl;
-export const planetUrl = Url.planetUrl;
+export const {
+  imageUrl,
+  mediaUrl,
+  planetUrl,
+  worldUrl,
+} = Url;
 
 export const markdown2html = text => text && markdown(text);
 export const wiki2html = (text, world) => text
   && markdown2html(
     text
-      .replace(localImage, `![$1](${Url.mediaUrl}/wiki/${world}/$2)`)
-      .replace(localLink, `[$1](#/wiki/${world}/$2)`)
+      .replace(localImage, `![$1](${mediaUrl}/wiki/${world}/$2)`)
+      .replace(localLink, `[$1](#/wiki/${world}/$2)`),
   );

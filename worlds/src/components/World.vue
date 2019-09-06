@@ -8,19 +8,35 @@
     <v-layout row wrap>
       <v-flex xs4>
         <v-card
+          v-if="summary"
+          class="mb-1"
+        >
+          <v-container>
+            <v-row
+              v-for="(item, id) in summary"
+              :key="`summary-${id}`"
+            >
+              <template v-if="item.value">
+                <v-col>{{item.title}}</v-col>
+                <v-col>{{item.value}}</v-col>
+              </template>
+            </v-row>
+          </v-container>
+        </v-card>
+        <v-card
           v-if="world.pages && world.pages.length"
         >
           <v-list>
-            <v-list-tile
+            <v-list-item
               v-for="(page, id) in world.pages"
               :key="`page-${id}`"
               :to="page.url"
               :title="page.filename"
             >
-              <v-list-tile-content>
-                <v-list-tile-title v-text="page.filename" />
-              </v-list-tile-content>
-            </v-list-tile>
+              <v-list-item-content>
+                <v-list-item-title v-text="page.filename" />
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-card>
         <br />
@@ -35,15 +51,15 @@
                   Детская энциклопедия (Издание {{id + 1}})
                 </v-card-title>
                 <v-list>
-                  <v-list-tile
+                  <v-list-item
                     v-for="volume in v"
                     :key="`v1-${volume.id}`"
                     :to="`/world/${world.slug}/${volume.to}`"
                   >
-                    <v-list-tile-content>
-                      <v-list-tile-title v-text="volume.title" />
-                    </v-list-tile-content>
-                  </v-list-tile>
+                    <v-list-item-content>
+                      <v-list-item-title v-text="volume.title" />
+                    </v-list-item-content>
+                  </v-list-item>
                 </v-list>
               </v-card>
           <br />
@@ -71,16 +87,16 @@
             </v-card-text>
             <v-container v-else>
               <v-list>
-                <v-list-tile
+                <v-list-item
                   v-for="(page, id) in world.pages"
                   :key="`page-${id}`"
                   :to="page.url"
                   :title="page.filename"
                 >
-                  <v-list-tile-content>
-                    <v-list-tile-title v-text="page.filename" />
-                  </v-list-tile-content>
-                </v-list-tile>
+                  <v-list-item-content>
+                    <v-list-item-title v-text="page.filename" />
+                  </v-list-item-content>
+                </v-list-item>
               </v-list>
 
               <v-layout
@@ -133,6 +149,17 @@ export default {
     'world',
     'wiki',
   ],
+  computed: {
+    summary() {
+      return this.world && [
+        {title: 'Название мира', value: this.world.title},
+        {title: 'Возникновение', value: this.world.createdAt},
+        {title: 'Создатель', value: this.world.author},
+        {title: 'Происхождение', value: this.world.origin},
+        {title: 'Воплощения', value: this.world.media},
+      ]
+    }
+  },
   data: () => ({
     enteringPortal: true,
     wikiLogo: {

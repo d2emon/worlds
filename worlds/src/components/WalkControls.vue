@@ -30,7 +30,7 @@
       <v-layout row wrap>
         <v-flex xs4>
           <v-btn
-            flat
+            text
             icon
             :color="goButtonColor('u')"
             @click="doGoOrFlee('u')"
@@ -41,7 +41,7 @@
         </v-flex>
         <v-flex xs4>
           <v-btn
-            flat
+            text
             icon
             :color="goButtonColor('n')"
             @click="doGoOrFlee('n')"
@@ -54,7 +54,7 @@
       <v-layout row wrap>
         <v-flex xs4>
           <v-btn
-            flat
+            text
             icon
             :color="goButtonColor('w')"
             @click="doGoOrFlee('w')"
@@ -65,7 +65,7 @@
         </v-flex>
         <v-flex xs4 class="offset-xs4">
           <v-btn
-            flat
+            text
             icon
             :color="goButtonColor('e')"
             @click="doGoOrFlee('e')"
@@ -78,7 +78,7 @@
       <v-layout row wrap>
         <v-flex xs4 class="offset-xs4">
           <v-btn
-            flat
+            text
             icon
             :color="goButtonColor('s')"
             @click="doGoOrFlee('s')"
@@ -89,7 +89,7 @@
         </v-flex>
         <v-flex xs4>
           <v-btn
-            flat
+            text
             icon
             :color="goButtonColor('d')"
             @click="doGoOrFlee('d')"

@@ -24,13 +24,17 @@ class SluggedWorld1(World):
 
 class WorldFolder:
     def __init__(self, slug):
-        self.__title = None
-        self.slug = slug
-        self.order = None
+        self.author = None
+        self.created_at = None
         self.__image = None
-        self.__wiki = None
-        self.__links = {}
         self.__index_page = None
+        self.__links = {}
+        self.media = None
+        self.order = None
+        self.origin = None
+        self.slug = slug
+        self.__title = None
+        self.__wiki = None
 
     @property
     def title(self):
@@ -93,8 +97,12 @@ class WorldFolder:
             return
         with open(self.__world_file, "r", encoding='utf-8') as fp:
             data = json.load(fp)
+            self.author = data.get('author')
+            self.created_at = data.get('createdAt')
             self.__image = data.get('image')
+            self.media = data.get('media')
             self.order = data.get('order')
+            self.origin = data.get('origin')
             self.__title = data.get('title', self.slug)
             self.__wiki = data.get('wiki')
 
@@ -102,13 +110,16 @@ class WorldFolder:
             # lurkmore=True,
             # posmotreli=True,
             self.__links = data.get('links', {})
-            # links=None,
 
     def serialize(self):
         return {
+            'author': self.author,
+            'created_at': self.created_at,
             'image': self.image,
+            'media': self.media,
             'index_page': self.index_page,
             'order': self.order,
+            'origin': self.origin,
             'planets': [__planet.as_dict() for __planet in self.planets],
             'slug': self.slug,
             'title': self.title,
@@ -420,11 +431,11 @@ WORLDS_DATA = [
         'slug': 'star-wars',
         'index_page': 'star-wars/index.md',
     },
-    SluggedWorld(
-        title='Земноморье',
-        slug='zemnomorye',
-        # image='images/Pet9.png',
-    ),
+    # SluggedWorld(
+    #     title='Земноморье',
+    #     slug='zemnomorye',
+    #     # image='images/Pet9.png',
+    # ),
     {
         'title': 'Кинг',
         'slug': 'king',

@@ -32,7 +32,7 @@
             :href="href"
             target="_blank"
             :icon="!!wikiLogo[k]"
-            flat
+            text
           >
             <v-avatar
               v-if="wikiLogo[k]"

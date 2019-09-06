@@ -40,7 +40,7 @@
         <v-spacer></v-spacer>
         <v-btn
           color="primary"
-          flat
+          text
           @click="$emit('input', false)"
         >
           Войти

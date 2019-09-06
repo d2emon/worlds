@@ -8,7 +8,7 @@ import {
 const wikiLink = ({
   worldId,
   planetId,
-  pageId
+  pageId,
 }) => {
   const urlParts = [
     '/api/worlds/wiki',
@@ -44,27 +44,36 @@ export default {
     .get(`/api/worlds/world/${world}`)
     .then(({ data }) => data.world)
     .then(({
-      title,
+      author,
+      createdAt,
       image,
-      slug,
-      wiki,
+      origin,
+      media,
       pages,
-      text,
       planets,
+      slug,
+      text,
+      title,
+      wiki,
+
       data,
     }) => ({
-      title,
-      slug,
-      // image,
+      author,
+      createdAt,
       image: image || imageUrl,
-      url: worldUrl(slug),
-      wiki,
+      origin,
+      media,
       pages: (pages || []).map(page => ({
         ...page,
         url: `${worldUrl(slug)}/wiki/${page.url}`,
       })),
-      text,
       planets,
+      slug,
+      text,
+      title,
+      url: worldUrl(slug),
+      wiki,
+
       data,
     })),
   getPlanet: (worldId, planetId) => Api

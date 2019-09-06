@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import modules from './modules';
-import config from '@/helpers/config'
+import config from '@/helpers/config';
 
 Vue.use(Vuex);
 
