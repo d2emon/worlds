@@ -1,26 +1,13 @@
 import json
 import os
 from config import Config
-from ..utils import Database
 from ..wikifiles import wikis
-from .world import World, SluggedWorld
+from .database import WorldsDB
 from .planet import Planet
+from .world import World, SluggedWorld
 
 from .futureMoscow import future_moscow
 from .spectre import spectre
-
-
-class WorldsDB(Database):
-    @classmethod
-    def world(cls, item):
-        return World(**item)
-
-    def all(self):
-        return sorted(
-            super().all(),
-            key=lambda world: world.get('order') or 0,
-            reverse=True,
-        )
 
 
 class SluggedWorld1(World):
@@ -78,7 +65,6 @@ class WorldFolder:
     @property
     def wiki(self):
         if self.__wiki is None:
-            print(wikis(self.title))
             # links = links or {}
             # self.__wiki = wikis(
             #     title,
@@ -134,11 +120,11 @@ class WorldFolder:
 
 # worlds = [world for world in os.listdir(Config.WIKI_ROOT)]
 # worlds = [world for world in worlds if os.path.isdir(os.path.join(Config.WIKI_ROOT, world))]
-WORLD_FOLDERS = [
+WORLD_FOLDERS = (
     WorldFolder(slug)
     for slug in os.listdir(Config.WIKI_ROOT)
     if os.path.isdir(os.path.join(Config.WIKI_ROOT, slug))
-]
+)
 WORLDS_DATA = [
     {
         'title': 'Assassin\'s Creed',
@@ -555,15 +541,17 @@ worlds = [world.fields if isinstance(world, World) else world for world in WORLD
 
 
 def parse_folder(folder):
-    world = next((world for world in worlds if world.get('slug') == folder.slug), None) or {}
-    print(folder.serialize())
-    return {
-        **folder.serialize(),
-        **world,
-    }
+    def f():
+        world = next((world for world in worlds if world.get('slug') == folder.slug), None) or {}
+        # print(folder.serialize())
+        return {
+            **folder.serialize(),
+            **world,
+        }
+    return f
 
 
-ITEMS = map(parse_folder, WORLD_FOLDERS)
+# ITEMS = map(parse_folder, WORLD_FOLDERS)
 # for w in WORLD_FOLDERS:
 #     world = next((world for world in worlds if world.get('slug') == w.slug), None)
 #     if world is None:
@@ -574,4 +562,17 @@ ITEMS = map(parse_folder, WORLD_FOLDERS)
 #     ITEMS.append(serialized)
 
 # WORLDS = WorldsDB([world.fields if isinstance(world, World) else world for world in WORLDS_DATA])
-WORLDS = WorldsDB(ITEMS)
+
+
+def folder_loader():
+    for slug in os.listdir(Config.WIKI_ROOT):
+        if not os.path.isdir(os.path.join(Config.WIKI_ROOT, slug)):
+            continue
+        yield parse_folder(WorldFolder(slug))
+
+
+WORLDS = WorldsDB(
+    # items=[item() for item in ITEMS],
+    # loaders=[parse_folder(item) for item in WORLD_FOLDERS],
+    loader=folder_loader,
+)

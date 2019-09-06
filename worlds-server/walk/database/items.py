@@ -469,7 +469,7 @@ class Items(ListDatabase):
         initial = cls.__ITEMS_INITIAL.get(item_id, {})
         has_connected = item_id % 2 > 0
         flags = initial.get('flags', set())
-        logger.debug("%s(%s):\t%s %s", item_id, has_connected, data, initial)
+        # logger.debug("%s(%s):\t%s %s", item_id, has_connected, data, initial)
         return {
             'item_id': item_id,
             # Item Data

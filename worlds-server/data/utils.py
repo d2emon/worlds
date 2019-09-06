@@ -2,8 +2,8 @@ import uuid
 
 
 class Database:
-    def __init__(self, items):
-        self.items = [self.sanitize(item) for item in items]
+    def __init__(self):
+        self.__items = []
 
     @classmethod
     def sanitize(cls, data):
@@ -19,28 +19,68 @@ class Database:
         item.update(data)
         return item
 
+    @classmethod
+    def item(cls, data=None):
+        if data is None:
+            return None
+        return lambda: cls.sanitize(data)
+
+    @classmethod
+    def filters(
+        cls,
+        item_id=None,
+        slug=None,
+    ):
+        yield lambda item: True
+        if item_id is not None:
+            yield lambda item: item.get('id') == item_id
+        if slug is not None:
+            yield lambda item: item.get('slug') == slug
+
+    @property
+    def items(self):
+        yield from self.__items
+
+    def filter(self, **kwargs):
+        return filter(
+            lambda item: all(f(item) for f in self.filters(**kwargs)),
+            self.items
+        )
+
+    def find(self, **kwargs):
+        return (self.item(data)() for data in self.filter(**kwargs))
+
     def by_item_id(self, item_id):
-        return next((item for item in self.items if item.get('id') == item_id), None)
+        return next(self.find(item_id=item_id), None)
 
     def by_slug(self, slug):
-        return next((item for item in self.items if item.get('slug') == slug), None)
+        return next(self.find(slug=slug), None)
 
     def delete(self, item_id):
-        item = next((item for item in self.items if item['id'] == item_id), None)
+        item = next(self.filter(item_id=item_id), None)
         if item is None:
             return False
 
-        self.items.remove(item)
+        self.__items.remove(item)
         return True
 
     def add(self, data):
-        self.items.append(self.sanitize(data))
-        return True
+        self.__items.append(self.sanitize(data))
+        return self.__items[-1]
 
     def edit(self, item_id, data):
         self.delete(item_id)
-        self.add(data)
-        return True
+        return self.add(data)
 
     def all(self):
-        return self.items
+        return self.find()
+
+
+class ListDatabase(Database):
+    def __init__(self, items):
+        super().__init__()
+        map(self.add, items)
+
+    @property
+    def items(self):
+        return self.all()

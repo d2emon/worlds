@@ -1,7 +1,7 @@
-from .utils import Database
+from .utils import ListDatabase
 
 
-BOOKS = Database([
+BOOKS = ListDatabase([
     {
         'title': 'On the Road',
         'author': 'Jack Kerouac',

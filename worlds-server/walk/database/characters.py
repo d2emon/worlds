@@ -257,7 +257,7 @@ class Characters(ListDatabase):
     def character(cls, character_id):
         result = cls.__character_data(character_id)
         if character_id < 16:
-            logger.debug("%s:\t%s", character_id, result)
+            # logger.debug("%s:\t%s", character_id, result)
             return result
         character_id -= 16
         if character_id < len(cls.MOBILES):
@@ -270,7 +270,7 @@ class Characters(ListDatabase):
                 'is_aggressive': cls.__is_aggressive(name),
                 'is_undead': cls.__is_undead(name),
             })
-        logger.debug("%s:\t%s", character_id + 16, result)
+        # logger.debug("%s:\t%s", character_id + 16, result)
         return result
 
     def reset(self):

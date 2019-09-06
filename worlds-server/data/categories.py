@@ -1,8 +1,8 @@
 import random
-from .utils import Database
+from .utils import ListDatabase
 
 
-class CategoriesDB(Database):
+class CategoriesDB(ListDatabase):
     IMAGES = [
         'https://cdn.vuetifyjs.com/images/cards/house.jpg',
         'https://cdn.vuetifyjs.com/images/cards/road.jpg',
