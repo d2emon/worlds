@@ -4,5 +4,12 @@
   "image": "Spectre.jpg",
   "wiki": {
     "wikipedia": "https://ru.wikipedia.org/wiki/Спектр_(роман)"
-  }
+  },
+  "language": "Русский",
+  "series": "Звездный лабиринт",
+  "publisher": "АСТ",
+  "createdAt": "2002",
+  "pages": "490",
+  "origin": "Книга",
+  "isbn": "ISBN 5-17-014364-8"
 }

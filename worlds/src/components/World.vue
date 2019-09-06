@@ -7,22 +7,11 @@
 
     <v-layout row wrap>
       <v-flex xs4>
-        <v-card
-          v-if="summary"
+        <world-summary
+          v-if="world"
           class="mb-1"
-        >
-          <v-container>
-            <v-row
-              v-for="(item, id) in summary"
-              :key="`summary-${id}`"
-            >
-              <template v-if="item.value">
-                <v-col>{{item.title}}</v-col>
-                <v-col>{{item.value}}</v-col>
-              </template>
-            </v-row>
-          </v-container>
-        </v-card>
+          :world="world"
+        />
         <v-card
           v-if="world.pages && world.pages.length"
         >
@@ -142,6 +131,7 @@ export default {
   name: 'World',
   components: {
     Portal: () => import('@/components/Portal.vue'),
+    WorldSummary: () => import('@/components/WorldSummary.vue'),
     Wiki: () => import('@/components/Wiki.vue'),
   },
   props: [
@@ -149,17 +139,6 @@ export default {
     'world',
     'wiki',
   ],
-  computed: {
-    summary() {
-      return this.world && [
-        {title: 'Название мира', value: this.world.title},
-        {title: 'Возникновение', value: this.world.createdAt},
-        {title: 'Создатель', value: this.world.author},
-        {title: 'Происхождение', value: this.world.origin},
-        {title: 'Воплощения', value: this.world.media},
-      ]
-    }
-  },
   data: () => ({
     enteringPortal: true,
     wikiLogo: {
