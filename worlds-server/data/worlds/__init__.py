@@ -15,6 +15,13 @@ class WorldsDB(Database):
     def world(cls, item):
         return World(**item)
 
+    def all(self):
+        return sorted(
+            super().all(),
+            key=lambda world: world.get('order') or 0,
+            reverse=True,
+        )
+
 
 class SluggedWorld1(World):
     def __init__(
@@ -32,6 +39,7 @@ class WorldFolder:
     def __init__(self, slug):
         self.__title = None
         self.slug = slug
+        self.order = None
         self.__image = None
         self.__wiki = None
         self.__links = {}
@@ -69,18 +77,18 @@ class WorldFolder:
 
     @property
     def wiki(self):
-        if self.__wiki is not None:
-            return self.__wiki
-
-        # links = links or {}
-        # self.__wiki = wikis(
-        #     title,
-        #     wikipedia=wikipedia,
-        #     lurkmore=lurkmore,
-        #     posmotreli=posmotreli,
-        #     **links,
-        # )
-        return {}
+        if self.__wiki is None:
+            print(wikis(self.title))
+            # links = links or {}
+            # self.__wiki = wikis(
+            #     title,
+            #     wikipedia=wikipedia,
+            #     lurkmore=lurkmore,
+            #     posmotreli=posmotreli,
+            #     **links,
+            # )
+            self.__wiki = wikis(self.title)
+        return self.__wiki
 
     @property
     def __world_file(self):
@@ -99,8 +107,9 @@ class WorldFolder:
             return
         with open(self.__world_file, "r", encoding='utf-8') as fp:
             data = json.load(fp)
-            self.__title = data.get('title', self.slug)
             self.__image = data.get('image')
+            self.order = data.get('order')
+            self.__title = data.get('title', self.slug)
             self.__wiki = data.get('wiki')
 
             # wikipedia=True,
@@ -111,13 +120,13 @@ class WorldFolder:
 
     def serialize(self):
         return {
-            'slug': self.slug,
-            'title': self.title,
             'image': self.image,
             'index_page': self.index_page,
-            'wiki': self.wiki,
+            'order': self.order,
             'planets': [__planet.as_dict() for __planet in self.planets],
-
+            'slug': self.slug,
+            'title': self.title,
+            'wiki': self.wiki,
             # 'root': self.root,
             # 'images': self.images,
         }
@@ -522,10 +531,10 @@ WORLDS_DATA = [
         title='Утиные истории',
         slug='duck-tales',
     ),
-    SluggedWorld(
-        title='Этория',
-        slug='etoriya',
-    ),
+    # SluggedWorld(
+    #     title='Этория',
+    #     slug='etoriya',
+    # ),
     # SluggedWorld(
     #     title='Юрий Петухов',
     #     slug='yuriy-petuhov',
@@ -543,15 +552,26 @@ WORLDS_DATA = [
 # 'image': 'cm-logos.gif',
 # 'image': 'd20-logos.jpg',
 worlds = [world.fields if isinstance(world, World) else world for world in WORLDS_DATA]
-ITEMS = []
-for w in WORLD_FOLDERS:
-    world = next((world for world in worlds if world.get('slug') == w.slug), None)
-    if world is None:
-        world = {}
-    item = w.serialize()
-    print(item)
-    item.update(world)
-    ITEMS.append(item)
+
+
+def parse_folder(folder):
+    world = next((world for world in worlds if world.get('slug') == folder.slug), None) or {}
+    print(folder.serialize())
+    return {
+        **folder.serialize(),
+        **world,
+    }
+
+
+ITEMS = map(parse_folder, WORLD_FOLDERS)
+# for w in WORLD_FOLDERS:
+#     world = next((world for world in worlds if world.get('slug') == w.slug), None)
+#     if world is None:
+#         world = {}
+#     serialized = w.serialize()
+#     print(serialized)
+#     serialized.update(world)
+#     ITEMS.append(serialized)
 
 # WORLDS = WorldsDB([world.fields if isinstance(world, World) else world for world in WORLDS_DATA])
 WORLDS = WorldsDB(ITEMS)

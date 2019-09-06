@@ -12,6 +12,7 @@ class World:
         image='portal.jpg',
         index_page=None,
         loader=None,
+        order=None,
         pages=None,
         planets=None,
         slug=None,
@@ -20,11 +21,12 @@ class World:
         wiki=None,
         **data,
     ):
-        self.__id = id
+        self.id = id
         self.__data_loader = data_loader
         self.__image = image
         self.index_page = index_page
         self.__loader = loader
+        self.order = order
         self.__pages = pages or {}
         self.__planets = list(planets or [])
         self.slug = slug
@@ -47,6 +49,7 @@ class World:
             'image': self.__image,
             'index_page': self.index_page,
             'loader': self.__loader,
+            'order': self.order,
             'pages': self.__pages,
             'planets': [planet.fields for planet in self.planets],
             'slug': self.slug,
@@ -117,19 +120,20 @@ class World:
 
     def as_dict(self, full=False):
         result = {
-            'id': self.__id,
+            'id': self.id,
+            'image': self.image,
+            'order': self.order,
             'slug': self.slug,
             'title': self.title,
-            'image': self.image,
         }
         if not full:
             return result
 
         result.update({
-            'text': self.text,
             'pages': self.pages,
-            'wiki': self.wiki,
             'planets': [planet.as_dict() for planet in self.planets],
+            'text': self.text,
+            'wiki': self.wiki,
 
             'data': self.additional_data,
         })
