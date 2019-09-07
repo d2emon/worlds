@@ -32,7 +32,12 @@ export default {
     labels: {
       title: 'Название мира',
       createdAt: 'Возникновение',
+      isbn: 'ISBN',
+      pages: 'Страниц',
       author: 'Создатель',
+      series: 'Серия',
+      language: 'Язык оригинала',
+      publisher: 'Издательство',
       origin: 'Происхождение',
       media: 'Воплощения',
     },

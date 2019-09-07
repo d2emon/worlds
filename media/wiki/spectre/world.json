@@ -5,11 +5,12 @@
   "wiki": {
     "wikipedia": "https://ru.wikipedia.org/wiki/Спектр_(роман)"
   },
+  "author": "Сергей Лукьяненко",
   "language": "Русский",
   "series": "Звездный лабиринт",
   "publisher": "АСТ",
-  "createdAt": "2002",
-  "pages": "490",
+  "created_at": "2002",
+  "book_pages": "490",
   "origin": "Книга",
   "isbn": "ISBN 5-17-014364-8"
 }

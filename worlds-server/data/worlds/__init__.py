@@ -13,25 +13,35 @@ from .spectre import spectre
 class WorldFolder:
     field_names = [
         'author',
+        'book_pages',
         'created_at',
         'image',
+        'isbn',
         # 'index_page',
+        'language',
         '__links',
         'media',
         'order',
         'origin',
-        'slug',
+        'publisher',
+        'series',
+        # 'slug',
         'title',
         'wiki',
     ]
     serializable = [
         'author',
+        'book_pages',
         'created_at',
         'image',
-        'media',
         'index_page',
+        'isbn',
+        'language',
+        'media',
         'order',
         'origin',
+        'publisher',
+        'series',
         'slug',
     ]
 
@@ -44,8 +54,6 @@ class WorldFolder:
 
     @property
     def image(self):
-        if not self.is_loaded:
-            self.load()
         image = self.fields.get('image')
         return "{}/images/{}".format(self.slug, image) if image else None
 
@@ -55,8 +63,6 @@ class WorldFolder:
 
     @property
     def index_page(self):
-        if not self.is_loaded:
-            self.load()
         return os.path.join(self.slug, self.fields.get('index_page', 'index.md'))
 
     @property
@@ -85,8 +91,6 @@ class WorldFolder:
 
     @property
     def title(self):
-        if not self.is_loaded:
-            self.load()
         return self.fields.get('title', self.slug)
 
     @property
@@ -101,7 +105,7 @@ class WorldFolder:
             #     **links,
             # )
             self.fields['wiki'] = wikis(self.title)
-        return self.fields.get('wiki', {})
+        return self.fields.get('wiki', wikis(self.title))
 
     @property
     def __world_file(self):
@@ -118,10 +122,14 @@ class WorldFolder:
             # posmotreli=True,
 
     def serialize(self):
+        if not self.is_loaded:
+            self.load()
+
         computed = {
             'image': self.image,
             'index_page': self.index_page,
             'planets': [__planet.as_dict() for __planet in self.planets],
+            'slug': self.slug,
             'title': self.title,
             'wiki': self.wiki,
         }

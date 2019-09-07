@@ -30,10 +30,8 @@
         </v-card>
         <br />
 
-        <template
-          v-for="(v, id) in encyclo.child"
-        >
               <v-card
+                v-for="(v, id) in encyclo.child"
                 :key="`v${id}`"
               >
                 <v-card-title>
@@ -51,8 +49,6 @@
                   </v-list-item>
                 </v-list>
               </v-card>
-          <br />
-        </template>
       </v-flex>
         <v-flex xs8>
             <slot />
@@ -96,7 +92,8 @@
                 <v-flex
                   sm4
                   class="pa-1"
-                  v-for="card in world.data.cards"
+                  v-for="(card, id) in world.data.cards"
+                  :key="`card-${id}`"
                 >
                   <v-card>
                     <a

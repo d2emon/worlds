@@ -4,114 +4,163 @@ from ..wikifiles import get_wiki, list_wiki, wikis
 from .planet import Planet
 
 
-class World:
+class Field:
     def __init__(
         self,
-        id=None,
-        author=None,
-        created_at=None,
-        data_loader=None,
-        image='portal.jpg',
-        index_page=None,
-        loader=None,
-        media=None,
-        order=None,
-        origin=None,
-        pages=None,
-        planets=None,
-        slug=None,
-        text=None,
-        title='',
-        wiki=None,
-        **data,
+        name,
+        default=None,
+        is_hidden=False,
+        is_main=False,
+        normalize=lambda item: item,
+        serialize=lambda item: item,
     ):
-        self.id = id
-        self.author = author
-        self.created_at = created_at
-        self.__data_loader = data_loader
-        self.__image = image
-        self.index_page = index_page
-        self.__loader = loader
-        self.media = media
-        self.order = order
-        self.origin = origin
-        self.__pages = pages or {}
-        self.__planets = list(planets or [])
-        self.slug = slug
-        self.__text = text
-        self.title = title
-        self.wiki = wiki or {}
+        self.name = name
+        self.default = default
+        self.is_hidden = is_hidden
+        self.is_main = is_main
+        self.normalize = normalize
+        self.serialize = serialize
 
-        self.data = data
+    def get(self, fields):
+        return self.normalize(fields.get(self.name, self.default))
 
-    def wiki_loader(self):
-        return self.get_wiki()
 
-    def __text_loader(self):
-        return self.__text
+class World:
+    __fields = {
+        'id': Field('id', is_main=True),
+        'author': Field('author'),
+        'book_pages': Field('book_pages'),
+        'created_at': Field('created_at'),
+        'data_loader': Field(
+            'data_loader',
+            is_hidden=True,
+            default=lambda: {},
+        ),
+        'image': Field(
+            'image',
+            default="portal.jpg",
+            is_hidden=True,
+            normalize=lambda item: item and '{}/wiki/{}'.format(app.config.get('MEDIA_URL'), item)
+        ),
+        'index_page': Field('index_page'),
+        'isbn': Field('isbn'),
+        'language': Field('language'),
+        # '__links',
+        'loader': Field('loader', is_hidden=True),
+        'media': Field('media'),
+        'order': Field('order', is_main=True),
+        'origin': Field('origin'),
+        'pages': Field('pages', default={}, is_hidden=True),
+        'planets': Field(
+            'planets',
+            default=[],
+            is_hidden=True,
+            normalize=lambda item: (Planet(**data) for data in item),
+            serialize=lambda item: [planet.fields for planet in item],
+        ),
+        'publisher': Field('publisher'),
+        'series': Field('series'),
+        'slug': Field('slug', is_main=True),
+        'text': Field('text', is_hidden=True),
+        'title': Field('title', default='', is_main=True),
+        'wiki': Field('wiki', default={}),
+    }
 
-    @property
-    def fields(self):
-        result = {
-            'author': self.author,
-            'created_at': self.created_at,
-            'data_loader': self.__data_loader,
-            'image': self.__image,
-            'index_page': self.index_page,
-            'loader': self.__loader,
-            'media': self.media,
-            'order': self.order,
-            'origin': self.origin,
-            'pages': self.__pages,
-            'planets': [planet.fields for planet in self.planets],
-            'slug': self.slug,
-            'title': self.title,
-            'text': self.__text,
-            'wiki': self.wiki,
+    def __init__(self, **data):
+        # self.id = id
+        # self.__data = {key: data.get(key, field.default) for key, field in self.__fields.items()}
+        # self.data = {k: v for k, v in data.items() if k not in self.__fields.keys()}
+        self.fields = {
+            **{key: data.get(key, field.default) for key, field in self.__fields.items()},
+            **{key: value for key, value in data.items() if key not in self.__fields.keys()}
         }
-        result.update(self.data)
-        return result
+        # self.author = author
+        # self.created_at = created_at
+        # self.__data_loader = data_loader
+        # self.__image = image
+        # self.index_page = index_page
+        # self.__loader = loader
+        # self.media = media
+        # self.order = order
+        # self.origin = origin
+        # self.__pages = pages or {}
+        # self.__planets = list(planets or [])
+        # self.slug = slug
+        # self.__text = text
+        # self.title = title
+        # self.wiki = wiki or {}
+        # self.data = data
 
     @property
-    def image(self):
-        return self.__image and '{}/wiki/{}'.format(app.config.get('MEDIA_URL'), self.__image)
+    def additional_data(self):
+        loader = self.get_field('data_loader')
+        return loader and loader()
 
-    @property
-    def loader(self):
-        if self.__loader is not None:
-            return self.__loader
-        if self.index_page is not None:
-            return self.wiki_loader
-        # return self.__text_loader
-        return lambda: self.__text
-
-    @property
-    def data_loader(self):
-        if self.__data_loader is not None:
-            return self.__data_loader
-        return lambda: {}
-
-    @property
-    def planets(self):
-        return (Planet(**data) for data in self.__planets)
+    # @property
+    # def fields(self):
+    #     return {
+    #         # 'author': self.author,
+    #         # 'created_at': self.created_at,
+    #         # 'data_loader': self.__data_loader,
+    #         # 'image': self.__image,
+    #         # 'index_page': self.index_page,
+    #         # 'loader': self.__loader,
+    #         # 'media': self.media,
+    #         # 'order': self.order,
+    #         # 'origin': self.origin,
+    #         # 'pages': self.__pages,
+    #         # 'slug': self.slug,
+    #         # 'title': self.title,
+    #         # 'text': self.__text,
+    #         # 'wiki': self.wiki,
+    #         **self.data,
+    #         **{field.name: field.get(self.__data) for field in self.__fields},
+    #     }
 
     @property
     def text(self):
         return self.loader and self.loader()
 
-    @property
-    def additional_data(self):
-        return self.data_loader and self.data_loader()
-
+    # Normalizers
     @property
     def pages(self):
         return sorted(
-            [{
-                'filename': self.__pages.get(file) or file,
-                'url': file,
-            } for file in list_wiki(self.slug)],
-            key=lambda item: item['filename'],
+            [
+                {
+                    'filename': self.get_field('pages').get(file, file),
+                    'url': file,
+                }
+                for file in list_wiki(self.get_field('slug'))
+            ],
+            key=lambda item: item.get('filename', 0),
         )
+
+    # Loaders
+    @property
+    def __text_loader(self):
+        return lambda: self.get_field('text')
+
+    @property
+    def wiki_loader(self):
+        return lambda: self.get_wiki()
+
+    @property
+    def loader(self):
+        loader = self.get_field('loader')
+        if loader is not None:
+            return loader
+
+        if self.get_field('index_page') is not None:
+            return self.wiki_loader
+        return self.__text_loader
+        # return lambda: self.__fields.get('text')
+
+    # Getters
+    def get_field(self, field):
+        return self.__fields.get(field).get(self.fields)
+
+    def get_planet(self, planet_id):
+        return next((planet for planet in self.get_field('planets') if planet.slug == planet_id), None)
 
     def get_wiki(
         self,
@@ -119,41 +168,40 @@ class World:
         planet_id=None
     ):
         if page_id is None:
-            return get_wiki(self.index_page)
+            return get_wiki(self.get_field('index_page'))
 
-        path = self.slug
+        path = self.get_field('slug')
         if planet_id is not None:
             path = os.path.join(path, 'planets', planet_id)
         path = os.path.join(path, "{}.md".format(page_id))
         return get_wiki(path)
 
-    def get_planet(self, planet_id):
-        return next((planet for planet in self.planets if planet.slug == planet_id), None)
-
+    # Dictionary
     def as_dict(self, full=False):
-        result = {
-            'id': self.id,
-            'image': self.image,
-            'order': self.order,
-            'slug': self.slug,
-            'title': self.title,
-        }
+        # result = {
+        #     **{field.name: field.get(self.__data) for field in self.__fields if field.is_main},
+        #     # 'id': self.id,
+        #     # 'image': self.image,
+        # }
+        fields = (field for field in self.__fields.values() if not field.is_hidden)
         if not full:
-            return result
+            fields = (field for field in fields if field.is_main)
+            additional_fields = {}
+        else:
+            additional_fields = {
+                # 'bookPages': self.__fields.get('book_pages'),
+                # 'createdAt': self.__fields.get('created_at'),
+                'pages': self.pages,
+                'planets': [planet.as_dict() for planet in self.get_field('planets')],
+                'text': self.text,
 
-        result.update({
-            'author': self.author,
-            'createdAt': self.created_at,
-            'media': self.media,
-            'origin': self.origin,
-            'pages': self.pages,
-            'planets': [planet.as_dict() for planet in self.planets],
-            'text': self.text,
-            'wiki': self.wiki,
+                'data': self.additional_data,
+            }
 
-            'data': self.additional_data,
-        })
-        return result
+        return {
+            **{field.name: field.get(self.fields) for field in fields},
+            **additional_fields,
+        }
 
 
 class SluggedWorld(World):
