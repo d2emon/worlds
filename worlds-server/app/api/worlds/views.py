@@ -3,17 +3,21 @@ from . import blueprint
 from data.worlds import WORLDS, World
 
 
+class RecordNotFound(Exception):
+    pass
+
+
 def world_by_slug(slug):
     data = WORLDS.by_slug(slug)
     if data is None:
-        raise FileNotFoundError()
+        raise RecordNotFound()
     return World(**data)
 
 
 def planet_by_slug(world_id, planet_id):
     item = world_by_slug(world_id).get_planet(planet_id)
     if item is None:
-        raise FileNotFoundError()
+        raise RecordNotFound()
     return item
 
 
@@ -32,7 +36,7 @@ def try_response(f):
             'status': 'success',
             **f(),
         })
-    except FileNotFoundError:
+    except RecordNotFound:
         return jsonify({'status': 'fail'})
 
 

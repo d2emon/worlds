@@ -1,20 +1,24 @@
 import json
 import os
+from ..wikifiles import list_pages
 
 
 class Planet:
+    __fields = [
+        'id',
+        'about',
+        'description',
+        'planetMap',
+        'slug',
+    ]
+
     def __init__(
         self,
-        id=None,
-        about=None,
-        description=None,
-        name=None,
-        slug=None,
         **data,
     ):
-        self.__id = id
-        self.about = about or []
-        self.description = description
+        self.__id = data.get('id')
+        self.about = data.get('about', [])
+        self.description = data.get('description')
         """
         The planet ${1:Qo'noS}${2:, named so by its discoverer}, is a ${3:desert planet} in a ${4:small solar system
         with }${5: ten} other planets.
@@ -55,65 +59,114 @@ class Planet:
         destroyed most life their own planet, these hostile creatures now search the universe for resources they can
         use on their home-planet. No other species has had the capabilities to stand in their way, yet.}
         """
-        self.name = name
+        self.name = data.get('name')
         # ${1}${2}${3}${4}${5}
         # ${1}${2}${3}${6}
         # ${1}${4}${5}
         # ${3b}${2.0}${1}${2.1}${5}
         # ${3b}${6} ${7.0}${7.1}${7.2}${7.3}
-        self.slug = slug
+        self.planet_map = data.get('planetMap')
+        self.slug = data.get('slug')
 
-        self.data = data
+        self.data = {k: v for k, v in data.items()}
 
     @property
     def fields(self):
-        result = self.as_dict()
+        result = self.serialize()
         result.update(self.data)
         return result
+
+    @classmethod
+    def __about(
+        cls,
+        files=(),
+        pages=(),
+        sorted_pages=()
+    ):
+        file_pages = [{'title': file} for file in files]
+        new_pages = [
+            {
+                'order': order,
+                'title': title,
+            }
+            for (order, title) in enumerate(sorted_pages)
+        ] + file_pages
+        # Add files
+        for new_page in new_pages:
+            page = next((page for page in pages if page.get('title') == new_page.get('title')), None)
+            if page is None:
+                pages.append(new_page)
+            else:
+                page.update(new_page)
+        return sorted(pages, key=lambda p: p.get('order'))
+
+    @classmethod
+    def __planet_map(cls, root):
+        root = os.path.join(root, 'map')
+        planet_map = {
+            # 'title': '',
+            'wiki': [],
+        }
+        # From JSON
+        filename = os.path.join(root, 'map.json')
+        if os.path.isfile(filename):
+            with open(filename, "r", encoding='utf-8') as f:
+                data = json.load(f)
+                planet_map.update({
+                    **data,
+                    'wiki': [
+                        {
+                            'title': title,
+                            'order': order,
+                        }
+                        for (order, title) in enumerate(data.get('wiki'))
+                    ]
+                })
+        # From files
+        for file in list_pages(root):
+            if any(page for page in planet_map['wiki'] if page.get('title') == file):
+                continue
+            planet_map['wiki'].append({'title': file})
+        return planet_map
 
     @classmethod
     def load(cls, path, slug):
         root = os.path.join(path, slug)
         filename = os.path.join(root, 'planet.json')
-        if not os.path.isfile(filename):
+        if not os.path.isdir(root) or not os.path.isfile(filename):
             return cls()
         with open(filename, "r", encoding='utf-8') as f:
             data = json.load(f)
 
-            sort_pages = data.get('sortPages', [])
-            pages = {
-                title: {
-                    'order': order,
-                    'title': title,
-                }
-                for (order, title) in enumerate(sort_pages)
-            }
-            unsorted = data.get('about', []) + [
-                {
-                    'title': os.path.splitext(os.path.basename(file))[0],
-                }
-                for file in os.listdir(root)
-                if file.endswith('.md')
-            ]
-            for page in unsorted:
-                title = page.get('title') or page.get('slug')
-                pages[title] = {
-                    'order': len(pages),
-                    **pages.get(title, {}),
-                    **page,
-                }
-
-            return cls(
-                about=sorted(pages.values(), key=lambda __page: __page.get('order')),
-                description=data.get('description'),
-                name=data.get('name', slug),
-                slug=slug,
-            )
+            # files = os.listdir(root)
+            return cls(**{
+                'about': cls.__about(
+                    files=list_pages(root),
+                    pages=data.get('about', []),
+                    sorted_pages=data.get('sortPages', []),
+                ),
+                'description': data.get('description'),
+                'name': data.get('name', slug),
+                'planetMap': cls.__planet_map(
+                    root=os.path.join(root),
+                ),
+                'slug': slug,
+            })
 
     def as_dict(self):
         return {
             'about': self.about,
             'description': self.description,
             'name': self.name,
+            'map': self.planet_map,
+            'slug': self.slug,
+        }
+
+    def serialize(self):
+        return {
+            'about': self.about,
+            'description': self.description,
+            'name': self.name,
+            'planetMap': self.planet_map,
             'slug': self.slug,
         }

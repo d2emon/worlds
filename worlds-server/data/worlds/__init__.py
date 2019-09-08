@@ -71,10 +71,6 @@ class WorldFolder:
 
     @property
     def planets(self):
-        return list(self.__planets_data)
-
-    @property
-    def __planets_data(self):
         path = os.path.join(self.root, 'planets')
         if not os.path.exists(path):
             return
@@ -128,7 +124,7 @@ class WorldFolder:
         computed = {
             'image': self.image,
             'index_page': self.index_page,
-            'planets': [__planet.as_dict() for __planet in self.planets],
+            'planets': [__planet.serialize() for __planet in self.planets],
             'slug': self.slug,
             'title': self.title,
             'wiki': self.wiki,
@@ -566,7 +562,6 @@ worlds = [world.fields if isinstance(world, World) else world for world in WORLD
 def parse_folder(folder):
     def f():
         world = next((world for world in worlds if world.get('slug') == folder.slug), None) or {}
-        # print(folder.serialize())
         return {
             **folder.serialize(),
             **world,
