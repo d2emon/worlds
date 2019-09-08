@@ -33,7 +33,7 @@ export default {
       title: 'Название мира',
       createdAt: 'Возникновение',
       isbn: 'ISBN',
-      pages: 'Страниц',
+      bookPages: 'Страниц',
       author: 'Создатель',
       series: 'Серия',
       language: 'Язык оригинала',

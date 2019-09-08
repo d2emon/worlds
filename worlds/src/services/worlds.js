@@ -64,8 +64,8 @@ export default {
       data,
     }) => ({
       author,
-      book_pages,
-      createdAt: created_at,
+      bookPages,
+      createdAt,
       image: image || imageUrl,
       isbn,
       language,

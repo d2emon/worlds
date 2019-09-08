@@ -566,7 +566,7 @@ worlds = [world.fields if isinstance(world, World) else world for world in WORLD
 def parse_folder(folder):
     def f():
         world = next((world for world in worlds if world.get('slug') == folder.slug), None) or {}
-        print(folder.serialize())
+        # print(folder.serialize())
         return {
             **folder.serialize(),
             **world,

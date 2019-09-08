@@ -13,6 +13,7 @@ class Field:
         is_main=False,
         normalize=lambda item: item,
         serialize=lambda item: item,
+        serialize_name=None,
     ):
         self.name = name
         self.default = default
@@ -20,6 +21,7 @@ class Field:
         self.is_main = is_main
         self.normalize = normalize
         self.serialize = serialize
+        self.serialize_name = serialize_name or name
 
     def get(self, fields):
         return self.normalize(fields.get(self.name, self.default))
@@ -29,8 +31,8 @@ class World:
     __fields = {
         'id': Field('id', is_main=True),
         'author': Field('author'),
-        'book_pages': Field('book_pages'),
-        'created_at': Field('created_at'),
+        'book_pages': Field('book_pages', serialize_name='bookPages'),
+        'created_at': Field('created_at', serialize_name='createdAt'),
         'data_loader': Field(
             'data_loader',
             is_hidden=True,
@@ -39,10 +41,10 @@ class World:
         'image': Field(
             'image',
             default="portal.jpg",
-            is_hidden=True,
+            is_main=True,
             normalize=lambda item: item and '{}/wiki/{}'.format(app.config.get('MEDIA_URL'), item)
         ),
-        'index_page': Field('index_page'),
+        'index_page': Field('index_page', serialize_name='indexPage'),
         'isbn': Field('isbn'),
         'language': Field('language'),
         # '__links',
@@ -67,55 +69,15 @@ class World:
     }
 
     def __init__(self, **data):
-        # self.id = id
-        # self.__data = {key: data.get(key, field.default) for key, field in self.__fields.items()}
-        # self.data = {k: v for k, v in data.items() if k not in self.__fields.keys()}
         self.fields = {
             **{key: data.get(key, field.default) for key, field in self.__fields.items()},
             **{key: value for key, value in data.items() if key not in self.__fields.keys()}
         }
-        # self.author = author
-        # self.created_at = created_at
-        # self.__data_loader = data_loader
-        # self.__image = image
-        # self.index_page = index_page
-        # self.__loader = loader
-        # self.media = media
-        # self.order = order
-        # self.origin = origin
-        # self.__pages = pages or {}
-        # self.__planets = list(planets or [])
-        # self.slug = slug
-        # self.__text = text
-        # self.title = title
-        # self.wiki = wiki or {}
-        # self.data = data
 
     @property
     def additional_data(self):
         loader = self.get_field('data_loader')
         return loader and loader()
-
-    # @property
-    # def fields(self):
-    #     return {
-    #         # 'author': self.author,
-    #         # 'created_at': self.created_at,
-    #         # 'data_loader': self.__data_loader,
-    #         # 'image': self.__image,
-    #         # 'index_page': self.index_page,
-    #         # 'loader': self.__loader,
-    #         # 'media': self.media,
-    #         # 'order': self.order,
-    #         # 'origin': self.origin,
-    #         # 'pages': self.__pages,
-    #         # 'slug': self.slug,
-    #         # 'title': self.title,
-    #         # 'text': self.__text,
-    #         # 'wiki': self.wiki,
-    #         **self.data,
-    #         **{field.name: field.get(self.__data) for field in self.__fields},
-    #     }
 
     @property
     def text(self):
@@ -153,7 +115,6 @@ class World:
         if self.get_field('index_page') is not None:
             return self.wiki_loader
         return self.__text_loader
-        # return lambda: self.__fields.get('text')
 
     # Getters
     def get_field(self, field):
@@ -178,19 +139,12 @@ class World:
 
     # Dictionary
     def as_dict(self, full=False):
-        # result = {
-        #     **{field.name: field.get(self.__data) for field in self.__fields if field.is_main},
-        #     # 'id': self.id,
-        #     # 'image': self.image,
-        # }
         fields = (field for field in self.__fields.values() if not field.is_hidden)
         if not full:
             fields = (field for field in fields if field.is_main)
             additional_fields = {}
         else:
             additional_fields = {
-                # 'bookPages': self.__fields.get('book_pages'),
-                # 'createdAt': self.__fields.get('created_at'),
                 'pages': self.pages,
                 'planets': [planet.as_dict() for planet in self.get_field('planets')],
                 'text': self.text,
@@ -199,7 +153,7 @@ class World:
             }
 
         return {
-            **{field.name: field.get(self.fields) for field in fields},
+            **{field.serialize_name: field.get(self.fields) for field in fields},
             **additional_fields,
         }
 

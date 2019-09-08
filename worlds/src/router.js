@@ -17,12 +17,11 @@ export default new Router({
     },
     {
       path: '/world/:worldId',
-      name: 'world',
       component: () => import('@/views/World.vue'),
       children: [
         {
           path: '',
-          name: 'world-main',
+          name: 'world',
           component: () => import('@/views/wiki/World.vue'),
         },
         {
@@ -32,12 +31,11 @@ export default new Router({
         },
         {
           path: 'planet-:planetId',
-          name: 'planet',
           component: () => import('@/views/WorldPlanet.vue'),
           children: [
             {
               path: '',
-              name: 'planet-main',
+              name: 'planet',
               component: () => import('@/views/WorldPlanetMain.vue'),
             },
             {
