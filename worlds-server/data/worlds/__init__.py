@@ -124,7 +124,7 @@ class WorldFolder:
         computed = {
             'image': self.image,
             'index_page': self.index_page,
-            'planets': [__planet.serialize() for __planet in self.planets],
+            'planets': [__planet.fields for __planet in self.planets],
             'slug': self.slug,
             'title': self.title,
             'wiki': self.wiki,

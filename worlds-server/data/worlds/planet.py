@@ -34,13 +34,28 @@ class WikiPage:
         }
 
 
+class Field:
+    def __init__(
+        self,
+        name,
+        export_name=None,
+        is_main=False,
+    ):
+        self.name = name
+        self.export_name = export_name or name
+        self.is_main = is_main
+
+
 class Planet:
     __fields = [
-        'id',
-        'about',
-        'description',
-        'planetMap',
-        'slug',
+        Field('id'),
+        Field('about'),
+        Field('description', is_main=True),
+        Field('magnet'),
+        Field('name', is_main=True),
+        Field('planetMap', export_name='map'),
+        Field('surface'),
+        Field('slug', is_main=True),
     ]
 
     def __init__(
@@ -48,8 +63,6 @@ class Planet:
         **data,
     ):
         self.__id = data.get('id')
-        self.about = data.get('about', [])
-        self.description = data.get('description')
         """
         The planet ${1:Qo'noS}${2:, named so by its discoverer}, is a ${3:desert planet} in a ${4:small solar system
         with }${5: ten} other planets.
@@ -90,22 +103,39 @@ class Planet:
         destroyed most life their own planet, these hostile creatures now search the universe for resources they can
         use on their home-planet. No other species has had the capabilities to stand in their way, yet.}
         """
-        self.name = data.get('name')
         # ${1}${2}${3}${4}${5}
         # ${1}${2}${3}${6}
         # ${1}${4}${5}
         # ${3b}${2.0}${1}${2.1}${5}
         # ${3b}${6} ${7.0}${7.1}${7.2}${7.3}
-        self.planet_map = data.get('planetMap')
-        self.slug = data.get('slug')
+        self.fields = data
+        # self.about = data.get('about', [])
+        # self.description = data.get('description')
+        # self.name = data.get('name')
+        # self.planet_map = data.get('planetMap')
+        # self.slug = data.get('slug')
+        # self.surface = data.get('surface')
 
-        self.data = {k: v for k, v in data.items()}
+        # self.data = {k: v for k, v in data.items()}
+
+    # @property
+    # def fields(self):
+    #     # result = self.serialize()
+    #     # result.update(self.data)
+    #     # return result
+    #     return {
+    #         'about': self.about,
+    #         'description': self.description,
+    #         'name': self.name,
+    #         'planetMap': self.planet_map,
+    #         'surface': self.surface,
+    #         'slug': self.slug,
+    #         **self.data,
+    #     }
 
     @property
-    def fields(self):
-        result = self.serialize()
-        result.update(self.data)
-        return result
+    def slug(self):
+        return self.fields.get('slug')
 
     @classmethod
     def __about(
@@ -168,13 +198,18 @@ class Planet:
             data = json.load(f)
 
             # files = os.listdir(root)
+            fields = [
+                'description',
+                'magnet',
+                'surface',
+            ]
             return cls(**{
+                **{field: data.get(field) for field in fields},
                 'about': cls.__about(
                     files=list_pages(root),
                     pages=data.get('about', []),
                     sorted_pages=data.get('sortPages', []),
                 ),
-                'description': data.get('description'),
                 'name': data.get('name', slug),
                 'planetMap': cls.__planet_map(
                     root=os.path.join(root),
@@ -183,24 +218,8 @@ class Planet:
             })
 
     def as_dict(self, full=False):
-        fields = {
-            'description': self.description,
-            'name': self.name,
-            'slug': self.slug,
-        }
-        if not full:
-            return fields
-        return {
-            **fields,
-            'about': self.about,
-            'map': self.planet_map,
-        }
-
-    def serialize(self):
-        return {
-            'about': self.about,
-            'description': self.description,
-            'name': self.name,
-            'planetMap': self.planet_map,
-            'slug': self.slug,
-        }
+        if full:
+            fields = self.__fields
+        else:
+            fields = [field for field in self.__fields if field.is_main]
+        return {field.export_name: self.fields.get(field.name) for field in fields}

@@ -92,9 +92,11 @@ const planet = {
   fields: [
     'about',
     'description',
+    'magnet',
     'map',
     'name',
     'slug',
+    'surface',
   ],
   addUrl: worldId => ({
     slug,
