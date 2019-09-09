@@ -22,5 +22,54 @@
         {"title": "Советская картография"}
       ]
     }
+  ],
+  "average_radius": "6371 км",
+  "equatorial_radius": "6378 км",
+  "polar_axis": "6357 км",
+  "equator_length": "40 070.4 км",
+  "meridian_length": "40 008.6 км",
+  "surface": "510 млн км^2",
+  "average_density": "5.52",
+  "average_solar_distance": "149.5 млн км",
+  "average_orbital_speed": "29.76 км/c",
+  "turnover_duration": "23 часа 56 мин. 4.1 с",
+  "equatorial_point_speed": "465 м/с",
+  "year": "365 суток 5 часов 48 мин. 46 с",
+  "sun_height": [
+    {"latitude":  [90], "spring":  [0], "summer":  [23, 5], "autumn":  [0], "winter":  [-23,5]},
+    {"latitude":  [66, 5], "spring":  [23, 5], "summer":  [47], "autumn":  [23, 5], "winter":  [0]},
+    {"latitude":  [23, 5], "spring":  [66, 5], "summer":  [90], "autumn":  [66, 5], "winter":  [43]},
+    {"latitude":  [0], "spring":  [90], "summer":  [66, 5], "autumn":  [90], "winter":  [66,5]}
+  ],
+  "meridian_degree_length": [
+    {"latitude":  [0], "meridian":  0, "parallel":  111.3},
+    {"latitude":  [24], "meridian":  110.8, "parallel":  101.7},
+    {"latitude":  [67], "meridian":  111.5, "parallel":  43.6},
+    {"latitude":  [90], "meridian":  111.7, "parallel":  0}
+  ],
+  "day_length": [
+    {"latitude":  [0], "max_day":  [12], "min_day":  [12]},
+    {"latitude":  [20], "max_day":  [13, 13], "min_day":  [10, 47]},
+    {"latitude":  [67], "max_day":  [24], "min_day":  [0]}
+  ],
+  "polar_day": [
+    {"latitude":  [66, 5], "polar_day":  [1], "polar_night":  [1]},
+    {"latitude":  [90], "polar_day":  [186], "polar_night":  [179]}
+  ],
+  "hottest": [
+    "Калифорния",
+    "Сахара",
+    "Аравия"
+  ],
+  "coldest": [
+    "Гренландия",
+    "Северо-Восток Азии",
+    "Антарктида"
+  ],
+  "landWater": {
+    "land": {"north": 39, "south":  19, "average": 28.8},
+    "water": {"north": 61, "south":  81, "average": 71.2}
+  },
+  "continents": [
   ]
 }
