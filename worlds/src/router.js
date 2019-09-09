@@ -43,6 +43,11 @@ export default new Router({
               name: 'planet-wiki',
               component: () => import('@/views/wiki/Planet.vue'),
             },
+            {
+              path: 'map/:pageId?',
+              name: 'planet-map',
+              component: () => import('@/views/wiki/PlanetMap.vue'),
+            },
           ],
         },
       ],

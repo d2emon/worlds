@@ -3,6 +3,37 @@ import os
 from ..wikifiles import list_pages
 
 
+class WikiPage:
+    def __init__(
+        self,
+        title,
+        order=None,
+        url=None,
+    ):
+        self.__fields = {'title': title}
+        if order is not None:
+            self.__fields['order'] = order
+        if url is not None:
+            self.__fields['url'] = url
+
+    @property
+    def title(self):
+        return self.__fields['title']
+
+    @property
+    def url(self):
+        return self.__fields.get('url', self.title)
+
+    def update(self, fields):
+        self.__fields.update(fields)
+
+    def as_dict(self):
+        return {
+            **self.__fields,
+            'url': self.url,
+        }
+
+
 class Planet:
     __fields = [
         'id',
@@ -83,22 +114,23 @@ class Planet:
         pages=(),
         sorted_pages=()
     ):
-        file_pages = [{'title': file} for file in files]
+        pages = [WikiPage(page) for page in pages]
+        file_pages = [WikiPage(file) for file in files]
         new_pages = [
-            {
-                'order': order,
-                'title': title,
-            }
+            WikiPage(title, order=order)
             for (order, title) in enumerate(sorted_pages)
         ] + file_pages
         # Add files
         for new_page in new_pages:
-            page = next((page for page in pages if page.get('title') == new_page.get('title')), None)
+            page = next((page for page in pages if page.title == new_page.title), None)
             if page is None:
                 pages.append(new_page)
             else:
-                page.update(new_page)
-        return sorted(pages, key=lambda p: p.get('order'))
+                page.update(new_page.as_dict())
+        return sorted(
+            (page.as_dict() for page in pages),
+            key=lambda p: p.get('order', len(pages)),
+        )
 
     @classmethod
     def __planet_map(cls, root):
@@ -115,10 +147,7 @@ class Planet:
                 planet_map.update({
                     **data,
                     'wiki': [
-                        {
-                            'title': title,
-                            'order': order,
-                        }
+                        WikiPage(title, order=order).as_dict()
                         for (order, title) in enumerate(data.get('wiki'))
                     ]
                 })
@@ -126,7 +155,7 @@ class Planet:
         for file in list_pages(root):
             if any(page for page in planet_map['wiki'] if page.get('title') == file):
                 continue
-            planet_map['wiki'].append({'title': file})
+            planet_map['wiki'].append(WikiPage(file).as_dict())
         return planet_map
 
     @classmethod
@@ -153,13 +182,18 @@ class Planet:
                 'slug': slug,
             })
 
-    def as_dict(self):
-        return {
-            'about': self.about,
+    def as_dict(self, full=False):
+        fields = {
             'description': self.description,
             'name': self.name,
-            'map': self.planet_map,
             'slug': self.slug,
+        }
+        if not full:
+            return fields
+        return {
+            **fields,
+            'about': self.about,
+            'map': self.planet_map,
         }
 
     def serialize(self):

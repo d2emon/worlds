@@ -89,12 +89,12 @@ class World:
         return sorted(
             [
                 {
-                    'filename': self.get_field('pages').get(file, file),
+                    'title': self.get_field('pages').get(file, file),
                     'url': file,
                 }
                 for file in list_wiki(self.get_field('slug'))
             ],
-            key=lambda item: item.get('filename', 0),
+            key=lambda item: item.get('title', 0),
         )
 
     # Loaders
@@ -126,14 +126,20 @@ class World:
     def get_wiki(
         self,
         page_id=None,
-        planet_id=None
+        planet_id=None,
+        page_type='page',
     ):
+        if page_type not in ('page', 'map'):
+            return None
+
         if page_id is None:
             return get_wiki(self.get_field('index_page'))
 
         path = self.get_field('slug')
         if planet_id is not None:
             path = os.path.join(path, 'planets', planet_id)
+        if page_type == 'map':
+            path = os.path.join(path, 'map')
         path = os.path.join(path, "{}.md".format(page_id))
         return get_wiki(path)
 

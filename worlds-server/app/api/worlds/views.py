@@ -21,12 +21,13 @@ def planet_by_slug(world_id, planet_id):
     return item
 
 
-def wiki_by_slug(world_id=None, planet_id=None, page_id=None):
+def wiki_by_slug(world_id=None, planet_id=None, page_id=None, page_type='page'):
     if world_id is None:
         return None
     return world_by_slug(world_id).get_wiki(
         planet_id=planet_id,
         page_id=page_id,
+        page_type=page_type,
     )
 
 
@@ -57,18 +58,19 @@ def get_world(world_id):
 @blueprint.route('/world/<world_id>/planet/<planet_id>', methods=['GET'])
 def get_planet(world_id, planet_id):
     return try_response(lambda: {
-        'planet': planet_by_slug(world_id, planet_id).as_dict(),
+        'planet': planet_by_slug(world_id, planet_id).as_dict(full=True),
     })
 
 
-@blueprint.route('/wiki/world/<world_id>/planet/<planet_id>/page/<path:page_id>', methods=['GET'])
+@blueprint.route('/wiki/world/<world_id>/planet/<planet_id>/<page_type>/<path:page_id>', methods=['GET'])
 @blueprint.route('/wiki/world/<world_id>/page/<path:page_id>', methods=['GET'])
 @blueprint.route('/wiki/page/<path:page_id>', methods=['GET'])
-def get_wiki(world_id=None, planet_id=None, page_id='index'):
+def get_wiki(world_id=None, planet_id=None, page_id='index', page_type='page'):
     return try_response(lambda: {
         'wiki': wiki_by_slug(
             world_id=world_id,
             planet_id=planet_id,
             page_id=page_id,
+            page_type=page_type,
         ),
     })

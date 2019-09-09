@@ -26,7 +26,7 @@
                     :key="article.title"
                   >
                     <router-link
-                      :to="`${planet.url}/wiki/${article.title}`"
+                      :to="article.url"
                       v-text="article.title"
                     ></router-link>
                     <ul
@@ -37,8 +37,29 @@
                         :key="child.title"
                       >
                         <router-link
-                          :to="`${planet.url}/wiki/${article.title}/${child.title}`"
+                          :to="`${planet.url}/wiki/${child.title}`"
                           v-text="child.title"
+                        ></router-link>
+                      </li>
+                    </ul>
+                  </li>
+                  <li
+                    v-if="planet.map"
+                  >
+                    <router-link
+                      :to="`${planet.url}/map`"
+                      v-text="planet.map.title"
+                    ></router-link>
+                    <ul
+                      v-if="planet.map.wiki"
+                    >
+                      <li
+                        v-for="article in planet.map.wiki"
+                        :key="article.title"
+                      >
+                        <router-link
+                          :to="article.url"
+                          v-text="article.title"
                         ></router-link>
                       </li>
                     </ul>

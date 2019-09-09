@@ -9,7 +9,7 @@ const state = {
   worlds: [],
   world: null,
   planet: null,
-  wiki: '',
+  wiki: null,
 };
 
 const getters = {};
@@ -19,7 +19,7 @@ const mutations = {
   setPortal: (state, portal) => { state.portal = portal; },
   setWorlds: (state, worlds) => { state.worlds = worlds; },
   setWorld: (state, world) => { state.world = world; },
-  setWiki: (state, wiki) => { state.wiki = wiki; },
+  setWiki: (state, wiki) => { console.log(wiki); state.wiki = wiki; },
 };
 
 const actions = {
@@ -37,11 +37,11 @@ const actions = {
       html: wiki2html(world.text, worldId),
     }))
     .then(world => commit('setWorld', world)),
-  getWiki: ({ commit }, { worldId, planetId, pageId }) => (pageId
-    ? worldsService.getWiki({ worldId, planetId, pageId })
+  getWiki: ({ commit }, params) => (params.pageId
+    ? worldsService.getWiki(params)
     : Promise.resolve(null)
   )
-    .then(wiki => wiki2html(wiki, worldId))
+    .then(wiki => wiki2html(wiki, params.worldId))
     .then(wiki => commit('setWiki', wiki)),
   getPlanet: ({ commit }, { worldId, planetId }) => worldsService
     .getPlanet(worldId, planetId)

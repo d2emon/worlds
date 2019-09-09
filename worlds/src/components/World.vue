@@ -20,10 +20,10 @@
               v-for="(page, id) in world.pages"
               :key="`page-${id}`"
               :to="page.url"
-              :title="page.filename"
+              :title="page.title"
             >
               <v-list-item-content>
-                <v-list-item-title v-text="page.filename" />
+                <v-list-item-title v-text="page.title" />
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -71,18 +71,9 @@
               <wiki :wiki="world.html" />
             </v-card-text>
             <v-container v-else>
-              <v-list>
-                <v-list-item
-                  v-for="(page, id) in world.pages"
-                  :key="`page-${id}`"
-                  :to="page.url"
-                  :title="page.filename"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title v-text="page.filename" />
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
+              <page-list
+                :pages="world.pages"
+              />
 
               <v-layout
                 v-if="world.data && world.data.cards"
@@ -127,6 +118,7 @@ import posmotreli from '@/assets/wiki/posmotreli.png';
 export default {
   name: 'World',
   components: {
+    PageList: () => import('@/components/PageList.vue'),
     Portal: () => import('@/components/Portal.vue'),
     WorldSummary: () => import('@/components/WorldSummary.vue'),
     Wiki: () => import('@/components/Wiki.vue'),
@@ -146,44 +138,44 @@ export default {
     encyclo: {
       child: [
         [
-          {id: 1, title: 'Земля', to: 'planet-earth'},
-          {id: 2, title: 'Земная кора и недра Земли. Мир небесных тел', to: 'planet-earth/geology/+/astronomy'},
-          {id: 3, title: 'Числа и фигуры. Вещество и энергия', to: 'math/+/energy'},
-          {id: 4, title: 'Растения и животные', to: 'biology'},
-          {id: 5, title: 'Техника', to: 'tech'},
-          {id: 6, title: 'Человек', to: 'human'},
-          {id: 7, title: 'Из истории человеческого общества', to: 'history'},
-          {id: 8, title: 'Литература и искусство', to: 'art'},
-          {id: 9, title: 'Наша советская Родина', to: 'motherland'},
-          {id: 10, title: 'Зарубежные страны', to: 'countries'},
+          { id: 1, title: 'Земля', to: 'planet-earth' },
+          { id: 2, title: 'Земная кора и недра Земли. Мир небесных тел', to: 'planet-earth/geology/+/astronomy' },
+          { id: 3, title: 'Числа и фигуры. Вещество и энергия', to: 'math/+/energy' },
+          { id: 4, title: 'Растения и животные', to: 'biology' },
+          { id: 5, title: 'Техника', to: 'tech' },
+          { id: 6, title: 'Человек', to: 'human' },
+          { id: 7, title: 'Из истории человеческого общества', to: 'history' },
+          { id: 8, title: 'Литература и искусство', to: 'art' },
+          { id: 9, title: 'Наша советская Родина', to: 'motherland' },
+          { id: 10, title: 'Зарубежные страны', to: 'countries' },
         ],
         [
-          {id: 1, title: 'Земля', to: 'planet-earth'},
-          {id: 2, title: 'Мир небесных тел. Числа и фигуры', to: 'astronomy/+/math'},
-          {id: 3, title: 'Растения и животные', to: 'biology'},
-          {id: 4, title: 'Техника и производство', to: 'tech'},
-          {id: 5, title: 'Вещество и энергия', to: 'energy'},
-          {id: 6, title: 'Человек', to: 'human'},
-          {id: 7, title: 'Сельское хозяйство', to: 'agriculture'},
-          {id: 8, title: 'Из истории человеческого общества', to: 'history'},
-          {id: 9, title: 'Зарубежные страны', to: 'countries'},
-          {id: 10, title: 'Язык. Художественная литература', to: 'language'},
-          {id: 11, title: 'Искусство', to: 'art'},
-          {id: 12, title: 'Наша советская Родина', to: 'motherland'},
+          { id: 1, title: 'Земля', to: 'planet-earth' },
+          { id: 2, title: 'Мир небесных тел. Числа и фигуры', to: 'astronomy/+/math' },
+          { id: 3, title: 'Растения и животные', to: 'biology' },
+          { id: 4, title: 'Техника и производство', to: 'tech' },
+          { id: 5, title: 'Вещество и энергия', to: 'energy' },
+          { id: 6, title: 'Человек', to: 'human' },
+          { id: 7, title: 'Сельское хозяйство', to: 'agriculture' },
+          { id: 8, title: 'Из истории человеческого общества', to: 'history' },
+          { id: 9, title: 'Зарубежные страны', to: 'countries' },
+          { id: 10, title: 'Язык. Художественная литература', to: 'language' },
+          { id: 11, title: 'Искусство', to: 'art' },
+          { id: 12, title: 'Наша советская Родина', to: 'motherland' },
         ],
         [
-          {id: 1, title: 'Земля', to: 'planet-earth'},
-          {id: 2, title: 'Мир небесных тел. Числа и фигуры', to: 'astronomy/+/math'},
-          {id: 3, title: 'Вещество и энергия', to: 'energy'},
-          {id: 4, title: 'Растения и животные', to: 'biology'},
-          {id: 5, title: 'Техника и производство', to: 'tech'},
-          {id: 6, title: 'Сельское хозяйство', to: 'agriculture'},
-          {id: 7, title: 'Человек', to: 'human'},
-          {id: 8, title: 'Из истории человеческого общества', to: 'history'},
-          {id: 9, title: 'Язык и литература', to: 'language'},
-          {id: 10, title: 'Зарубежные страны', to: 'countries'},
-          {id: 11, title: 'Искусство', to: 'art'},
-          {id: 12, title: 'Наша советская Родина', to: 'motherland'},
+          { id: 1, title: 'Земля', to: 'planet-earth' },
+          { id: 2, title: 'Мир небесных тел. Числа и фигуры', to: 'astronomy/+/math' },
+          { id: 3, title: 'Вещество и энергия', to: 'energy' },
+          { id: 4, title: 'Растения и животные', to: 'biology' },
+          { id: 5, title: 'Техника и производство', to: 'tech' },
+          { id: 6, title: 'Сельское хозяйство', to: 'agriculture' },
+          { id: 7, title: 'Человек', to: 'human' },
+          { id: 8, title: 'Из истории человеческого общества', to: 'history' },
+          { id: 9, title: 'Язык и литература', to: 'language' },
+          { id: 10, title: 'Зарубежные страны', to: 'countries' },
+          { id: 11, title: 'Искусство', to: 'art' },
+          { id: 12, title: 'Наша советская Родина', to: 'motherland' },
         ],
       ],
     },
