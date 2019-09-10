@@ -1,0 +1,36 @@
+[
+  "./index.json",
+  "./geology/index.json",
+  {
+    "title": "Земля",
+    "index": "./index.json"
+  },
+  {
+    "title": "Земля",
+    "index": "./index.json"
+  },
+  {
+    "title": "Земля",
+    "index": "./index.json"
+  },
+  {
+    "title": "Земля",
+    "index": "./index.json"
+  },
+  {
+    "title": "Земля",
+    "index": "./index.json"
+  },
+  {
+    "title": "Земля",
+    "index": "./index.json"
+  },
+  {
+    "title": "Земля",
+    "index": "./index.json"
+  },
+  {
+    "title": "Земля",
+    "index": "./index.json"
+  }
+]
