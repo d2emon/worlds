@@ -51,6 +51,7 @@ class Planet:
         Field('id'),
         Field('about'),
         Field('description', is_main=True),
+        Field('radius'),
         Field('magnet'),
         Field('name', is_main=True),
         Field('planetMap', export_name='map'),
