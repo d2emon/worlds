@@ -219,12 +219,12 @@ WORLDS_DATA = [
         'index_page': 'dragonlance/index.md',
     },
     {'title': 'Dragonstar'},
-    {
-        'title': 'Eberron',
-        'image': 'eberron/images/eb-logos.gif',
-        'slug': 'eberron',
-        'index_page': 'eberron/index.md',
-    },
+    # {
+    #     'title': 'Eberron',
+    #     'image': 'eberron/images/eb-logos.gif',
+    #     'slug': 'eberron',
+    #     'index_page': 'eberron/index.md',
+    # },
     {'title': 'Exalted'},
     {'title': 'Fading Suns'},
 
