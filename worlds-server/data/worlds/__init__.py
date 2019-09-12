@@ -370,7 +370,7 @@ WORLDS_DATA = [
         'slug': 'scp-foundation',
         'index_page': 'scp-foundation/index.md',
     },
-    {'title': 'Shadowrun', 'link': 'https://rpg.fandom.com/ru/wiki/Shadowrun'},
+    # {'title': 'Shadowrun', 'link': 'https://rpg.fandom.com/ru/wiki/Shadowrun'},
 
     {'title': 'Shaintar: Immortal Legends'},
     {'title': 'Spellbound Kingdoms'},
@@ -395,7 +395,7 @@ WORLDS_DATA = [
     },
     {'title': 'Unhallowed Metropolis'},
     {'title': 'Urban Arcana'},
-    {'title': 'Vampire: The Masquerade', 'link': 'https://rpg.fandom.com/ru/wiki/Vampire:_The_Masquerade'},
+    # {'title': 'Vampire: The Masquerade', 'link': 'https://rpg.fandom.com/ru/wiki/Vampire:_The_Masquerade'},
 
     {'title': 'Vampire: The Requiem'},
     {'title': 'Категория:Warcraft'},
