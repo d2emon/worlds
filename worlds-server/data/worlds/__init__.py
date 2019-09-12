@@ -165,7 +165,7 @@ WORLDS_DATA = [
     {'title': 'Fading Suns'},
 
     {'title': 'Fallout'},
-    {'title': 'Forgotten Realms', 'link': 'https://rpg.fandom.com/ru/wiki/Forgotten_Realms''},
+    {'title': 'Forgotten Realms', 'link': 'https://rpg.fandom.com/ru/wiki/Forgotten_Realms'},
     {'title': 'Gamma World'},
     {'title': 'Greyhawk'},
     {'title': 'Hellfrost'},
@@ -706,10 +706,20 @@ def parse_folder(folder):
 
 
 def folder_loader():
-    for slug in os.listdir(Config.WIKI_ROOT):
+    folders = list(os.listdir(Config.WIKI_ROOT))
+    for slug in folders:
         if not os.path.isdir(os.path.join(Config.WIKI_ROOT, slug)):
             continue
         yield parse_folder(WorldFolder(slug))
+
+    for world in worlds:
+        slug = world.get('slug') or world.get('title')
+        if slug in folders:
+            continue
+        yield lambda: {
+            'slug': slug,
+            **world,
+        }
 
 
 WORLDS = WorldsDB(

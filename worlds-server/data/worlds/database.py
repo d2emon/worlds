@@ -5,8 +5,8 @@ from .world import World
 class WorldsDB(Database):
     def __init__(
         self,
-        items=[],
-        loaders=[],
+        items=(),
+        loaders=(),
         loader=lambda: [],
     ):
         super().__init__()

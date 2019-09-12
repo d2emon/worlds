@@ -112,8 +112,8 @@ export default {
   getWorlds: () => Api
     .get('/api/worlds')
     .then(({ data }) => data.worlds)
-    .then(filterFields(world.fields))
-    .then(world.addUrl())
+    .then(items => items.map(filterFields(world.fields)))
+    .then(items => items.map(world.addUrl()))
     .then(items => items.map(({
       // title,
       image,
