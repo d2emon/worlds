@@ -1,0 +1,26 @@
+version: '2'
+services:
+  front:
+    build: ./worlds
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "8081:8080"
+    volumes:
+      - "./worlds:/app"
+  back:
+    build: ./worlds-server
+    depends_on:
+      - front
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+      - WORLDS_FRONT=http://worlds_front_1:8080/
+    links:
+      - front
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./worlds-server:/app"
+      - "./config.py:/app/config.py"
+      - "./media:/media"
