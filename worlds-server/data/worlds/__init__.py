@@ -335,16 +335,15 @@ WORLDS_DATA = [
     },
     {'title': 'Pirates of the Spanish Main'},
 
-    {'title': 'Planescape', },
-    {
-        # !
-        'title': 'Planescape',
-        'image': 'planescape/images/PlanescapeLogo.jpg',
-        'slug': 'planescape',
-        'index_page': 'planescape/index.md',
-
-        'link': 'https://rpg.fandom.com/ru/wiki/Planescape',
-    },
+    # {
+    #     # !
+    #     'title': 'Planescape',
+    #     'image': 'planescape/images/PlanescapeLogo.jpg',
+    #     'slug': 'planescape',
+    #     'index_page': 'planescape/index.md',
+    #
+    #     'link': 'https://rpg.fandom.com/ru/wiki/Planescape',
+    # },
     {'title': 'Points of Light'},
     {'title': 'Ptolus'},
     {
