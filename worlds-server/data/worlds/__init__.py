@@ -346,15 +346,15 @@ WORLDS_DATA = [
     # },
     {'title': 'Points of Light'},
     {'title': 'Ptolus'},
-    {
-        # !
-        'title': 'Ravenloft',
-        'image': 'ravenloft/images/rv-logos.gif',
-        'slug': 'ravenloft',
-        'index_page': 'ravenloft/index.md',
-
-        'link': 'https://rpg.fandom.com/ru/wiki/Ravenloft',
-    },
+    # {
+    #     # !
+    #     'title': 'Ravenloft',
+    #     'image': 'ravenloft/images/rv-logos.gif',
+    #     'slug': 'ravenloft',
+    #     'index_page': 'ravenloft/index.md',
+    #
+    #     'link': 'https://rpg.fandom.com/ru/wiki/Ravenloft',
+    # },
     {'title': 'Rippers'},
     {'title': 'Rippers Resurrected'},
     # {
