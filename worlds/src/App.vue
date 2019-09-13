@@ -1,23 +1,58 @@
 <template>
   <v-app>
     <v-app-bar>
-      <v-toolbar-title class="headline text-uppercase">
-        <router-link to="/">
-          <span>Миры</span>
-        </router-link>
+      <!-- v-app-bar-nav-icon></v-app-bar-nav-icon -->
+
+      <v-toolbar-title class="text-uppercase">
+        <router-link to="/">Миры</router-link>
       </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <!-- v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
+
+      <div class="flex-grow-1"></div>
+
+      <v-btn
+        text
+        to="/"
       >
-        <span class="mr-2">Latest Release</span>
-      </v-btn -->
+        Миры
+      </v-btn>
+
+      <v-btn
+        text
+        to="/blog"
+      >
+        Блог
+      </v-btn>
+
+      <!-- v-menu
+        left
+        bottom
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item
+            v-for="n in 5"
+            :key="n"
+            @click="() => {}"
+          >
+            <v-list-item-title>Option {{ n }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu -->
     </v-app-bar>
 
     <v-content>
-      <router-view />
+      <v-container>
+        <v-layout justify-center>
+          <v-flex xs12 sm9>
+            <router-view />
+          </v-flex>
+        </v-layout>
+      </v-container>
     </v-content>
   </v-app>
 </template>
@@ -29,6 +64,10 @@ export default {
 </script>
 
 <style>
+a {
+  text-decoration: none;
+}
+
 .wiki blockquote {
   border-left: .25em solid #dfe2e5;
   color: #6a737d;
@@ -39,8 +78,11 @@ export default {
   height: 200px;
 }
 
+.v-toolbar a {
+  color: #FFFFFF;
+}
+
 .v-card__title a {
-  text-decoration: none;
   color: #000000;
 }
 </style>
