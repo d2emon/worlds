@@ -95,7 +95,7 @@ export default new Router({
           component: () => import('@/views/blog/Home.vue'),
         },
         {
-          path: ':slug',
+          path: ':postId',
           name: 'blog-post',
           component: () => import('@/views/blog/Post.vue'),
         },
