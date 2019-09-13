@@ -52,7 +52,12 @@ class World:
         'media': Field('media'),
         'order': Field('order', is_main=True),
         'origin': Field('origin'),
-        'pages': Field('pages', default={}, is_hidden=True),
+        'pages': Field(
+            'pages',
+            default={},
+            is_hidden=True,
+            normalize=lambda item: item or {},
+        ),
         'planets': Field(
             'planets',
             default=[],
@@ -62,7 +67,7 @@ class World:
         ),
         'publisher': Field('publisher'),
         'series': Field('series'),
-        'slug': Field('slug', is_main=True),
+        'slug': Field('slug', default='', is_main=True),
         'text': Field('text', is_hidden=True),
         'title': Field('title', default='', is_main=True),
         'wiki': Field('wiki', default={}),

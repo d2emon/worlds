@@ -620,34 +620,7 @@ WORLDS_DATA = [
     ),
     {'title': 'Полночь'},
     {'title': 'Порох и хлеб'},
-    SluggedWorld(
-        title='Путеводитель по коридорам Ада',
-        slug='putevoditel-po-koridoram-ada',
-        image='images/Hell.jpg',
 
-        wiki={
-            'lurkmore': "http://lurkmore.to/Путеводитель по коридорам Ада"
-        },
-    ),
-
-    # SluggedWorld(
-    #     title='Рик и Морти',
-    #     slug='rick-and-morty',
-    #     image='images/LabRick.png',
-    #
-    #     links={
-    #         'en': "https://rickandmorty.fandom.com/",
-    #         'ru': "https://rickandmorty.fandom.com/ru/",
-    # },
-    #
-    #     pages={
-    #         'science': '«Рик и Морти» с точки зрения науки',
-    #         'references': 'Obscure Pop Culture References From Rick And Morty, Explained',
-    #         'easter-eggs': '13 Important "Rick And Morty" Easter Eggs That Prove '
-    #                        'It\'s The Smartest Show On Television',
-    #         'universes': 'Вселенные',
-    #     },
-    # ),
     {'title': 'Рокуган'},
     {'title': 'Категория:Сады Ислага'},
     {'title': 'Сальвеблюз'},
@@ -660,15 +633,6 @@ WORLDS_DATA = [
     {'title': 'Шандария'},
     {'title': 'Эберрон', 'link': 'https://rpg.fandom.com/ru/wiki/%D0%AD%D0%B1%D0%B5%D1%80%D1%80%D0%BE%D0%BD'},
     {'title': 'Эра Водолея'},
-    # SluggedWorld(
-    #     title='Юрий Петухов',
-    #     slug='yuriy-petuhov',
-    #     # image='images/Pet9.png',
-    #
-    #     wiki={
-    #         'lurkmore': "http://lurkmore.to/Юрий_Петухов"
-    #     },
-    # ),
 ]
 # 'image': '3e-logos.gif',
 # 'image': 'hw-logos.gif',
