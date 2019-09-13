@@ -229,15 +229,15 @@ WORLDS_DATA = [
     {'title': 'Fading Suns'},
 
     {'title': 'Fallout'},
-    {
-        # !
-        'title': 'Forgotten Realms',
-        'image': 'forgotten-realms/images/fr-logos.gif',
-        'slug': 'forgotten-realms',
-        'index_page': 'forgotten-realms/index.md',
-
-        'link': 'https://rpg.fandom.com/ru/wiki/Forgotten_Realms',
-    },
+    # {
+    #     # !
+    #     'title': 'Forgotten Realms',
+    #     'image': 'forgotten-realms/images/fr-logos.gif',
+    #     'slug': 'forgotten-realms',
+    #     'index_page': 'forgotten-realms/index.md',
+    #
+    #     'link': 'https://rpg.fandom.com/ru/wiki/Forgotten_Realms',
+    # },
     {'title': 'Gamma World'},
     {
         'title': 'Ghostwalk',
