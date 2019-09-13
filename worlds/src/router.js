@@ -85,5 +85,21 @@ export default new Router({
       name: 'categories',
       component: () => import('@/views/Categories.vue'),
     },
+    {
+      path: '/blog',
+      component: () => import('@/views/blog/Blog.vue'),
+      children: [
+        {
+          path: '',
+          name: 'blog-home',
+          component: () => import('@/views/blog/Home.vue'),
+        },
+        {
+          path: ':slug',
+          name: 'blog-post',
+          component: () => import('@/views/blog/Post.vue'),
+        },
+      ],
+    },
   ],
 });
