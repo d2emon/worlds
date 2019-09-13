@@ -1,57 +1,73 @@
 <template>
   <div id="blog-post">
-    <h1>{{ post.data.title }}</h1>
-    <h4>{{ post.data.author.firstName }} {{ post.data.author.lastName }}</h4>
-    <div v-html="post.data.body"></div>
-    <router-link
-      v-if="post.meta.previousPost"
-      :to="`/blog/${post.meta.previousPost.slug}`"
-      class="button"
+    <v-card
+      v-if="post && post.data"
     >
-      {{ post.meta.previousPost.title }}
-    </router-link>
-    <router-link
-      v-if="post.meta.nextPost"
-      :to="`/blog/${post.meta.nextPost.slug}`"
-      class="button"
-    >
-      {{ post.meta.nextPost.title }}
-    </router-link>
+      <v-card-title>
+        <h1>{{ post.data.title }}</h1>
+        <h4 v-if="post.data.author">
+          {{ post.data.author.firstName }} {{ post.data.author.lastName }}
+        </h4>
+      </v-card-title>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          text
+        >
+          Edit
+        </v-btn>
+        <v-btn
+          text
+        >
+          Delete
+        </v-btn>
+      </v-card-actions>
+      <v-container>
+        <v-card-text v-html="post.data.html"></v-card-text>
+      </v-container>
+      <v-card-actions
+        v-if="post.meta"
+      >
+        <v-btn
+          v-if="post.meta.previousPost"
+          :to="`/blog/${post.meta.previousPost.slug}`"
+        >
+          {{ post.meta.previousPost.title }}
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+          v-if="post.meta.nextPost"
+          :to="`/blog/${post.meta.nextPost.slug}`"
+        >
+          {{ post.meta.nextPost.title }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
   </div>
 </template>
 
 <script>
+import {
+  mapState,
+  mapActions,
+} from 'vuex';
+
 export default {
   name: 'BlogPost',
-  data: () => ({
-    post: {},
-  }),
+  computed: {
+    ...mapState('blog', ['post']),
+  },
   methods: {
-    getPost() {
-      const { slug } = this.$route.params;
-      this.post = {
-        slug,
-        data: {
-          title: 'Post 1',
-          author: {
-            firstName: 'First',
-            lastName: 'Last',
-          },
-          body: 'Body',
-        },
-        meta: {
-          previousPost: {},
-          nextPost: {},
-        },
-      };
-    },
+    ...mapActions('blog', ['fetchPost']),
   },
   created() {
-    this.getPost();
+    const { postId } = this.$route.params;
+    this.fetchPost(postId);
   },
   watch: {
     $route() {
-      this.getPost();
+      const { postId } = this.$route.params;
+      this.fetchPost(postId);
     },
   },
 };

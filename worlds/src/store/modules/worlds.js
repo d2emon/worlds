@@ -19,7 +19,7 @@ const mutations = {
   setPortal: (state, portal) => { state.portal = portal; },
   setWorlds: (state, worlds) => { state.worlds = worlds; },
   setWorld: (state, world) => { state.world = world; },
-  setWiki: (state, wiki) => { console.log(wiki); state.wiki = wiki; },
+  setWiki: (state, wiki) => { state.wiki = wiki; },
 };
 
 const actions = {
