@@ -2,7 +2,7 @@ import {
   Api,
 } from '@/helpers';
 
-const action = command => args => Api
+const action = command => args => Api.back
   .get(`/walk/${command}${args ? `/${args}` : ''}`)
   .then(({ data }) => data);
 
