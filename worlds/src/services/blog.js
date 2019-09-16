@@ -1,3 +1,7 @@
+import {
+  Api,
+} from '@/helpers';
+
 const __posts = [
   {
     id: 1,
@@ -61,6 +65,8 @@ const filterFields = fields => post => Object.keys(post).reduce(
 );
 
 export default {
+  getIndex: () => Api.blog.get('/')
+    .then(({ data }) => data),
   getPosts: () => Promise.resolve(__posts)
     .then(posts => posts.map(filterFields(briefFields))),
   getPost: postId => Promise.resolve(__posts.find(post => post.slug === postId))

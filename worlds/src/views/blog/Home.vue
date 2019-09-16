@@ -1,19 +1,35 @@
 <template>
   <div id="blog-home">
-    <h1>{{ pageTitle }}</h1>
+    <h2 v-if="user">Hello, {{ user.username }}!</h2>
 
     <v-container>
+      <v-layout row wrap>
+        <v-flex
+          xs12
+          v-for="post in posts"
+          :key="`post--${post.id}`"
+        >
+          <v-container>
+            <v-card>
+              <v-card-text>
+                {{post.author.username}} says: <strong>{{post.body}}</strong>
+              </v-card-text>
+            </v-card>
+          </v-container>
+        </v-flex>
+      </v-layout>
+
       <transition-group
         class="layout row wrap blog__feed"
         name="preview"
       >
         <v-flex
           xs3
-          v-for="post in posts"
+          v-for="post in oldPosts"
           :key="`post--${post.slug}`"
         >
           <v-container>
-            <v-card :class="classes">
+            <v-card>
               <router-link
                 :to="`/blog/${post.slug}`"
               >
@@ -33,7 +49,6 @@
 
                   <transition name="fade">
                     <figcaption
-                      v-if="!reading"
                       class="preview__title"
                     >
                       {{ post.title }}
@@ -44,7 +59,6 @@
 
               <transition name="fade">
                 <v-container
-                  v-if="!reading"
                   class="preview__details"
                 >
                   <h5 class="preview__meta">
@@ -85,11 +99,12 @@ import {
 
 export default {
   name: 'BlogHome',
-  data: () => ({
-    pageTitle: 'Blog',
-  }),
   computed: {
-    ...mapState('blog', ['posts']),
+    ...mapState('blog', [
+      'user',
+      'posts',
+      'oldPosts',
+    ]),
   },
   methods: {
     ...mapActions('blog', ['fetchPosts']),

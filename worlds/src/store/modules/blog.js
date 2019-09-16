@@ -6,15 +6,30 @@ import {
 export default {
   namespaced: true,
   state: {
+    title: '',
+    user: null,
     posts: [],
+    oldPosts: [],
     post: null,
   },
   getters: {},
   mutations: {
-    setPosts: (state, posts) => { state.posts = posts; },
+    setBlog: (state, {
+      title,
+      user,
+      posts,
+    }) => {
+      state.title = title;
+      state.user = user;
+      state.posts = posts;
+    },
+    setPosts: (state, posts) => { state.oldPosts = posts; },
     setPost: (state, post) => { state.post = post; },
   },
   actions: {
+    fetchIndex: ({ commit }) => blogService
+      .getIndex()
+      .then(blog => commit('setBlog', blog)),
     fetchPosts: ({ commit }) => blogService
       .getPosts()
       .then(posts => commit('setPosts', posts)),

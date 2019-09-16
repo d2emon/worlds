@@ -109,7 +109,7 @@ const planet = {
 };
 
 export default {
-  getWorlds: () => Api
+  getWorlds: () => Api.back
     .get('/api/worlds')
     .then(({ data }) => data.worlds)
     .then(items => items.map(filterFields(world.fields)))
@@ -127,7 +127,7 @@ export default {
       image: image || imageUrl,
       // url: worldUrl(slug),
     }))),
-  getWorld: worldId => Api
+  getWorld: worldId => Api.back
     .get(`/api/worlds/world/${worldId}`)
     .then(({ data }) => data.world)
     .then(filterFieldsWithData(world.fields))
@@ -143,7 +143,7 @@ export default {
       pages: normalizePages(`${url}/wiki`, pages),
       url,
     })),
-  getPlanet: (worldId, planetId) => Api
+  getPlanet: (worldId, planetId) => Api.back
     .get(`/api/worlds/world/${worldId}/planet/${planetId}`)
     .then(({ data }) => data.planet)
     .then(filterFields(planet.fields))
@@ -162,7 +162,7 @@ export default {
       },
       url,
     })),
-  getWiki: params => Api
+  getWiki: params => Api.back
     .get(wikiLink(params))
     .then(({ data }) => data.wiki),
 };
