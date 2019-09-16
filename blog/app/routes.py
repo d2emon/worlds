@@ -1,5 +1,5 @@
 from app import app
-from flask import jsonify
+from flask import jsonify, request
 import uuid
 
 
@@ -65,3 +65,17 @@ def index():
         'user': user,
         'posts': posts,
     })
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    form = request.form
+    try:
+        if not form.get('username'):
+            raise ValueError('Username is required')
+        if not form.get('password'):
+            raise ValueError('Password is required')
+    except ValueError as e:
+        return jsonify({'error': str(e)})
+
+    return jsonify({'result': "Login requested for user {username}, remember_me={rememberMe}".format(**form)})

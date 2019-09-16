@@ -67,6 +67,8 @@ const filterFields = fields => post => Object.keys(post).reduce(
 export default {
   getIndex: () => Api.blog.get('/')
     .then(({ data }) => data),
+  postLogin: form => Api.blog.post('/login', form)
+    .then(console.log),
   getPosts: () => Promise.resolve(__posts)
     .then(posts => posts.map(filterFields(briefFields))),
   getPost: postId => Promise.resolve(__posts.find(post => post.slug === postId))
