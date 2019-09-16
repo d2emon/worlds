@@ -1,12 +1,12 @@
-FROM python:3
+FROM python:3-alpine
 
 WORKDIR /app
 
-VOLUME . /app
+COPY . /app
 
-VOLUME ./config.py /app/config.py
+RUN apk add build-base python-dev py-pip jpeg-dev zlib-dev
 
-VOLUME ./media /media
+ENV LIBRARY_PATH=/lib:/usr/lib
 
 RUN pip install -r requirements.txt
 
