@@ -95,6 +95,11 @@ export default new Router({
           component: () => import('@/views/blog/Home.vue'),
         },
         {
+          path: 'login',
+          name: 'blog-log-in',
+          component: () => import('@/views/blog/Login.vue'),
+        },
+        {
           path: ':postId',
           name: 'blog-post',
           component: () => import('@/views/blog/Post.vue'),

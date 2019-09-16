@@ -14,13 +14,13 @@
           to="/"
           icon
         >
-          <v-icon>view_module</v-icon>
+          <v-icon>mdi-view-module</v-icon>
         </v-btn>
         <v-btn
           to="/random-world"
           icon
         >
-          <v-icon>gesture</v-icon>
+          <v-icon>mdi-gesture</v-icon>
         </v-btn>
 
         <v-spacer />

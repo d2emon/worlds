@@ -30,6 +30,9 @@ export default {
     fetchIndex: ({ commit }) => blogService
       .getIndex()
       .then(blog => commit('setBlog', blog)),
+    doLogin: ({}, form) => blogService
+      .postLogin(form)
+      .then(console.log),
     fetchPosts: ({ commit }) => blogService
       .getPosts()
       .then(posts => commit('setPosts', posts)),
