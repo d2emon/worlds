@@ -1,10 +1,41 @@
 <template>
-  <v-container>
-    <h1 v-if="title">{{ title }} - Blog</h1>
-    <h1 v-else>Welcome to Blog!</h1>
+  <v-card light>
+    <v-toolbar light>
+      <v-toolbar-title v-if="title">{{ title }} - Blog</v-toolbar-title>
+      <v-toolbar-title v-else>Blog</v-toolbar-title>
+
+      <div class="flex-grow-1"></div>
+
+      <v-toolbar-items>
+        <v-btn
+          text
+          exact
+          to="/blog/"
+        >
+          Home
+        </v-btn>
+        <v-btn
+          text
+          exact
+          to="/blog/login"
+        >
+          Login
+        </v-btn>
+      </v-toolbar-items>
+    </v-toolbar>
+
+    <v-container v-if="messages && messages.length">
+      <v-alert
+        v-for="(message, messageId) in messages"
+        :key="`message-${messageId}`"
+        type="info"
+      >
+        {{message}}
+      </v-alert>
+    </v-container>
 
     <router-view />
-  </v-container>
+  </v-card>
 </template>
 
 <script>
@@ -18,6 +49,7 @@ export default {
   computed: {
     ...mapState('blog', [
       'title',
+      'messages',
     ]),
   },
   methods: {

@@ -64,11 +64,17 @@ const filterFields = fields => post => Object.keys(post).reduce(
   {},
 );
 
+const makeForm = (data) => {
+  const form = new FormData();
+  Object.keys(data).forEach(key => form.append(key, data[key]));
+  return form;
+};
+
 export default {
   getIndex: () => Api.blog.get('/')
     .then(({ data }) => data),
-  postLogin: form => Api.blog.post('/login', form)
-    .then(console.log),
+  postLogin: values => Api.blog.post('/login', makeForm(values))
+    .then(({ data }) => data),
   getPosts: () => Promise.resolve(__posts)
     .then(posts => posts.map(filterFields(briefFields))),
   getPost: postId => Promise.resolve(__posts.find(post => post.slug === postId))
