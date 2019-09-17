@@ -1,6 +1,12 @@
 <template>
-  <div id="blog-home">
-    <h2 v-if="user">Hello, {{ user.username }}!</h2>
+  <v-card
+    id="blog-home"
+    flat
+    light
+  >
+    <v-card-title>
+      <h2 v-if="user">Hello, {{ user.username }}!</h2>
+    </v-card-title>
 
     <v-container>
       <v-layout row wrap>
@@ -88,7 +94,7 @@
         </v-flex>
       </transition-group>
     </v-container>
-  </div>
+  </v-card>
 </template>
 
 <script>

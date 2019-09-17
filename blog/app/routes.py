@@ -70,12 +70,13 @@ def index():
 @app.route('/login', methods=['POST'])
 def login():
     form = request.form
-    try:
-        if not form.get('username'):
-            raise ValueError('Username is required')
-        if not form.get('password'):
-            raise ValueError('Password is required')
-    except ValueError as e:
-        return jsonify({'error': str(e)})
-
-    return jsonify({'result': "Login requested for user {username}, remember_me={rememberMe}".format(**form)})
+    errors = {}
+    if not form.get('username'):
+        errors['username'] = 'Username is required'
+    if not form.get('password'):
+        errors['password'] = 'Password is required'
+    if len(errors):
+        return jsonify({'errors': errors})
+    return jsonify({
+        'result': "Login requested for user {username}, remember_me={rememberMe}".format(**form)
+    })

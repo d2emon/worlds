@@ -1,45 +1,57 @@
 <template>
-  <v-row justify="center">
-    <v-col md="4">
-      <v-card>
-        <v-card-title>Sign In</v-card-title>
-        <v-container>
-          <v-form
-            ref="loginForm"
-            v-model="valid"
-          >
-            <v-text-field
-              v-model="username"
-              :rules="usernameRules"
-              label="Username"
-            ></v-text-field>
-            <v-text-field
-              v-model="password"
-              :rules="passwordRules"
-              label="Password"
-            ></v-text-field>
-            <v-checkbox
-              v-model="rememberMe"
-              :rules="[v => true]"
-              label="Remember Me"
-            ></v-checkbox>
-            <v-btn
-              :disabled="!valid"
-              color="success"
-              class="mr-4"
-              @click="validate"
+  <v-card
+    flat
+    dark
+  >
+    <v-row justify="center">
+      <v-col md="4">
+        <v-card light>
+          <v-card-title>Sign In</v-card-title>
+          <v-container>
+            <v-form
+              ref="loginForm"
+              v-model="valid"
             >
-              Sign In
-            </v-btn>
-          </v-form>
-        </v-container>
-      </v-card>
-    </v-col>
-  </v-row>
+              <v-text-field
+                v-model="username"
+                :rules="usernameRules"
+                :error-messages="loginErrors.username"
+                label="Username"
+              ></v-text-field>
+              <v-text-field
+                type="password"
+                v-model="password"
+                :rules="passwordRules"
+                :error-messages="loginErrors.password"
+                label="Password"
+              ></v-text-field>
+              <v-checkbox
+                v-model="rememberMe"
+                :rules="[v => true]"
+                :error-messages="loginErrors.rememberMe"
+                label="Remember Me"
+              ></v-checkbox>
+              <v-btn
+                :disabled="!valid"
+                color="success"
+                class="mr-4"
+                @click="validate"
+              >
+                Sign In
+              </v-btn>
+            </v-form>
+          </v-container>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-card>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import {
+  mapState,
+  mapActions,
+} from 'vuex';
 
 export default {
   name: 'Login',
@@ -59,18 +71,26 @@ export default {
       v => (v && v.length <= 32) || 'Password must be less than 32 characters',
     ],
   }),
+  computed: {
+    ...mapState('blog', ['errors']),
+    loginErrors() { return this.errors ? (this.errors.login || {}) : {}; },
+  },
   methods: {
     ...mapActions('blog', ['doLogin']),
     validate() {
       if (this.$refs.loginForm.validate()) {
-        console.log('validate');
         this.doLogin({
           username: this.username,
           password: this.password,
           rememberMe: this.rememberMe,
-        });
+        })
+          .then((result) => {
+            if (result) {
+              this.$router.push('/blog/');
+            }
+          });
       }
-    }
+    },
   },
 };
 </script>

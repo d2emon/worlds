@@ -8,6 +8,8 @@ export default {
   state: {
     title: '',
     user: null,
+    messages: [],
+    errors: {},
     posts: [],
     oldPosts: [],
     post: null,
@@ -23,6 +25,13 @@ export default {
       state.user = user;
       state.posts = posts;
     },
+    setMessages: (state, messages) => { state.messages = messages; },
+    setErrors: (state, { form, errors }) => {
+      state.errors = {
+        ...state.errors,
+        [form]: errors,
+      };
+    },
     setPosts: (state, posts) => { state.oldPosts = posts; },
     setPost: (state, post) => { state.post = post; },
   },
@@ -30,9 +39,13 @@ export default {
     fetchIndex: ({ commit }) => blogService
       .getIndex()
       .then(blog => commit('setBlog', blog)),
-    doLogin: ({}, form) => blogService
+    doLogin: ({ commit }, form) => blogService
       .postLogin(form)
-      .then(console.log),
+      .then(({ result, errors = [] }) => {
+        commit('setMessages', result ? [result] : []);
+        commit('setErrors', { form: 'login', errors });
+        return !!result && errors.length <= 0;
+      }),
     fetchPosts: ({ commit }) => blogService
       .getPosts()
       .then(posts => commit('setPosts', posts)),
