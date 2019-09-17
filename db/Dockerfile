@@ -8,10 +8,14 @@ COPY . /app
 
 # ENV LIBRARY_PATH=/lib:/usr/lib
 
+ENV FLASK_APP=run.py
+
 RUN pip install -r requirements.txt
 
 EXPOSE 5000
 
 ENTRYPOINT ["python"]
+
+# RUN flask db init
 
 CMD ["run.py"]
