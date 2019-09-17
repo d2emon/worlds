@@ -1,6 +1,7 @@
+import requests
+import uuid
 from app import app
 from flask import jsonify, request
-import uuid
 from .forms import LoginForm
 
 
@@ -72,9 +73,43 @@ def index():
 def login():
     form = LoginForm(request.form)
     form.validate()
+
+    client = requests.session()
+
+    r = client.get('http://db:5000/api')
+    csrf_token = r.json().get('csrf_token')
+
+    r = client.post(
+        'http://db:5000/api/login',
+        data={
+            'csrf_token': csrf_token,
+            'username': form.username.data,
+            'password': form.password.data,
+            'remember_me': form.remember_me.data,
+        }
+    )
+    data = r.json()
+
+    authenticated = data.get('authenticated')
+    error = data.get('error')
+
+    messages = []
+    if authenticated:
+        messages.append("Login requested for user {username}, remember_me={remember_me}".format(**form.data))
+    if error:
+        messages.append(error)
+
     return jsonify({
         'result':
             (len(form.errors) == 0)
             and "Login requested for user {username}, remember_me={remember_me}".format(**form.data),
         'errors': form.errors,
+        'messages': messages,
     })
+
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    client = requests.session()
+    data = client.get('http://db:5000/api/logout').json()
+    return jsonify({'result': True})
