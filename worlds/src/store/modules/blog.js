@@ -44,7 +44,7 @@ export default {
       .then(({ result, errors = [] }) => {
         commit('setMessages', result ? [result] : []);
         commit('setErrors', { form: 'login', errors });
-        return !!result && errors.length <= 0;
+        return !!result && !Object.keys(errors).length;
       }),
     fetchPosts: ({ commit }) => blogService
       .getPosts()

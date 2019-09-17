@@ -15,20 +15,20 @@
               <v-text-field
                 v-model="username"
                 :rules="usernameRules"
-                :error-messages="loginErrors.username"
+                :error-messages="loginErrors['username']"
                 label="Username"
               ></v-text-field>
               <v-text-field
                 type="password"
                 v-model="password"
                 :rules="passwordRules"
-                :error-messages="loginErrors.password"
+                :error-messages="loginErrors['password']"
                 label="Password"
               ></v-text-field>
               <v-checkbox
                 v-model="rememberMe"
                 :rules="[v => true]"
-                :error-messages="loginErrors.rememberMe"
+                :error-messages="loginErrors['remember_me']"
                 label="Remember Me"
               ></v-checkbox>
               <v-btn
@@ -82,7 +82,7 @@ export default {
         this.doLogin({
           username: this.username,
           password: this.password,
-          rememberMe: this.rememberMe,
+          remember_me: this.rememberMe,
         })
           .then((result) => {
             if (result) {
