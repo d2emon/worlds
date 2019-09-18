@@ -18,6 +18,6 @@ EXPOSE 5000
 
 ENTRYPOINT ["python"]
 
-RUN flask db upgrade
+CMD flask db upgrade
 
 CMD ["run.py"]

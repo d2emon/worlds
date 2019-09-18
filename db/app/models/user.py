@@ -3,6 +3,14 @@ from datetime import datetime
 from flask_login import UserMixin
 from hashlib import md5
 from werkzeug.security import generate_password_hash, check_password_hash
+from .post import Post
+
+
+followers = db.Table(
+    'followers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('user.user_id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('user.user_id')),
+)
 
 
 class User(UserMixin, db.Model):
@@ -12,7 +20,19 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
+    posts = db.relationship(
+        'Post',
+        backref='author',
+        lazy='dynamic',
+    )
+    followed = db.relationship(
+        'User',
+        secondary=followers,
+        primaryjoin=(followers.c.follower_id == user_id),
+        secondaryjoin=(followers.c.followed_id == user_id),
+        backref=db.backref('followers', lazy='dynamic'),
+        lazy='dynamic',
+    )
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -29,6 +49,29 @@ class User(UserMixin, db.Model):
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
+
+    def follow(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
+
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.followed.remove(user)
+
+    def is_following(self, user):
+        return self.followed.filter(followers.c.followed_id == user.user_id).count() > 0
+
+    def followed_posts(self):
+        return Post.query.join(
+            followers,
+            (followers.c.followed_id == Post.user_id),
+        ).filter(
+            followers.c.follower_id == self.user_id
+        ).union(
+            Post.query.filter_by(user_id=self.user_id)
+        ).order_by(
+            Post.timestamp.desc()
+        )
 
 
 @login.user_loader
