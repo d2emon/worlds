@@ -1,12 +1,12 @@
 import uuid
 from app import app, db
-from app.models import User
+from app.models import Post, User
 from datetime import datetime
 from flask import flash, jsonify, render_template, redirect, request, url_for
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_wtf.csrf import generate_csrf
 from werkzeug.urls import url_parse
-from .forms import EditProfileForm, LoginForm, RegistrationForm
+from .forms import EditProfileForm, LoginForm, PostForm, RegistrationForm
 
 
 @app.before_request
@@ -16,66 +16,26 @@ def before_request():
         db.session.commit()
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!',
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!',
-        },
-        {
-            'author': {'username': 'Hippolite'},
-            'body': 'People=shit!',
-        },
-        {
-            'id': uuid.uuid4(),
-            'slug': 'post-1',
-            'author': {
-                'firstName': 'First',
-                'lastName': 'Last',
-            },
-            'title': 'Post 1',
-            'date': '01 May 2017',
-            'summary': 'Post 1',
-            'body': 'Post',
-            'image': 'https://image.ibb.co/bF9iO5/1.jpg',
-        },
-        {
-            'id': uuid.uuid4(),
-            'slug': 'post-2',
-            'author': {
-                'firstName': 'First',
-                'lastName': 'Last',
-            },
-            'title': 'Post 2',
-            'date': '01 May 2017',
-            'summary': 'Post 2',
-            'body': 'Post',
-            'image': 'https://image.ibb.co/bF9iO5/1.jpg',
-        },
-        {
-            'id': uuid.uuid4(),
-            'slug': 'post-3',
-            'author': {
-                'firstName': 'First',
-                'lastName': 'Last',
-            },
-            'title': 'Post 3',
-            'date': '01 May 2017',
-            'summary': 'Post 3',
-            'body': 'Post',
-            'image': 'https://image.ibb.co/bF9iO5/1.jpg',
-        },
-    ]
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(
+            body=form.post.data,
+            author=current_user,
+        )
+        db.session.add(post)
+        db.session.commit()
+
+        flash('Your post is now live!')
+        return redirect(url_for('index'))
+    posts = current_user.followed_posts().all()
     return render_template(
         'index.html',
         title="Home",
+        form=form,
         posts=posts,
     )
 
@@ -213,6 +173,16 @@ def unfollow(username):
     db.session.commit()
     flash('You are not following {}!'.format(username))
     return redirect(url_for('user', username=username))
+
+
+@app.route('/explore')
+def explore():
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template(
+        'index.html',
+        title="Explore",
+        posts=posts,
+    )
 
 
 # API
