@@ -16,6 +16,8 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
+    POSTS_PER_PAGE = 25
+
     # Secret key
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'blog-secret-key'
 
