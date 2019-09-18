@@ -9,6 +9,8 @@ COPY . /app
 # ENV LIBRARY_PATH=/lib:/usr/lib
 
 ENV FLASK_APP=run.py
+ENV MAIL_SERVER=mail
+ENV MAIL_PORT=8025
 
 RUN pip install -r requirements.txt
 

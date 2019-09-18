@@ -24,15 +24,23 @@ services:
       - "./worlds-server:/app"
       - "./config.py:/app/config.py"
       - "./media:/media"
+      - "./log:/app/log"
+  mail:
+    build: ./mail
+    ports:
+      - "8025:8025"
   db:
     build: ./db
     environment:
       - FLASK_DEBUG=1
       - FLASK_ENV=development
+    links:
+      - mail
     ports:
       - "5002:5000"
     volumes:
       - "./db:/app"
+      - "./log:/app/log"
   blog:
     build: ./blog
     environment:
@@ -44,3 +52,4 @@ services:
       - "5001:5000"
     volumes:
       - "./blog:/app"
+      - "./log:/app/log"
