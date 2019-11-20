@@ -1,0 +1,17 @@
+[General]
+type = wiki
+tags = фентези
+order = 8
+creationdatetime = 2017-06-24 00:32:34.114000
+datetime = 2017-06-24 00:33:26.854000
+cursorposition = 22
+
+[wiki]
+md5_hash = d9a67ee6ad2ea22cddb9da03fb3e48bf
+
+[Misc]
+pageindex = 1
+
+[Tree]
+expand = False
+
