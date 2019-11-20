@@ -181,19 +181,19 @@ WORLDS_DATA = [
     #     title='Cyberpunk20XX',
     #     slug='cyberpunk-20xx',
     # ),
-    {
-        'title': 'Dangerous Fantasy 2',
-        'image': 'dangerous-fantasy-2/images/df2.gif',
-        'slug': 'dangerous-fantasy-2',
-        'index_page': 'dangerous-fantasy-2/index.md',
-    },
-    {
-        # !
-        'title': 'Dark Sun',
-        'image': 'dark-sun/images/ds-logos.gif',
-        'slug': 'dark-sun',
-        'index_page': 'dark-sun/index.md',
-    },
+    # {
+    #     'title': 'Dangerous Fantasy 2',
+    #     'image': 'dangerous-fantasy-2/images/df2.gif',
+    #     'slug': 'dangerous-fantasy-2',
+    #     'index_page': 'dangerous-fantasy-2/index.md',
+    # },
+    # {
+    #     # !
+    #     'title': 'Dark Sun',
+    #     'image': 'dark-sun/images/ds-logos.gif',
+    #     'slug': 'dark-sun',
+    #     'index_page': 'dark-sun/index.md',
+    # },
     {'title': 'Dawn of the Emperors'},
     {'title': 'Deadlands'},
 
@@ -207,13 +207,13 @@ WORLDS_DATA = [
     #     'slug': 'dragon-fist',
     #     'index_page': 'dragon-fist/index.md',
     # },
-    {
-        # !
-        'title': 'Dragonlance',
-        'image': 'dragonlance/images/fa-logos.gif',
-        'slug': 'dragonlance',
-        'index_page': 'dragonlance/index.md',
-    },
+    # {
+    #     # !
+    #     'title': 'Dragonlance',
+    #     'image': 'dragonlance/images/fa-logos.gif',
+    #     'slug': 'dragonlance',
+    #     'index_page': 'dragonlance/index.md',
+    # },
     {'title': 'Dragonstar'},
     # {
     #     'title': 'Eberron',
