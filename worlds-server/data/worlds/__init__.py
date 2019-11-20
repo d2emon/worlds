@@ -150,26 +150,20 @@ WORLDS_DATA = [
 
     {'title': 'Al-Qadim'},
     {'title': 'Ashen Stars'},
-    {
-        'title': 'Assassin\'s Creed',
-        'image': 'assassins-creed/images/assassins.jpg',
-        'slug': 'assassins-creed',
-        'index_page': 'assassins-creed/index.md',
-    },
-    {
-        # !
-        'title': 'Birthright',
-        'image': 'birthright/images/br-logos.gif',
-        'slug': 'birthright',
-        'index_page': 'birthright/index.md',
-    },
-    {
-        # !
-        'title': 'Blackmoor',
-        'image': 'blackmoor/images/Blackmoor_logo.png',
-        'slug': 'blackmoor',
-        'index_page': 'blackmoor/index.md',
-    },
+    # {
+    #     # !
+    #     'title': 'Birthright',
+    #     'image': 'birthright/images/br-logos.gif',
+    #     'slug': 'birthright',
+    #     'index_page': 'birthright/index.md',
+    # },
+    # {
+    #     # !
+    #     'title': 'Blackmoor',
+    #     'image': 'blackmoor/images/Blackmoor_logo.png',
+    #     'slug': 'blackmoor',
+    #     'index_page': 'blackmoor/index.md',
+    # },
     {'title': 'Bulldogs!'},
     # {
     #     'title': 'Council of Wyrms',
@@ -183,10 +177,10 @@ WORLDS_DATA = [
     #     'slug': 'creature-crucible',
     #     'index_page': 'creature-crucible/index.md',
     # },
-    SluggedWorld(
-        title='Cyberpunk20XX',
-        slug='cyberpunk-20xx',
-    ),
+    # SluggedWorld(
+    #     title='Cyberpunk20XX',
+    #     slug='cyberpunk-20xx',
+    # ),
     {
         'title': 'Dangerous Fantasy 2',
         'image': 'dangerous-fantasy-2/images/df2.gif',
