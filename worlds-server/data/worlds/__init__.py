@@ -235,19 +235,19 @@ WORLDS_DATA = [
     #     'link': 'https://rpg.fandom.com/ru/wiki/Forgotten_Realms',
     # },
     {'title': 'Gamma World'},
-    {
-        'title': 'Ghostwalk',
-        'image': 'ghostwalk/images/Ghostwalk_coverthumb.jpg',
-        'slug': 'ghostwalk',
-        'index_page': 'ghostwalk/index.md',
-    },
-    {
-        # !
-        'title': 'Greyhawk',
-        'image': 'greyhawk/images/gh-logos.gif',
-        'slug': 'greyhawk',
-        'index_page': 'greyhawk/index.md',
-    },
+    # {
+    #     'title': 'Ghostwalk',
+    #     'image': 'ghostwalk/images/Ghostwalk_coverthumb.jpg',
+    #     'slug': 'ghostwalk',
+    #     'index_page': 'ghostwalk/index.md',
+    # },
+    # {
+    #     # !
+    #     'title': 'Greyhawk',
+    #     'image': 'greyhawk/images/gh-logos.gif',
+    #     'slug': 'greyhawk',
+    #     'index_page': 'greyhawk/index.md',
+    # },
     {'title': 'Hellfrost'},
     {'title': 'Hellfrost: Land of Fire'},
     {'title': 'Hollow World'},
@@ -261,20 +261,20 @@ WORLDS_DATA = [
     #     'slug': 'jakandor',
     #     'index_page': 'jakandor/index.md',
     # },
-    {
-        # !
-        'title': 'Kingdoms of Kalamar',
-        'image': 'kingdoms-of-kalamar/images/kk-logos.gif',
-        'slug': 'kingdoms-of-kalamar',
-        'index_page': 'kingdoms-of-kalamar/index.md',
-    },
-    {
-        # !
-        'title': 'Lankhmar',
-        'image': 'lankhmar/images/lm-logos.gif',
-        'slug': 'lankhmar',
-        'index_page': 'lankhmar/index.md',
-    },
+    # {
+    #     # !
+    #     'title': 'Kingdoms of Kalamar',
+    #     'image': 'kingdoms-of-kalamar/images/kk-logos.gif',
+    #     'slug': 'kingdoms-of-kalamar',
+    #     'index_page': 'kingdoms-of-kalamar/index.md',
+    # },
+    # {
+    #     # !
+    #     'title': 'Lankhmar',
+    #     'image': 'lankhmar/images/lm-logos.gif',
+    #     'slug': 'lankhmar',
+    #     'index_page': 'lankhmar/index.md',
+    # },
     {'title': 'Legends of Anglerre'},
     {
         'title': 'Mahasarpa',
