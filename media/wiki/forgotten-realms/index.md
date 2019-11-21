@@ -58,12 +58,15 @@ Forgotten Realms (Забытые Королевства) — сеттинг дл
     * [Официальный сайт](http://www.wizards.com/dnd/ForgottenRealms.aspx)
     * [Forgotten Realms Wikia](https://forgottenrealms.fandom.com/wiki/Main_Page)
     * [Кэндлкип](http://www.candlekeep.com/) — англоязычный фанатский сайт
+    * https://www.realmshelps.net/index.shtml
 * На русском
     * [Wiki Aerie](http://wiki.aerie.ru/) — русский вики-сайт по миру Забытых Королевств
     * [Забытые Королевства](http://fr.dungeons.ru/) — информация и переводы
     * [Forgotten Lands](http://oranj.3dn.ru/) — информация по Забытым Королевствам
 
 ----
+
+![](./images/1_11-dungeons--dragons.jpg)
 
 Created by author and game designer Ed Greenwood as his personal campaign and
 detailed in a long series of articles in Dragon Magazine, Forgotten Realms
