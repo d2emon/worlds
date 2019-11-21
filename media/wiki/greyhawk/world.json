@@ -1,4 +1,5 @@
 {
     "title": "Greyhawk",
-    "image": "gh-logos.gif"
+    "image": "gh-logos.gif",
+    "order": 90
 }
