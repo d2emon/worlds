@@ -1,0 +1,17 @@
+[General]
+type = wiki
+tags = фентези, хоррор
+order = 21
+creationdatetime = 2016-04-06 16:05:34.084438
+datetime = 2016-09-18 00:47:36.518706
+cursorposition = 3191
+
+[wiki]
+md5_hash = b002502b0e6772821750833289f775c0
+
+[Misc]
+pageindex = 1
+
+[Tree]
+expand = False
+
