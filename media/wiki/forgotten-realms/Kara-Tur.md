@@ -1,0 +1,3 @@
+# Kara-Tur
+
+An oriental setting loosely based on mythical and medieval East and Southeast Asia, featuring advanced and mystical civilizations populated by martial warriors, samurais, ninjas, spirit folk and other fantastical creatures. It was introduced in the original Oriental Adventures rulebook published in the 1980s. It later became part of the Forgotten Realms and was eventually placed on the eastern edge of Toril. The lands of Kara-Tur are split between several peoples and kingdoms, the most powerful of which is Shou Lung, a sprawling empire (inspired by historical China) and arguably the largest nation on the Forgotten Realms.
