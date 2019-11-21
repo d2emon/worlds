@@ -4,5 +4,6 @@
     "en": "https://warhammerfantasy.fandom.com/",
     "ru": "https://warhammerfantasy.fandom.com/ru/"
   },
-  "lurkmore": false
+  "lurkmore": false,
+  "order": 71
 }
