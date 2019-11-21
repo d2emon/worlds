@@ -276,59 +276,59 @@ WORLDS_DATA = [
     #     'index_page': 'lankhmar/index.md',
     # },
     {'title': 'Legends of Anglerre'},
-    {
-        'title': 'Mahasarpa',
-        'image': 'mahasarpa/images/Mahasarpa.jpg',
-        'slug': 'mahasarpa',
-        'index_page': 'mahasarpa/index.md',
-    },
+    # {
+    #     'title': 'Mahasarpa',
+    #     'image': 'mahasarpa/images/Mahasarpa.jpg',
+    #     'slug': 'mahasarpa',
+    #     'index_page': 'mahasarpa/index.md',
+    # },
     {'title': 'Категория:Megaverse'},
     {'title': 'Mekton'},
     {'title': 'Mighty Fortress'},
 
-    {
-        'title': 'Mortal Kombat',
-        'image': 'mortal-kombat/images/MortalKombat.jpg',
-        'slug': 'mortal-kombat',
-        'index_page': 'mortal-kombat/index.md',
-    },
+    # {
+    #     'title': 'Mortal Kombat',
+    #     'image': 'mortal-kombat/images/MortalKombat.jpg',
+    #     'slug': 'mortal-kombat',
+    #     'index_page': 'mortal-kombat/index.md',
+    # },
     {'title': 'Mutant City Blues'},
-    {
-        # !
-        'title': 'Mystara',
-        'image': 'mystara/images/ms-logos.gif',
-        'slug': 'mystara',
-        'index_page': 'mystara/index.md',
-    },
+    # {
+    #     # !
+    #     'title': 'Mystara',
+    #     'image': 'mystara/images/ms-logos.gif',
+    #     'slug': 'mystara',
+    #     'index_page': 'mystara/index.md',
+    # },
     {'title': 'Mythic Vistas'},
     {'title': 'Necessary Evil'},
     {'title': 'Necropolis (Savage Worlds)'},
     {'title': 'Numenera'},
-    {
-        'title': 'Nentir Vale',
-        'image': 'nentir-vale/images/NentirVale.jpg',
-        'slug': 'nentir-vale',
-        'index_page': 'nentir-vale/index.md',
-    },
-    {
-        'title': 'Odyssey',
-        'image': 'odyssey/images/od-logos.gif',
-        'slug': 'odyssey',
-        'index_page': 'odyssey/index.md',
-    },
-    {
-        'title': 'Oriental Adventures',
-        'image': 'oriental-adventures/images/oa-logos.gif',
-        'slug': 'oriental-adventures',
-        'index_page': 'oriental-adventures/index.md',
-    },
+    # {
+    #     'title': 'Nentir Vale',
+    #     'image': 'nentir-vale/images/NentirVale.jpg',
+    #     'slug': 'nentir-vale',
+    #     'index_page': 'nentir-vale/index.md',
+    # },
+    # {
+    #     'title': 'Odyssey',
+    #     'image': 'odyssey/images/od-logos.gif',
+    #     'slug': 'odyssey',
+    #     'index_page': 'odyssey/index.md',
+    # },
+    # {
+    #     'title': '',
+    #     'image': 'oriental-adventures/images/oa-logos.gif',
+    #     'slug': 'oriental-adventures',
+    #     'index_page': 'oriental-adventures/index.md',
+    # },
     {'title': 'Paranoia'},
-    {
-        'title': 'Pelinore',
-        'image': 'pelinore/images/Pelinore.jpg',
-        'slug': 'pelinore',
-        'index_page': 'pelinore/index.md',
-    },
+    # {
+    #     'title': 'Pelinore',
+    #     'image': 'pelinore/images/Pelinore.jpg',
+    #     'slug': 'pelinore',
+    #     'index_page': 'pelinore/index.md',
+    # },
     {'title': 'Pirates of the Spanish Main'},
 
     # {
@@ -360,72 +360,72 @@ WORLDS_DATA = [
     #     'index_page': 'stalker/index.md',
     # },
     {'title': 'Savage Coast'},
-    {
-        'title': 'SCP Foundation',
-        'slug': 'scp-foundation',
-        'index_page': 'scp-foundation/index.md',
-    },
+    # {
+    #     'title': 'SCP Foundation',
+    #     'slug': 'scp-foundation',
+    #     'index_page': 'scp-foundation/index.md',
+    # },
     # {'title': 'Shadowrun', 'link': 'https://rpg.fandom.com/ru/wiki/Shadowrun'},
 
     {'title': 'Shaintar: Immortal Legends'},
     {'title': 'Spellbound Kingdoms'},
-    {
-        # !
-        'title': 'Spelljammer',
-        'image': 'spelljammer/images/sj-logos.gif',
-        'slug': 'spelljammer',
-        'index_page': 'spelljammer/index.md',
-    },
+    # {
+    #     # !
+    #     'title': 'Spelljammer',
+    #     'image': 'spelljammer/images/sj-logos.gif',
+    #     'slug': 'spelljammer',
+    #     'index_page': 'spelljammer/index.md',
+    # },
     {'title': 'Sundered Skies'},
     {'title': 'Terah'},
-    SluggedWorld(
-        title='The Elder Scrolls',
-        slug='the-elder-scrolls',
-    ),
-    {
-        'title': 'Thunder Rift',
-        'image': 'thunder-rift/images/ThunderRift.jpg',
-        'slug': 'thunder-rift',
-        'index_page': 'thunder-rift/index.md',
-    },
+    # SluggedWorld(
+    #     title='The Elder Scrolls',
+    #     slug='the-elder-scrolls',
+    # ),
+    # {
+    #     'title': 'Thunder Rift',
+    #     'image': 'thunder-rift/images/ThunderRift.jpg',
+    #     'slug': 'thunder-rift',
+    #     'index_page': 'thunder-rift/index.md',
+    # },
     {'title': 'Unhallowed Metropolis'},
     {'title': 'Urban Arcana'},
     # {'title': 'Vampire: The Masquerade', 'link': 'https://rpg.fandom.com/ru/wiki/Vampire:_The_Masquerade'},
 
     {'title': 'Vampire: The Requiem'},
-    {'title': 'Категория:Warcraft'},
-    {
-        'title': 'Warcraft',
-        'image': 'warcraft/images/wc-logos.gif',
-        'slug': 'warcraft',
-        'index_page': 'warcraft/index.md',
-    },
-    {'title': 'Warhammer'},
-    {
-        'title': 'Warhammer 40.000',
-        'slug': 'warhammer-40000',
-        'index_page': 'warhammer-40000/index.md',
-    },
-    SluggedWorld(
-        title='Warhammer Fantasy Battles',
-        slug='warhammer-fantasy',
-        image=None,
-
-        links={
-            'en': "https://warhammerfantasy.fandom.com/",
-            'ru': "https://warhammerfantasy.fandom.com/ru/",
-        },
-
-        lurkmore=False,
-    ),
+    # {'title': 'Категория:Warcraft'},
+    # {
+    #     'title': 'Warcraft',
+    #     'image': 'warcraft/images/wc-logos.gif',
+    #     'slug': 'warcraft',
+    #     'index_page': 'warcraft/index.md',
+    # },
+    # {'title': 'Warhammer'},
+    # {
+    #     'title': 'Warhammer 40.000',
+    #     'slug': 'warhammer-40000',
+    #     'index_page': 'warhammer-40000/index.md',
+    # },
+    # SluggedWorld(
+    #     title='Warhammer Fantasy Battles',
+    #     slug='warhammer-fantasy',
+    #     image=None,
+    #
+    #     links={
+    #         'en': "https://warhammerfantasy.fandom.com/",
+    #         'ru': "https://warhammerfantasy.fandom.com/ru/",
+    #     },
+    #
+    #     lurkmore=False,
+    # ),
     {'title': 'Weird Wars'},
     {'title': 'Werewolf: The Apocalypse'},
-    {
-        'title': 'Wilderlands of High Fantasy',
-        'image': 'wilderlands-of-high-fantasy/images/WilderlandsOfHighFantasy.jpg',
-        'slug': 'wilderlands-of-high-fantasy',
-        'index_page': 'wilderlands-of-high-fantasy/index.md',
-    },
+    # {
+    #     'title': 'Wilderlands of High Fantasy',
+    #     'image': 'wilderlands-of-high-fantasy/images/WilderlandsOfHighFantasy.jpg',
+    #     'slug': 'wilderlands-of-high-fantasy',
+    #     'index_page': 'wilderlands-of-high-fantasy/index.md',
+    # },
     {'title': 'World’s Largest Dungeon'},
     {
         'title': 'Авенхейм',
