@@ -1,4 +1,5 @@
 {
     "title": "Assassin's Creed",
-    "image": "assassins.jpg"
+    "image": "assassins.jpg",
+    "order": 100
 }
