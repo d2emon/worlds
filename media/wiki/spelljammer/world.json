@@ -1,4 +1,5 @@
 {
   "title": "Spelljammer",
-  "image": "sj-logos.gif"
+  "image": "sj-logos.gif",
+  "order": 76
 }
