@@ -1,4 +1,5 @@
 {
     "title": "Blackmoor",
-    "image": "Blackmoor_logo.png"
+    "image": "Blackmoor_logo.png",
+    "order": 98
 }
