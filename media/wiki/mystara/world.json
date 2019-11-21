@@ -1,4 +1,5 @@
 {
     "title": "Mystara",
-    "image": "ms-logos.gif"
+    "image": "ms-logos.gif",
+    "order": 85
 }
