@@ -1,4 +1,5 @@
 {
   "title": "Warcraft",
-  "image": "wc-logos.gif"
+  "image": "wc-logos.gif",
+  "order": 73
 }
