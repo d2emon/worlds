@@ -14,9 +14,10 @@ let state = {
 
 export const getState = () => state;
 
-export const setState = newState => new Promise(() => {
+export const setState = newState => new Promise((resolve) => {
   state = {
     ...state,
     ...newState,
   };
+  return resolve(state);
 });

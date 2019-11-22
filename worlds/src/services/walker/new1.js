@@ -9,6 +9,7 @@ import {
   sendMessage,
   sendWizardMessage,
 } from './events';
+import {setPlayer} from "./world";
 
 const mhitplayer = (monster, player) => null;
 const dumpstuff = (monster, location) => null;
@@ -25,20 +26,23 @@ export const woundMonster = (monster, damage = 0) => {
   const state = getState();
 
   const strength = monster.strength - (damage || 0);
-  setState({
+  setPlayer({
     playerId: monster.playerId,
     strength,
-  });
-
-  if (strength >= 0) {
-    mhitplayer(monster, state.playerId);
-  } else {
-    dumpstuff(monster, monster.location);
-    sendMessage(null, monster.location, `${monster.name} has just died`);
-    sendWizardMessage(`[ ${monster.name} has just died ]`);
-    setState({
-      playerId: monster.playerId,
-      name: '',
+  })
+    .then(() => {
+      if (strength >= 0) {
+        mhitplayer(monster, state.playerId);
+        return Promise.resolve();
+      } else {
+        dumpstuff(monster, monster.location);
+        sendMessage(null, monster.location, `${monster.name} has just died`);
+        sendWizardMessage(`[ ${monster.name} has just died ]`);
+        return setPlayer({
+          playerId: monster.playerId,
+          name: '',
+        });
+      }
     });
-  }
+
 };

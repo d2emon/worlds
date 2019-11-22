@@ -62,7 +62,7 @@ export const nextWord = () => {
 
 
 export const updatePlayer = () => {
-  if (!Global.iSetup) return;
+  if (!Global.iSetup) return Promise.resolve();
 
   const level = levelof(Global.score);
   if (level !== Global.level) {
@@ -77,7 +77,7 @@ export const updatePlayer = () => {
   if (Global.strength > 30 + 10 * Global.level) {
     Global.strength = 30 + 10 * Global.level;
   }
-  setPlayer({
+  return setPlayer({
     playerId: Global.playerId,
     strength: Global.strength,
     sex: Global.sex,
