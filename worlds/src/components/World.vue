@@ -6,7 +6,7 @@
     />
 
     <v-layout row wrap>
-      <v-flex xs4>
+      <v-flex xs4 md3>
         <world-summary
           v-if="world"
           class="mb-1"
@@ -50,19 +50,19 @@
                 </v-list>
               </v-card>
       </v-flex>
-        <v-flex xs8>
-            <slot />
+      <v-flex xs8 md9>
+        <slot />
 
-            <!-- Object.keys(world) -->
-            <!-- world.title -->
-            <!-- world.image -->
-            <!-- world.url -->
-            <!-- world.text -->
-            <!-- world.html -->
+        <!-- Object.keys(world) -->
+        <!-- world.title -->
+        <!-- world.image -->
+        <!-- world.url -->
+        <!-- world.text -->
+        <!-- world.html -->
 
-            <v-card-text
-              v-if="wiki"
-            >
+        <v-card-text
+          v-if="wiki"
+        >
               <wiki :wiki="wiki" />
             </v-card-text>
             <v-card-text

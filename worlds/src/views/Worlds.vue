@@ -1,6 +1,6 @@
 <template>
   <v-layout justify-center>
-    <v-flex xs12 sm9>
+    <v-flex xs12 xl9>
       <worlds-list :worlds="worlds" />
     </v-flex>
   </v-layout>
