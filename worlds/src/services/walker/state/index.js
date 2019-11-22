@@ -1,4 +1,5 @@
 import blood from './blood';
+import bprintf from './bprintf';
 
 let state = {
   playerId: 0,
@@ -10,6 +11,7 @@ let state = {
   toUpdate: false,
 
   ...blood,
+  ...bprintf,
 };
 
 export const getState = () => state;
