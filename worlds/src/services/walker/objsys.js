@@ -27,7 +27,7 @@ export const isCarriedBy = (item, player) => {
 
 export const findPlayerVisible = (name) => {
   const player = fpbns(name);
-  return (player && seeplayer(player)) ? player : null;
+  return Promise.resolve((player && seeplayer(player)) ? player : null);
 };
 
 export const findItemAvailable = name => fobnsys(name, 1, 0);

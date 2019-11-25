@@ -59,7 +59,9 @@ export const getItem = itemId => new Item(itemId);
 
 export const getPlayer = playerId => new Player(playerId);
 
-export const setPlayer = player => Promise.resolve(null);
+export const setItem = (itemId, item) => Promise.resolve(null);
+
+export const setPlayer = (playerId, player) => Promise.resolve(null);
 
 export const loadWorld = () => Promise.resolve({
   //
