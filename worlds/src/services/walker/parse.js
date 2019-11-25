@@ -1,14 +1,13 @@
+import addMessage, {
+  showFile,
+  visualName,
+} from './bprintf';
 import {
   sendWizardMessage,
 } from './events';
 import {
   setPlayer,
 } from './world';
-import {
-  bprintf,
-  _p,
-  _f,
-} from './messages';
 
 const levelof = () => 0;
 const disle3 = (level, sex) => '';
@@ -68,10 +67,10 @@ export const updatePlayer = () => {
   if (level !== Global.level) {
     Global.level = level;
     console.log(`${Global.name} to level ${level}`);
-    bprintf(`You are now ${Global.name} ${disle3(level, Global.sex)}`);
-    sendWizardMessage(`${_p(Global.name)} is now level ${Global.level}`);
+    addMessage(`You are now ${Global.name} ${disle3(level, Global.sex)}`);
+    sendWizardMessage(`${visualName(Global.name)} is now level ${Global.level}`);
     if (level === 10) {
-      bprintf(_f(Global.GWIZ));
+      addMessage(showFile(Global.GWIZ));
     }
   }
   if (Global.strength > 30 + 10 * Global.level) {

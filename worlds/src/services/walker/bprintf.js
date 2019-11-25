@@ -1,38 +1,44 @@
 import {
   error,
 } from './crapup';
-import {getState, setState} from "./state";
-import {getPlayer, saveWorld, setPlayer} from "./world";
-import {loose} from "./player";
-import {findPlayerVisible} from "./objsys";
+import {
+  getState,
+  setState,
+} from './state';
+import {
+  getPlayer,
+  saveWorld,
+} from './world';
+import {
+  loose,
+} from './player';
+import {
+  findPlayerVisible,
+} from './objsys';
 
-const addMessage = (message) => {
-  const {
-    messages,
-    name,
-  } = getState();
-  if (messages.length > 4095) {
-    loose();
-    console.log(`Buffer overflow on user ${name}`)
-    error('PANIC - Buffer overflow');
-  }
-  return setState({
-    messages: [
-      ...messages,
-      message,
-    ],
-  });
-};
-
-const bprintf = (message) => {
+const sendMessage = message => new Promise(() => {
   if (message.length > 255) {
-    console.log('Bprintf Short Buffer overflow');
-    error('Internal Error in BPRINTF')
+    console.error('Bprintf Short Buffer overflow');
+    return error('Internal Error in BPRINTF');
   }
-  return addMessage(message);
-};
 
-export default bprintf;
+  const messages = [
+    ...(getState().messages || []),
+    message,
+  ];
+
+  if (messages.length > 4095) {
+    console.error(`Buffer overflow on user ${getState().name}`);
+    return loose()
+      .then(() => error('PANIC - Buffer overflow'));
+  }
+
+  return setState({ messages });
+});
+
+const addMessage = message => sendMessage(message);
+
+export default addMessage;
 
 export const seePlayer = (player) => {
   const state = getState();
@@ -112,6 +118,15 @@ const ppnblind = (match, message) => {
 const pnotkb = isKeyboard => (match, message) => !isKeyboard
   ? message
   : '';
+
+export const showFile = filename => `[f]${filename}[/f]`;
+export const audio = message => `[d]${message}[/d]`;
+export const visual = (player, message) => `[s name=\"${player}\"]${message}[/s]`;
+export const visualName = player => `[p]${player}[/p]`;
+export const notDark = message => `[c]${message}[/c]`;
+export const notDeafName = player => `[P]${player}[/P]`;
+export const notBlindName = player => `[D]${player}[/D]`;
+export const notKeyboard = message => `[l]${message}[/l]`;
 
 const applySpecial = (message, isKeyboard=true) => message
   .replace(/\[f\]([^\[]{0,128})\[\/f\]/g, pfile)

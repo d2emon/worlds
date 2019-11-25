@@ -1,6 +1,4 @@
-import {
-  bprintf,
-} from './messages';
+import addMessage from './bprintf';
 import {
   getState,
   setState,
@@ -15,7 +13,7 @@ const close = file => Promise.resolve(null);
 
 export const sysReset = () => {
   if (tscale() !== 2) {
-    bprintf('There are other people on.... So it wont work!');
+    addMessage('There are other people on.... So it wont work!');
     return Promise.resolve();
   }
 
@@ -36,7 +34,7 @@ export const sysReset = () => {
     .then((u) => {
       const t = time();
       if (t - 3600 < u < t) {
-        bprintf('Sorry at least an hour must pass between resets');
+        addMessage('Sorry at least an hour must pass between resets');
         return;
       }
       doReset();

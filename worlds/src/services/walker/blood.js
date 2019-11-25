@@ -1,3 +1,6 @@
+import addMessage, {
+  visualName,
+} from './bprintf';
 import {
   getState,
   setState,
@@ -12,10 +15,6 @@ import {
   getPlayer, loadWorld, saveWorld,
   setPlayer,
 } from './world';
-import {
-  bprintf,
-  _p,
-} from './messages';
 import {
   updatePlayer,
 } from './parse';
@@ -66,13 +65,13 @@ const maxDamageByItem = (item) => {
 
 const breakItem = (item) => {
   if (!item) {
-    bprintf('What is that?');
+    addMessage('What is that?');
     return;
   }
 
   const event = onBreakItem[item.itemId];
   if (!event) {
-    bprintf('You can\'t do that');
+    addMessage('You can\'t do that');
     return;
   }
 
@@ -122,11 +121,11 @@ export const weapcom = (itemName) => {
       .then(() => throw new Error('That\'s not a weapon'));
   }
 
-  return Promise.all(
+  return Promise.all([
     setState({ weapon: item.itemId }),
     updatePlayer(),
-  )
-    .then(() => bprintf('OK...'));
+  ])
+    .then(() => addMessage('OK...'));
 };
 
 export const hitPlayer = (target, weaponId) => {
@@ -138,7 +137,9 @@ export const hitPlayer = (target, weaponId) => {
     playerId,
   } = getState();
   if (isCarriedBy(item, playerId)) {
-    bprintf(`You belatedly realise you dont have the ${item.name},and are forced to use your hands instead..`);
+    addMessage(
+      `You belatedly realise you dont have the ${item.name},and are forced to use your hands instead..`,
+    );
     item = null;
   }
 
@@ -164,12 +165,12 @@ export const hitPlayer = (target, weaponId) => {
       const toHit = 40 + 3 * state.level - ac;
       if (res < toHit) {
         const weaponMessage = item ? ` with the ${item.name}` : '';
-        bprintf(`You hit ${_p(player.name)} ${weaponMessage}`);
+        addMessage(`You hit ${visualName(player.name)} ${weaponMessage}`);
         const damage = randomPercent() % maxDamageByItem(item);
 
         const promises = [];
         if (player.strength < damage) {
-          bprintf('Your last blow did the trick');
+          addMessage('Your last blow did the trick');
 
           promises.push(setState({
             score: (player.strength >= 0)
@@ -187,10 +188,10 @@ export const hitPlayer = (target, weaponId) => {
           .then(() => setState({ score: state.score + (damage * 2) }))
           .then(updatePlayer);
       }
-      bprintf(`You missed ${_p(player.name)}`);
+      addMessage(`You missed ${visualName(player.name)}`);
       return playerWounded(player, item.itemId, 0);
     })
-    .catch(e => bprintf(e.message));
+    .catch(e => addMessage(e.message));
 };
 
 export const killcom = (target, weaponName = null, ...args) => Promise.resolve()
@@ -241,7 +242,7 @@ export const killcom = (target, weaponName = null, ...args) => Promise.resolve()
 
     return xwisc(weaponName);
   })
-  .catch(e => bprintf(e.message));
+  .catch(e => addMessage(e.message));
 
 export const bloodrcv = (data, enemyId, isMe) => {
   if (!isMe) return Promise.resolve();
@@ -258,10 +259,10 @@ export const bloodrcv = (data, enemyId, isMe) => {
       const item = getItem(data.weapon);
       const weaponMessage = item ? ` with the ${item.name}` : '';
       if (!data.damage) {
-        throw new Error(`${_p(enemy.name)} attacks you${weaponMessage}`);
+        throw new Error(`${visualName(enemy.name)} attacks you${weaponMessage}`);
       }
 
-      bprintf(`You are wounded by ${_p(enemy.name)}${weaponMessage}`);
+      addMessage(`You are wounded by ${visualName(enemy.name)}${weaponMessage}`);
 
       if (state.level < 10) {
         let {
@@ -271,7 +272,7 @@ export const bloodrcv = (data, enemyId, isMe) => {
         strength -= data.damage;
         if (enemy.playerId === 16) {
           score -= 100 * data.damage;
-          bprintf('You feel weaker, as the wraiths icy touch seems to drain your very life force');
+          addMessage('You feel weaker, as the wraiths icy touch seems to drain your very life force');
           if (score < 0) {
             strength = -1;
           }
@@ -293,13 +294,13 @@ export const bloodrcv = (data, enemyId, isMe) => {
           .then(() => deleteUser(state.name))
           .then(loadWorld)
           .then(() => {
-            sendMessage(state.playerId, state.channel, `${_p(state.name)} has just died.`);
-            sendWizardMessage(`[ ${_p(state.name)} has been slain by ${enemy.name} ]`);
+            sendMessage(state.playerId, state.channel, `${visualName(state.name)} has just died.`);
+            sendWizardMessage(`[ ${visualName(state.name)} has been slain by ${enemy.name} ]`);
             return error('Oh dear... you seem to be slightly dead');
           });
       }
       return null;
     })
     .then(() => setState({ toUpdate: true }))
-    .catch(e => bprintf(e.message));
+    .catch(e => addMessage(e.message));
 };
