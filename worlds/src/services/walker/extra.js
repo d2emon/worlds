@@ -505,67 +505,53 @@ export const wherecom = (name) => Promise.resolve(getState())
   .then(r => r || addMessage('I dont know what that is'))
   .catch(e => addMessage(e.message));
 
-const eItem = () => Promise.resolve()
-  .then(() => {
-    char
-    a[80], b, c, d;
+const checkNumber = (value, minValue=null, maxValue=null) => {
+  if (!value) {
+    throw new Error('Missing numeric argument');
+  }
+  if (((minValue !== null) && (value < minValue))
+    || ((maxValue !== null) && (value > maxValue))) {
+    throw new Error('Invalid range')
+  }
+};
 
-    b = getnarg(0, numobs - 1);
-    if (b == -1) return;
-    c = getnarg(0, 3);
-    if (c == -1) return;
-    d = getnarg(0, 0);
-    if (d == -1) return;
-    objinfo[4 * b + c] = d;
-    bprintf("Tis done\n");
-    return;
-  });
+const eItem = (itemId, valueId, value) => {
+  checkNumber(itemId, 1, numobs);
+  checkNumber(valueId, 0, 3);
+  checkNumber(value);
+  return setItem(
+    itemId,
+    {
+      [valueId]: value,
+    }
+  );
+};
 
-const ePlayer = () => Promise.resolve()
-  .then(() => {
-    b=getnarg(0,47);
-    if(b==-1) return;
-    c=getnarg(0,15);
-    if(c==-1) return;
-    d=getnarg(0,0);
-    if(d==-1) return;
-    ublock[16*b+c]=d;
-    bprintf("Tis done\n");
-    return;
-  });
+const ePlayer = (playerId, valueId, value) => {
+  checkNumber(playerId, 1, 47);
+  checkNumber(valueId, 0, 15);
+  checkNumber(value);
+  return setPlayer(
+    playerId,
+    {
+      [valueId]: value,
+    }
+  );
+};
 
-export const editWorld = (mode, name) => Promise.resolve(getState())
+export const editWorld = (mode, itemId, valueId, value) => Promise.resolve(getState())
   .then((state) => {
     const me = getPlayer(state.playerId);
     if (!player || !player.bit[5]) {
       throw new Error('Must be Game Administrator');
     }
     if (mode === 'player') {
-      return ePlayer();
+      return ePlayer(itemId, valueId, value);
     } else if (mode === 'object') {
-      return eItem();
+      return eItem(itemId, valueId, value);
     } else {
       throw new Error('Must Specify Player or Object');
     }
   })
+  .then(() => addMessage('Tis done'))
   .catch(e => addMessage(e.message));
-
-
-
-
-
-long getnarg(bt,to)
-long bt,to;
-{
-	extern char wordbuf[];
-	long x;
-	if(brkword()==-1)
-	{
-		bprintf("Missing numeric argument\n");
-		return(-1);
-	}
-	x=numarg(wordbuf);
-	if(x<bt) {bprintf("Invalid range\n");return(-1);}
-	if((to)&&(x>to)) {bprintf("Invalid range\n");return(-1);}
-	return(x);
-}
