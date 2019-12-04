@@ -6,15 +6,37 @@ class State:
 
     log_file = None
 
+    snooped_id = None
+    snooper_id = None
+
     ail_blind = False
     channel = False
 
+
 ####
+
+
+def clear_messages():
+    State.messages = []
+
 
 def add_message(message):
     State.messages.append(message)
 
+
 ####
+
+def __block_alarm():
+    pass
+
+
+def __unblock_alarm():
+    pass
+
+
+def __save_world():
+    pass
+
 
 def get_player(player_id):
     return None
@@ -24,11 +46,18 @@ def isdark(channel):
     return False
 
 
-def setname(name):
-    return False
-
-
 ####
+
+
+def __set_name(player):
+    if player.player_id > 15 and player.player_id not in (fpbns("riatha").player_id, fpbns("shazareth").player_id):
+        State.wd_it = player.name
+        return
+    if player.sex:
+        State.wd_her = player.name
+    else:
+        State.wd_him = player.name
+    State.wd_them = player.name
 
 
 def see_player(player_id_1, player_id_2):
@@ -47,7 +76,7 @@ def see_player(player_id_1, player_id_2):
         return False
     if (State.channel == player_2.channel) and isdark(State.channel):
         return False
-    setname(player_id_2.name)
+    __set_name(player_2)
     return True
 
 
@@ -187,10 +216,21 @@ FILE *file;
        fprintf(file,"Someone");
     return(ct);
     }
+int pnotkb(str,ct,file)
+ char *str;
+ FILE *file;
+    {
+    extern long iskb;
+    char x[128];
+    ct=tocontinue(str,ct,x,127);
+    if(iskb) return(ct);
+    fprintf(file,"%s",x);
+    return(ct);
+    }
 """
 
 
-def __process_special(message):
+def __process_special(message, is_keyboard):
     message = re.sub(r"\[f\](.{0, 128})\[/f\]", __pfile, message)
     message = re.sub(r"\[d\](.{0, 128})\[/d\]", __pndeaf, message)
     message = re.sub(r"\[s\](.{0, 128})\[/s\]", __pcansee, message)
@@ -206,38 +246,85 @@ def show_file(filename):
     return "[f]{}[/f]".format(filename)
 
 
-class LogService:
-    __ALLOWED_USER_ID = 'ALLOWED_USER_ID'
-    __LOG = []
+class Service:
+    CONNECTIONS = {}
+    __last_connection_id = 0
+    __DATA = []
 
-    def __init__(self, user_id, log_id):
+    def __init__(self, filename, permissions):
+        self.__last_connection_id += 1
+        self.__filename = filename
+        self.__permissions = permissions
+        self.CONNECTIONS[self.__last_connection_id] = self
+        self.service_id = self.__last_connection_id
+
+    def disconnect(self):
+        self.service_id = None
+
+    def append(self, message):
+        if not self.service_id:
+            raise Exception()
+
+        self.__DATA.append(message)
+
+    def contents(self):
+        yield from self.__DATA
+
+    def reset(self):
+        self.__DATA = []
+
+
+class LogService(Service):
+    __ALLOWED_USER_ID = 'ALLOWED_USER_ID'
+
+    def __init__(self, user_id, permissions):
         self.__validate_user(user_id)
-        self.__connected = False
-        self.service_id = log_id
+        super().__init__('mud_log', permissions)
 
     @classmethod
     def __validate_user(cls, user_id):
         if user_id == cls.__ALLOWED_USER_ID:
             raise Exception('Not allowed from this ID')
 
-    def append(self, message):
-        if not self.__connected:
-            raise Exception()
-
-        self.__LOG.append(message)
-
-    def disconnect(self):
-        self.__connected = False
-
     @classmethod
-    def connect(cls, user_id, filename, permissions):
-        return cls(user_id, 0)
+    def restore(cls, user_id, log_id):
+        cls.__validate_user(user_id)
+        return cls.CONNECTIONS[log_id]
 
 
-def log_cmd(*args, **kwargs):
+class SnoopService(Service):
+    __SNOOP = 'SNOOP'
+
+    def __init__(self, player, permissions):
+        super().__init__(self.__SNOOP + player, permissions)
+
+
+def __view_snoop(name):
+    if not State.snooped_id:
+        return ""
+
+    service = SnoopService(name, 'r+')
+    if not service.service_id:
+        return ""
+
+    result = "\n".join(map(lambda s: "|{}".format(s), service.contents()))
+    service.reset()
+    service.disconnect()
+
+    return result
+
+
+def check_snoop(player_id):
+    if not State.snooped_id:
+        return
+
+    sendsys(State.snooped_id, player_id, -400, 0, "")
+
+
+def log_cmd(**kwargs):
     user_id = kwargs.get('user_id')
     if State.log_file is not None:
-        service = LogService(user_id, State.log_file)
+        service = LogService.restore(user_id, State.log_file)
         service.append("\nEnd of log....\n\n")
         service.disconnect()
 
@@ -247,8 +334,10 @@ def log_cmd(*args, **kwargs):
 
     add_message("Commencing Logging Of Session")
 
-    service = LogService.connect(user_id, 'mud_log', 'a') or LogService.connect(user_id, 'mud_log', 'w')
-    if not service:
+    service = LogService(user_id, 'a')
+    if not service.service_id:
+        service = LogService(user_id, 'w')
+    if not service.service_id:
         add_message("Cannot open log file mud_log")
         return
 
@@ -256,148 +345,41 @@ def log_cmd(*args, **kwargs):
     add_message("The log will be written to the file 'mud_log'")
 
 
-"""
-void pbfr()
-    {
-    FILE *fln;
-    long mu;
-    block_alarm();
-    closeworld();
-    if(strlen(sysbuf)) pr_due=1;
-    if((strlen(sysbuf))&&(pr_qcr)) putchar('\n');
-    pr_qcr=0;
-    if(State.log_file!=NULL)
-       {
-       iskb=0;
-       dcprnt(sysbuf, State.log_file);
-       }
-    if(snoopd!=-1)
-       {
-       fln=opensnoop(pname(snoopd),"a");
-       if(fln>0)
-          {
-iskb=0;
-          dcprnt(sysbuf,fln);
-          fcloselock(fln);
-          }
-       }
-    iskb=1;
-    dcprnt(sysbuf,stdout);
-    sysbuf[0]=0; /* clear buffer */
-    if(snoopt!=-1) viewsnoop();
-    unblock_alarm();
-    }
+def snoop_cmd(*args, **kwargs):
+    level = kwargs.get('level', 0)
+    player_id = kwargs.get('player_id', None)
+    name = kwargs.get('name', "")
 
-long iskb=1;
+    if level < 10:
+        add_message("Ho hum, the weather is nice isn't it")
+        return
 
-int pnotkb(str,ct,file)
- char *str;
- FILE *file;
-    {
-    extern long iskb;
-    char x[128];
-    ct=tocontinue(str,ct,x,127);
-    if(iskb) return(ct);
-    fprintf(file,"%s",x);
-    return(ct);
-    }
+    snooped = get_player(State.snooped_id)
+    if snooped:
+        add_message("Stopped snooping on {}".format(snooped))
+        sendsys(State.snooped_id, player_id, -400, 0, "")
+        State.snooped_id = None
 
-long snoopd= -1;
+    if len(args) < 1:
+        return
 
-FILE *opensnoop(user,per)
-char *per;
-char *user;
-    {
-    FILE *x;
-    extern FILE *openlock();
-    char z[256];
-    sprintf(z,"%s%s",SNOOP,user);
-    x=openlock(z,per);
-    return(x);
-    }
+    snooped = fpbn(args[0])
+    if not snooped:
+        add_message("Who is that ?")
+        return
 
-long snoopt= -1;
+    if (level < 10000 and snooped.level >= 10) or snooped.bit[6]:
+        add_message("Your magical vision is obscured")
+        State.snooped_id = None
+        return
 
-char sntn[32];
+    State.snooped_id = snooped.player_id
+    add_message("Started to snoop on {}".format(snooped.name))
+    sendsys(snooped.player_id, player_id, -401, 0, "")
 
-void snoopcom()
-    {
-    FILE *fx;
-    long x;
-    if(my_lev<10)
-       {
-       bprintf("Ho hum, the weather is nice isn't it\n");
-       return;
-       }
-    if(snoopt!=-1)
-       {
-       bprintf("Stopped snooping on %s\n",sntn);
-       snoopt= -1;
-       sendsys(sntn,globme,-400,0,"");
-       }
-    if(brkword()== -1)
-       {
-       return;
-       }
-    x=fpbn(wordbuf);
-    if(x==-1)
-       {
-       bprintf("Who is that ?\n");
-       return;
-       }
-    if(((my_lev<10000)&&(plev(x)>=10))||(ptstbit(x,6)))
-       {
-       bprintf("Your magical vision is obscured\n");
-       snoopt= -1;
-       return;
-       }
-    strcpy(sntn,pname(x));
-    snoopt=x;
-    bprintf("Started to snoop on %s\n",pname(x));
-    sendsys(sntn,globme,-401,0,"");
-    fx=opensnoop(globme,"w");
-    fprintf(fx," ");
-    fcloselock(fx);
-    }
-
-void viewsnoop()
-    {
-    long x;
-    char z[128];
-    FILE *fx;
-    fx=opensnoop(globme,"r+");
-    if(snoopt==-1) return;
-    if(fx==0)return;
-    while((!feof(fx))&&(fgets(z,127,fx)))
-           printf("|%s",z);
-    ftruncate(fileno(fx),0);
-    fcloselock(fx);
-    x=snoopt;
-    snoopt= -1;
-    /*
-    pbfr();
-    */
-    snoopt=x;
-    }
-void chksnp()
-{
-if(snoopt==-1) return;
-sendsys(sntn,globme,-400,0,"");
-}
-
-void setname(x)  /* Assign Him her etc according to who it is */
-long x;
-{
-	if((x>15)&&(x!=fpbns("riatha"))&&(x!=fpbns("shazareth")))
-	{
-		strcpy(wd_it,pname(x));
-		return;
-	}
-	if(psex(x)) strcpy(wd_her,pname(x));
-	else strcpy(wd_him,pname(x));
-	strcpy(wd_them,pname(x));
-}
-"""
+    service = SnoopService(name, "w")
+    service.append(" ")
+    service.disconnect()
 
 
 def post_clear_messages():
@@ -410,5 +392,43 @@ def post_clear_messages():
 def post_add_message(message):
     add_message(message)
     return {
+        'result': True,
+    }
+
+
+def get_messages(is_finished, user_id, name):
+    def output(is_keyboard):
+        for message in State.messages:
+            yield __process_special(message, is_keyboard)
+
+    __block_alarm()
+    __save_world()
+
+    is_clean = len(State.messages) == 0
+
+    result = []
+    if not is_clean and not is_finished:
+        result.append("")
+
+    if State.log_file:
+        service = LogService(user_id, State.log_file)
+        map(service.append, output(False))
+
+    snooper = get_player(State.snooper_id)
+    if snooper:
+        service = SnoopService(snooper.name, 'a')
+        if service.service_id:
+            map(service.append, output(False))
+            service.disconnect()
+
+    result += output(True)
+
+    State.messages = []
+    __unblock_alarm()
+    return {
+        'is_clean': is_clean,
+        'is_finished': False,
+        'messages': result,
+        'snoop': __view_snoop(name),
         'result': True,
     }
