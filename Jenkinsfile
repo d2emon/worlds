@@ -4,6 +4,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'python --version'
+                sh 'printenv'
             }
         }
         stage('Deploy') {
@@ -12,17 +13,21 @@ pipeline {
                 retry(3) {
                     sh 'python --version'
                 }
+                sh 'printenv'
             }
         }
         stage('Test') {
             steps {
                 sh 'echo "Fail!"; exit 1'
+                ssh './gradlew check'
             }
         }
     }
     post {
         always {
             echo 'This will always run'
+            archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+            junit 'build/reports/**/*.xml'
         }
         success {
             echo 'This will run only if successful'
