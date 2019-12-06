@@ -4,13 +4,15 @@ from back.bprintf import get_messages, post_add_message
 class Output:
     __dashes = "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
 
-    def __init__(self):
+    def __init__(self, without_alarm=lambda callback: None):
         self.__is_clean = True
         self.__is_finished = True
         self.__is_reading = True
 
         self.__prompt = ""
         self.__keyboard_input = ""
+
+        self.__without_alarm = without_alarm
 
         self.__user_id = None
         self.__name = None
@@ -23,10 +25,13 @@ class Output:
         post_add_message(message)
 
     def read_messages(self):
-        result = get_messages(self.__is_finished, self.__user_id, self.__name)
-        self.__is_clean = len(result['messages']) > 0
-        for message in result['messages']:
-            print(message)
+        def __read_messages():
+            result = get_messages(self.__is_finished, self.__user_id, self.__name)
+            self.__is_clean = len(result['messages']) > 0
+            for message in result['messages']:
+                print(message)
+
+        return self.__without_alarm(__read_messages)
 
     def error(self, message):
         self.read_messages()

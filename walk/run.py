@@ -22,8 +22,8 @@ class User:
 
 class Gui:
     def __init__(self, title, user):
-        self.output = Output()
         self.timer = Timer(on_timer=self.on_timer)
+        self.output = Output(without_alarm=self.timer.without_alarm)
 
         State.title = title
         State.name = user.username

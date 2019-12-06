@@ -29,15 +29,6 @@ def __add_message(message):
 
 
 ####
-
-def __block_alarm():
-    pass
-
-
-def __unblock_alarm():
-    pass
-
-
 def __save_world():
     pass
 
@@ -289,7 +280,6 @@ def get_messages(is_finished, user_id, name):
         for message in State.messages:
             yield __process_special(message, is_keyboard)
 
-    __block_alarm()
     __save_world()
 
     is_clean = len(State.messages) == 0
@@ -312,7 +302,6 @@ def get_messages(is_finished, user_id, name):
     result += output(True)
 
     State.messages = []
-    __unblock_alarm()
     return {
         'is_clean': is_clean,
         'is_finished': False,

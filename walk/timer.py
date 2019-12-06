@@ -33,3 +33,9 @@ class Timer:
         self.is_active = False
         self.__on_timer()
         self.is_active = True
+
+    def without_alarm(self, callback):
+        self.has_alarm = False
+        result = callback()
+        self.has_alarm = True
+        return result
