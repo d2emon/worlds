@@ -1,11 +1,4 @@
-def bprintf(message):
-    pass
-
-
-def pbfr():
-    return {
-        'messages': [],
-    }
+from back.bprintf import get_messages, post_add_message
 
 
 class Output:
@@ -19,13 +12,21 @@ class Output:
         self.__prompt = ""
         self.__keyboard_input = ""
 
+        self.__user_id = None
+        self.__name = None
+
     @property
     def __to_reprint(self):
         return not self.__is_reading and not self.__is_clean
 
+    def send_message(self, message):
+        post_add_message(message)
+
     def read_messages(self):
-        result = pbfr()
+        result = get_messages(self.__is_finished, self.__user_id, self.__name)
         self.__is_clean = len(result['messages']) > 0
+        for message in result['messages']:
+            print(message)
 
     def error(self, message):
         self.read_messages()
@@ -44,7 +45,7 @@ class Output:
         self.__is_reading = False
         self.__prompt = prompt
 
-        bprintf(self.__prompt)
+        self.send_message(self.__prompt)
         self.read_messages()
         self.__is_clean = True
 
