@@ -1,5 +1,8 @@
 pipeline {
     agent none
+    options {
+        skipStagesAfterUnstable()
+    }
     stages {
         stage('Build') {
             agent {
@@ -9,8 +12,7 @@ pipeline {
             }
             steps {
                 sh 'python --version'
-                sh 'printenv'
-                sh 'python -m py_compile config.py'
+                sh 'python -m py_compile hello.py'
             }
         }
         stage('Test') {
@@ -26,6 +28,14 @@ pipeline {
                 always {
                     junit 'test-reports/results.xml'
                 }
+            }
+        }
+        stage('Deliver') {
+            agent {
+                dockerfile true
+            }
+            steps {
+                sh 'python --version'
             }
         }
     }
