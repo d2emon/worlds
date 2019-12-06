@@ -1,13 +1,24 @@
 pipeline {
-    agent { docker { image 'python:3.5.1' } }
+    agent none
     stages {
         stage('Build') {
+            agent {
+                docker {
+                    image 'python:3-alpine'
+                }
+            }
             steps {
                 sh 'python --version'
                 sh 'printenv'
+                sh 'python -m py_compile config.py'
             }
         }
         stage('Deploy') {
+            agent {
+                docker {
+                    image 'python:3.5.1'
+                }
+            }
             steps {
                 sh 'echo "Hello World"'
                 retry(3) {
@@ -17,6 +28,11 @@ pipeline {
             }
         }
         stage('Test') {
+            agent {
+                docker {
+                    image 'python:3.5.1'
+                }
+            }
             steps {
                 sh 'echo "Fail!"; exit 1'
                 ssh './gradlew check'
