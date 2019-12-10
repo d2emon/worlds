@@ -31,6 +31,7 @@ class World:
     __fields = {
         'id': Field('id', is_main=True),
         'author': Field('author'),
+        'books': Field('books'),
         'book_pages': Field('book_pages', serialize_name='bookPages'),
         'created_at': Field('created_at', serialize_name='createdAt'),
         'data_loader': Field(

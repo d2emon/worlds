@@ -14,6 +14,7 @@ class WorldFolder:
     field_names = [
         'author',
         'book_pages',
+        'books',
         'created_at',
         'image',
         'isbn',
@@ -33,6 +34,7 @@ class WorldFolder:
     serializable = [
         'author',
         'book_pages',
+        'books',
         'created_at',
         'image',
         'index_page',
@@ -53,6 +55,31 @@ class WorldFolder:
             '__links': {},
             'slug': slug,
         }
+
+    @property
+    def books(self):
+        def parse_book(book_id):
+            return {
+                'book_id': book_id,
+                'title': books.get(book_id),
+            }
+
+        def parse_category(category):
+            subcategory = category.get('categories')
+            return {
+                'title': category.get('title'),
+                'books': [parse_book(b) for b in category.get('books', [])],
+                'categories': subcategory and [parse_category(c) for c in subcategory],
+            }
+
+        filename = os.path.join(self.root, 'books.json')
+        if not os.path.isfile(filename):
+            return ['no-books']
+        with open(filename, "r", encoding='utf-8') as fp:
+            data = json.load(fp)
+            books = data.get('books', {})
+            categories = data.get('categories', [])
+            return [parse_category(c) for c in categories]
 
     @property
     def image(self):
@@ -124,6 +151,7 @@ class WorldFolder:
             self.load()
 
         computed = {
+            'books': self.books,
             'image': self.image,
             'index_page': self.index_page,
             'planets': [__planet.fields for __planet in self.planets],
@@ -131,6 +159,7 @@ class WorldFolder:
             'title': self.title,
             'wiki': self.wiki,
         }
+        print(computed)
         return {
             **{key: self.fields.get(key) for key in self.serializable},
             **computed,

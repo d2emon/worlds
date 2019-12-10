@@ -63,6 +63,7 @@ const world = {
   fields: [
     'author',
     'bookPages',
+    'books',
     'createdAt',
     'image',
     'isbn',

@@ -9,11 +9,20 @@
       <v-flex xs4 md3>
         <world-summary
           v-if="world"
-          class="mb-1"
+          class="mb-2"
           :world="world"
         />
+
+        <v-card
+          v-if="world.books && world.books.length"
+          class="mb-2"
+        >
+          <books :books="world.books" />
+        </v-card>
+
         <v-card
           v-if="world.pages && world.pages.length"
+          class="mb-2"
         >
           <v-list>
             <v-list-item
@@ -63,12 +72,18 @@
         <v-card-text
           v-if="wiki"
         >
-              <wiki :wiki="wiki" />
+              <wiki
+                :wiki="wiki"
+                :world="world"
+              />
             </v-card-text>
             <v-card-text
               v-else-if="world.html"
             >
-              <wiki :wiki="world.html" />
+              <wiki
+                :wiki="world.html"
+                :world="world"
+              />
             </v-card-text>
             <v-container v-else>
               <page-list
@@ -118,6 +133,7 @@ import posmotreli from '@/assets/wiki/posmotreli.png';
 export default {
   name: 'World',
   components: {
+    Books: () => import('@/components/Books.vue'),
     PageList: () => import('@/components/PageList.vue'),
     Portal: () => import('@/components/Portal.vue'),
     WorldSummary: () => import('@/components/WorldSummary.vue'),
