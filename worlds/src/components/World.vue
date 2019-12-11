@@ -87,6 +87,7 @@
             </v-card-text>
             <v-container v-else>
               <page-list
+                v-if="world.pages"
                 :pages="world.pages"
               />
 
