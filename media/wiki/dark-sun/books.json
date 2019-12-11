@@ -1,96 +1,100 @@
 {
   "books": {
-    "3100": "Birthright Campaign Setting",
-    "3101": "Blood Enemies: Abominations of Cerilia",
-    "3102": "Sword and Crown",
-    "3103": "Cities of the Sun",
-    "3104": "Player's Secrets of Roesone",
-    "3105": "Player's Secrets of Endier",
-    "3106": "Player's Secrets of Medoere",
-    "3107": "Player's Secrets of Tournen",
-    "3108": "Player's Secrets of Illien",
-    "3109": "Player's Secrets of Talinie",
-    "3110": "Warlock of the Stonecrowns",
-    "3111": "Player's Secrets of Ariya",
+      "2400": "Campaign Setting",
+      "2401": "DS1 Freedom",
 
-    "3117": "The Book of Magecraft",
-    "3118": "The Sword of Roele",
-    "3119": "Player's Secrets of Binsada",
-    "3120": "Player's Secrets of Baruk-Azhik",
-    "3121": "The Rjurik Highlands",
-    "3122": "Player's Secrets of Halskapa",
-    "3123": "Player's Secrets of Khourane",
-    "3124": "Player's Secrets of Tuarhievel",
-    "3125": "Legends of the Hero-Kings",
-    "3126": "The Book of Priestcraft",
-    "3127": "Player's Secrets of Stjordvik",
-    "3129": "Havens of the Great Bay",
+      "2404": "DSR1 Slave Tribes",
+      "2405": "MC12 Monstrous Compendium Appendix",
+      "2406": "DSQ1 Road to Urik",
+      "2407": "DSR2 Dune Trader",
+      "2408": "Dragon Kings",
 
-    "3134": "Naval Battle Rules: The Seas of Cerillia",
-    "3135": "Player's Secrets of Hogunmark",
+      "2410": "DSQ2 Arcane Shadows",
+      "2411": "DSR3 Veiled Alliance",
+      "2412": "DSQ3 Asticlian Gambit",
+      "2413": "DSR4 Valley of Dust and Fire",
 
-    "3137": "The Book of Regency",
+      "2416": "DSE1 Dragon’s Crown",
+      "2417": "DSM1 Black Flames",
+      "2418": "The Ivory Triangle",
+      "2419": "CGR2 Complete Gladiator’s Handbook",
+      "2420": "DSS1 City-State of Tyr",
+      "2421": "DSM2 Merchant Houses of Amketch",
+      "2422": "DSS2 Earth, Air, Fire, and Water",
+      "2423": "DSS3 Elves of Athas",
+      "2424": "DSM3 Marauders of Nibenay",
 
-    "3140": "Blood Spawn: Creatures of Light and Shadow",
+      "2428": "(DSE2) Black Spine",
 
-    "3142": "King of the Giantdowns",
+      "2430": "Forest Maker",
+      "2431": "The Will and the Way",
+      "2432": "City by the Silt Sea",
+      "2433": "Monstrous Compendium Appendix II: Terrors Beyond Tyr",
 
-    "3147": "Tribes of the Heartless Wastes"
+      "2437": "Thri-Kreen of Athas",
+      "2438": "Campaign Setting (Revised and Expanded)",
+      "2439": "Windriders of the Jagged Cliffs",
+
+      "2441": "Beyond the Prism Pentad",
+
+      "2444": "Mind Lords of the Last Sea",
+      "2445": "Defilers and Preservers: The Wizards of Athas",
+      "2446": "Psionic Artifacts of Athas"
   },
   "categories": [
     {
+      "title": "Hardbacks",
+      "books": [
+        "2408"
+      ]
+    },
+    {
       "title": "Boxed Sets",
       "books": [
-        "3100",
-        "3103",
-        "3121",
-        "3129",
-        "3134"
+        "2400",
+        "2438",
+        "2418",
+        "2432",
+        "2444"
       ]
     },
     {
       "title": "Accessories",
-      "books": [
-        "3104",
-        "3105",
-        "3106",
-        "3107",
-        "3108",
-        "3109",
-        "3111",
-        "3119",
-        "3120",
-        "3122",
-        "3123",
-        "3124",
-        "3127",
-        "3135"
-      ]
-    },
-    {
-      "title": "Player's Secrets of Müden",
-      "books": [
-        "3101",
-        "3140",
-        "3147",
-        "3117",
-        "3126",
-        "3137"
-      ]
-    },
-    {
-      "title": "A Birthright Conspectus",
       "categories": [
+        {
+          "title": "Dark Sun Conspectus",
+          "books": [
+            "2404",
+            "2407",
+            "2411",
+            "2413",
+            "2420",
+            "2422",
+            "2423",
+            "2419",
+            "2431",
+            "2437",
+            "2439",
+            "2441",
+            "2445",
+            "2446",
+            "2405",
+            "2433"
+          ]
+        },
         {
           "title": "Adventures",
           "books": [
-            "3102",
-            "3110",
-            "3118",
-            "3117",
-            "3125",
-            "3142"
-
+            "2401",
+            "2406",
+            "2410",
+            "2412",
+            "2416",
+            "2428",
+            "2417",
+            "2421",
+            "2424",
+            "2430"
           ]
         }
       ]
