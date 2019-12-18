@@ -1,5 +1,28 @@
-version: '2'
+version: '3'
 services:
+  mail:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - internal
+  db:
+    build: ./db
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+    depends_on:
+      - mail
+    links:
+      - mail
+    ports:
+      - "5002:5000"
+    volumes:
+      - "./db:/app"
+      - "./log:/app/log"
+    networks:
+      - internal
   front:
     build: ./worlds
     environment:
@@ -8,14 +31,18 @@ services:
       - "8081:8080"
     volumes:
       - "./worlds:/app"
+    networks:
+      - default
   back:
     build: ./worlds-server
-    depends_on:
-      - front
     environment:
       - FLASK_DEBUG=1
       - FLASK_ENV=development
       - WORLDS_FRONT=http://worlds_front_1:8080/
+    depends_on:
+      - front
+      - db
+      - mail
     links:
       - front
     ports:
@@ -25,23 +52,9 @@ services:
       - "./config.py:/app/config.py"
       - "./media:/media"
       - "./log:/app/log"
-  mail:
-    image: mailhog/mailhog:v1.0.0
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-  db:
-    build: ./db
-    environment:
-      - FLASK_DEBUG=1
-      - FLASK_ENV=development
-    links:
-      - mail
-    ports:
-      - "5002:5000"
-    volumes:
-      - "./db:/app"
-      - "./log:/app/log"
+    networks:
+      - default
+      - internal
   blog:
     build: ./blog
     environment:
@@ -54,3 +67,11 @@ services:
     volumes:
       - "./blog:/app"
       - "./log:/app/log"
+    networks:
+      - default
+      - internal
+networks:
+  default:
+    external: true
+  internal:
+    external: false
