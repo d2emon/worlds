@@ -22,7 +22,7 @@
           />
 
           <v-img
-            :src="item.image"
+            :src="item.imageUrl"
             height="200px"
           >
             <!-- v-container

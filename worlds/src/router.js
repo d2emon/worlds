@@ -25,6 +25,11 @@ export default new Router({
           component: () => import('@/views/wiki/World.vue'),
         },
         {
+          path: 'edit',
+          name: 'world-edit',
+          component: () => import('@/views/edit/World.vue'),
+        },
+        {
           path: 'wiki/:pageId',
           name: 'world-wiki',
           component: () => import('@/views/wiki/World.vue'),

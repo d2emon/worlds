@@ -4,8 +4,8 @@
       v-if="world"
     >
       <v-img
-        v-if="world.image"
-        :src="world.image"
+        v-if="world.imageUrl"
+        :src="world.imageUrl"
         height="200px"
       />
 
@@ -61,6 +61,14 @@
           :to="world.url"
           v-text="world.title"
         />
+
+        <v-spacer />
+
+        <router-link
+          :to="world.editUrl"
+        >
+          <v-icon>mdi-square-edit-outline</v-icon>
+        </router-link>
       </v-card-title>
 
       <slot />

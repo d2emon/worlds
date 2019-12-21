@@ -39,11 +39,13 @@ class World:
             is_hidden=True,
             default=lambda: {},
         ),
-        'image': Field(
-            'image',
+        'image': Field('image'),
+        'image_url': Field(
+            'image_url',
             default="portal.jpg",
             is_main=True,
-            normalize=lambda item: item and '{}/wiki/{}'.format(app.config.get('MEDIA_URL'), item)
+            normalize=lambda item: item and '{}/wiki/{}'.format(app.config.get('MEDIA_URL'), item),
+            serialize_name='imageUrl',
         ),
         'index_page': Field('index_page', serialize_name='indexPage'),
         'isbn': Field('isbn'),

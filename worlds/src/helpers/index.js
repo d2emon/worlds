@@ -8,7 +8,7 @@ const localLink = /\[(.*?)]\(\.\/(.*?)\.md\)/g;
 export const Api = Axios;
 
 export const {
-  imageUrl,
+  defaultImage,
   mediaUrl,
   planetUrl,
   worldUrl,

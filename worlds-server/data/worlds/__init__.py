@@ -17,6 +17,7 @@ class WorldFolder:
         'books',
         'created_at',
         'image',
+        'image_url',
         'isbn',
         # 'index_page',
         'language',
@@ -37,6 +38,7 @@ class WorldFolder:
         'books',
         'created_at',
         'image',
+        'image_url',
         'index_page',
         'isbn',
         'language',
@@ -82,9 +84,9 @@ class WorldFolder:
             return [parse_category(c) for c in categories]
 
     @property
-    def image(self):
-        image = self.fields.get('image')
-        return "{}/images/{}".format(self.slug, image) if image else None
+    def image_url(self):
+        image_url = self.fields.get('image')
+        return "{}/images/{}".format(self.slug, image_url) if image_url else None
 
     @property
     def images(self):
@@ -152,7 +154,7 @@ class WorldFolder:
 
         computed = {
             'books': self.books,
-            'image': self.image,
+            'image_url': self.image_url,
             'index_page': self.index_page,
             'planets': [__planet.fields for __planet in self.planets],
             'slug': self.slug,

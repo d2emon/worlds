@@ -114,8 +114,8 @@
                     </a>
 
                     <v-card-title>
-                      <h3 class="headline" v-text="card.title"/>
-                      <div v-text="card.text" />
+                      <h3 class="headline" v-text="card.title"></h3>
+                      <div v-text="card.text"></div>
                     </v-card-title>
                   </v-card>
                 </v-flex>

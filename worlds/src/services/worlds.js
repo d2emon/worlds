@@ -1,6 +1,6 @@
 import {
   Api,
-  imageUrl,
+  defaultImage,
   worldUrl,
   planetUrl,
 } from '@/helpers';
@@ -66,6 +66,7 @@ const world = {
     'books',
     'createdAt',
     'image',
+    'imageUrl',
     'isbn',
     'language',
     'origin',
@@ -109,6 +110,22 @@ const planet = {
   }),
 };
 
+const loadWorld = ({ data }) => Promise.resolve(data.world)
+  .then(filterFieldsWithData(world.fields))
+  .then(world.addUrl())
+  .then(({
+    imageUrl,
+    pages,
+    url,
+    ...args
+  }) => ({
+    ...args,
+    editUrl: `${url}/edit`,
+    imageUrl: imageUrl || defaultImage,
+    pages: normalizePages(`${url}/wiki`, pages),
+    url,
+  }));
+
 export default {
   getWorlds: () => Api.back
     .get('/api/worlds')
@@ -117,7 +134,7 @@ export default {
     .then(items => items.map(world.addUrl()))
     .then(items => items.map(({
       // title,
-      image,
+      imageUrl,
       // slug,
       ...data
     }) => ({
@@ -125,25 +142,15 @@ export default {
       // title,
       // slug,
       // image,
-      image: image || imageUrl,
+      imageUrl: imageUrl || defaultImage,
       // url: worldUrl(slug),
     }))),
-  getWorld: worldId => Api.back
-    .get(`/api/worlds/world/${worldId}`)
-    .then(({ data }) => data.world)
-    .then(filterFieldsWithData(world.fields))
-    .then(world.addUrl())
-    .then(({
-      image,
-      pages,
-      url,
-      ...data
-    }) => ({
-      ...data,
-      image: image || imageUrl,
-      pages: normalizePages(`${url}/wiki`, pages),
-      url,
-    })),
+  getWorld: slug => Api.back
+    .get(`/api/worlds/world/${slug}`)
+    .then(loadWorld),
+  putWorld: (slug, args) => Api.back
+    .put(`/api/worlds/world/${slug}`, args)
+    .then(loadWorld),
   getPlanet: (worldId, planetId) => Api.back
     .get(`/api/worlds/world/${worldId}/planet/${planetId}`)
     .then(({ data }) => data.planet)
