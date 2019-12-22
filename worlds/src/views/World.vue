@@ -5,7 +5,19 @@
         v-if="world"
         :world="world"
       >
-        <router-view />
+        <v-container>
+          <v-layout row wrap>
+            <v-flex xs4 md3>
+              <world-details
+                v-if="world"
+                :world="world"
+              />
+            </v-flex>
+            <v-flex xs8 md9>
+              <router-view />
+            </v-flex>
+          </v-layout>
+        </v-container>
       </world-card>
     </v-flex>
   </v-layout>
@@ -21,6 +33,7 @@ export default {
   name: 'World',
   components: {
     WorldCard: () => import('@/components/cards/World.vue'),
+    WorldDetails: () => import('@/components/WorldDetails.vue'),
   },
   computed: {
     ...mapState('worlds', [

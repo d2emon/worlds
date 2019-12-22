@@ -1,41 +1,30 @@
 <template>
   <v-container>
-    <v-layout row wrap>
-      <v-flex
-        offset-xs4
-        xs8
-        offset-md3
-        md9
+    <v-form
+      ref="worldEditForm"
+      v-model="valid"
+      :lazy-validation="lazy"
+    >
+      <v-text-field
+        v-model="title"
+        :rules="titleRules"
+        label="Название"
+        required
+      ></v-text-field>
+      <v-text-field
+        v-model="image"
+        :rules="imageRules"
+        label="Изображение"
+      ></v-text-field>
+      <v-btn
+        :disabled="!valid"
+        color="success"
+        class="mr-4"
+        @click="saveWorld"
       >
-        <v-form
-          ref="worldEditForm"
-          v-model="valid"
-          :lazy-validation="lazy"
-        >
-          <v-text-field
-            v-model="title"
-            :rules="titleRules"
-            label="Название"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="image"
-            :rules="imageRules"
-            label="Изображение"
-          ></v-text-field>
-
-          <v-btn
-            :disabled="!valid"
-            color="success"
-            class="mr-4"
-            @click="saveWorld"
-          >
-            Save
-          </v-btn>
-        </v-form>
-
-      </v-flex>
-    </v-layout>
+        Save
+      </v-btn>
+    </v-form>
   </v-container>
 </template>
 
