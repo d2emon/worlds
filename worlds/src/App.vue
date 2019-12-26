@@ -75,7 +75,8 @@ a {
 }
 
 .wiki img {
-  height: 200px;
+  max-height: 200px;
+  max-width: 200px;
 }
 
 .v-toolbar a {

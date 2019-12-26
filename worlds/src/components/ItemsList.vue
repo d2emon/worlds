@@ -38,7 +38,7 @@
             </v-container -->
           </v-img>
 
-          <v-card-actions>
+          <!-- v-card-actions>
             <v-spacer></v-spacer>
             <v-btn icon>
               <v-icon>favorite</v-icon>
@@ -49,7 +49,7 @@
             <v-btn icon>
               <v-icon>share</v-icon>
             </v-btn>
-          </v-card-actions>
+          </v-card-actions -->
         </v-card>
       </v-flex>
 

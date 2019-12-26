@@ -23,6 +23,7 @@ class WorldFolder:
         'media',
         'order',
         'origin',
+        'pages',
         'publisher',
         'series',
         # 'slug',
@@ -40,6 +41,7 @@ class WorldFolder:
         'media',
         'order',
         'origin',
+        'pages',
         'publisher',
         'series',
         'slug',
@@ -148,124 +150,6 @@ WORLDS_DATA = [
 
     {'title': 'Al-Qadim'},
     {'title': 'Ashen Stars'},
-    {'title': 'Birthright'},
-    {'title': 'Blackmoor'},
-    {'title': 'Bulldogs!'},
-    {'title': 'Dark Sun'},
-    {'title': 'Dawn of the Emperors'},
-    {'title': 'Deadlands'},
-
-    {'title': 'Demon: The Fallen'},
-    {'title': 'Don\'t Rest Your Head'},
-    {'title': 'Dracurouge'},
-    {'title': 'Dragon Age'},
-    {'title': 'Dragonlance'},
-    {'title': 'Dragonstar'},
-    {'title': 'Exalted'},
-    {'title': 'Fading Suns'},
-
-    {'title': 'Fallout'},
-    {'title': 'Forgotten Realms', 'link': 'https://rpg.fandom.com/ru/wiki/Forgotten_Realms''},
-    {'title': 'Gamma World'},
-    {'title': 'Greyhawk'},
-    {'title': 'Hellfrost'},
-    {'title': 'Hellfrost: Land of Fire'},
-    {'title': 'Hollow World'},
-    {'title': 'Houses of the Blooded'},
-
-    {'title': 'Iron Kingdoms'},
-    {'title': 'Jakandor'},
-    {'title': 'Kingdoms of Kalamar'},
-    {'title': 'Lankhmar'},
-    {'title': 'Legends of Anglerre'},
-    {'title': 'Категория:Megaverse'},
-    {'title': 'Mekton'},
-    {'title': 'Mighty Fortress'},
-
-    {'title': 'Mutant City Blues'},
-    {'title': 'Mystara'},
-    {'title': 'Mythic Vistas'},
-    {'title': 'Necessary Evil'},
-    {'title': 'Necropolis (Savage Worlds)'},
-    {'title': 'Numenera'},
-    {'title': 'Paranoia'},
-    {'title': 'Pirates of the Spanish Main'},
-
-    {'title': 'Planescape', 'link': 'https://rpg.fandom.com/ru/wiki/Planescape'},
-    {'title': 'Points of Light'},
-    {'title': 'Ptolus'},
-    {'title': 'Ravenloft', 'link': 'https://rpg.fandom.com/ru/wiki/Ravenloft'},
-    {'title': 'Rippers'},
-    {'title': 'Rippers Resurrected'},
-    {'title': 'Savage Coast'},
-    {'title': 'Shadowrun', 'link': 'https://rpg.fandom.com/ru/wiki/Shadowrun'},
-
-    {'title': 'Shaintar: Immortal Legends'},
-    {'title': 'Spellbound Kingdoms'},
-    {'title': 'Spelljammer'},
-    {'title': 'Sundered Skies'},
-    {'title': 'Terah'},
-    {'title': 'Unhallowed Metropolis'},
-    {'title': 'Urban Arcana'},
-    {'title': 'Vampire: The Masquerade', 'link': 'https://rpg.fandom.com/ru/wiki/Vampire:_The_Masquerade'},
-
-    {'title': 'Vampire: The Requiem'},
-    {'title': 'Категория:Warcraft'},
-    {'title': 'Warhammer'},
-    {'title': 'Weird Wars'},
-    {'title': 'Werewolf: The Apocalypse'},
-    {'title': 'World’s Largest Dungeon'},
-    {'title': 'Анакен'},
-    {'title': 'Анима'},
-
-    {'title': 'Арадия'},
-    {'title': 'АРРРГХЪ!'},
-    {'title': 'Вавилон-5'},
-    {'title': 'Волчье солнце'},
-    {'title': 'Вселенная Warcraft'},
-    {'title': 'Глоранта'},
-    {'title': 'Голарион'},
-    {'title': 'Горная ведьма'},
-
-    {'title': 'Грань Вселенной'},
-    {'title': 'Дзайбацу'},
-    {'title': 'Замок Фалькенштайн'},
-    {'title': 'Звёздный путь'},
-    {'title': 'Земля (BESM)'},
-    {'title': 'Известный мир'},
-    {'title': 'Искусство волшебства'},
-    {'title': 'Исторический сеттинг'},
-
-    {'title': 'История сеттинга Greyhawk'},
-    {'title': 'Красная земля'},
-    {'title': 'Категория:Лаар'},
-    {'title': 'Лавикандия'},
-    {'title': 'Лайран'},
-    {'title': 'Маска Красной Смерти'},
-    {'title': 'Мир Тьмы'},
-    {'title': 'Муршамбала'},
-
-    {'title': 'Неизвестные армии'},
-    {'title': 'Новый Мир Тьмы'},
-    {'title': 'Нудмер'},
-    {'title': 'Ньямбе'},
-    {'title': 'Оборотни въ фофудьяхъ'},
-    {'title': 'Перекрёсток миров'},
-    {'title': 'Полночь'},
-    {'title': 'Порох и хлеб'},
-
-    {'title': 'Рокуган'},
-    {'title': 'Категория:Сады Ислага'},
-    {'title': 'Сальвеблюз'},
-    {'title': 'Категория:Старый Мир Тьмы'},
-    {'title': 'Странствующие миры'},
-    {'title': 'Категория:Текумель'},
-    {'title': 'Фэн Шуй'},
-    {'title': 'Категория:Храмовники Рока'},
-    {'title': 'Шандария'},
-    {'title': 'Эберрон', 'link': 'https://rpg.fandom.com/ru/wiki/%D0%AD%D0%B1%D0%B5%D1%80%D1%80%D0%BE%D0%BD'},
-    {'title': 'Эра Водолея'},
-
     {
         'title': 'Assassin\'s Creed',
         'image': 'assassins-creed/images/assassins.jpg',
@@ -273,17 +157,20 @@ WORLDS_DATA = [
         'index_page': 'assassins-creed/index.md',
     },
     {
+        # !
         'title': 'Birthright',
         'image': 'birthright/images/br-logos.gif',
         'slug': 'birthright',
         'index_page': 'birthright/index.md',
     },
     {
+        # !
         'title': 'Blackmoor',
         'image': 'blackmoor/images/Blackmoor_logo.png',
         'slug': 'blackmoor',
         'index_page': 'blackmoor/index.md',
     },
+    {'title': 'Bulldogs!'},
     # {
     #     'title': 'Council of Wyrms',
     #     'image': 'council-of-wyrms/images/Council_of_Wyrms.jpg',
@@ -307,11 +194,19 @@ WORLDS_DATA = [
         'index_page': 'dangerous-fantasy-2/index.md',
     },
     {
+        # !
         'title': 'Dark Sun',
         'image': 'dark-sun/images/ds-logos.gif',
         'slug': 'dark-sun',
         'index_page': 'dark-sun/index.md',
     },
+    {'title': 'Dawn of the Emperors'},
+    {'title': 'Deadlands'},
+
+    {'title': 'Demon: The Fallen'},
+    {'title': 'Don\'t Rest Your Head'},
+    {'title': 'Dracurouge'},
+    {'title': 'Dragon Age'},
     # {
     #     'title': 'Dragon Fist',
     #     'image': 'dragon-fist/images/DragonFist.jpg',
@@ -319,23 +214,33 @@ WORLDS_DATA = [
     #     'index_page': 'dragon-fist/index.md',
     # },
     {
+        # !
         'title': 'Dragonlance',
         'image': 'dragonlance/images/fa-logos.gif',
         'slug': 'dragonlance',
         'index_page': 'dragonlance/index.md',
     },
-    {
-        'title': 'Eberron',
-        'image': 'eberron/images/eb-logos.gif',
-        'slug': 'eberron',
-        'index_page': 'eberron/index.md',
-    },
-    {
-        'title': 'Forgotten Realms',
-        'image': 'forgotten-realms/images/fr-logos.gif',
-        'slug': 'forgotten-realms',
-        'index_page': 'forgotten-realms/index.md',
-    },
+    {'title': 'Dragonstar'},
+    # {
+    #     'title': 'Eberron',
+    #     'image': 'eberron/images/eb-logos.gif',
+    #     'slug': 'eberron',
+    #     'index_page': 'eberron/index.md',
+    # },
+    {'title': 'Exalted'},
+    {'title': 'Fading Suns'},
+
+    {'title': 'Fallout'},
+    # {
+    #     # !
+    #     'title': 'Forgotten Realms',
+    #     'image': 'forgotten-realms/images/fr-logos.gif',
+    #     'slug': 'forgotten-realms',
+    #     'index_page': 'forgotten-realms/index.md',
+    #
+    #     'link': 'https://rpg.fandom.com/ru/wiki/Forgotten_Realms',
+    # },
+    {'title': 'Gamma World'},
     {
         'title': 'Ghostwalk',
         'image': 'ghostwalk/images/Ghostwalk_coverthumb.jpg',
@@ -343,11 +248,19 @@ WORLDS_DATA = [
         'index_page': 'ghostwalk/index.md',
     },
     {
+        # !
         'title': 'Greyhawk',
         'image': 'greyhawk/images/gh-logos.gif',
         'slug': 'greyhawk',
         'index_page': 'greyhawk/index.md',
     },
+    {'title': 'Hellfrost'},
+    {'title': 'Hellfrost: Land of Fire'},
+    {'title': 'Hollow World'},
+    {'title': 'Houses of the Blooded'},
+
+    {'title': 'Iron Kingdoms'},
+    {'title': 'Jakandor'},
     # {
     #     'title': 'Jakandor',
     #     'image': 'jakandor/images/Jakandor.jpg',
@@ -355,35 +268,48 @@ WORLDS_DATA = [
     #     'index_page': 'jakandor/index.md',
     # },
     {
+        # !
         'title': 'Kingdoms of Kalamar',
         'image': 'kingdoms-of-kalamar/images/kk-logos.gif',
         'slug': 'kingdoms-of-kalamar',
         'index_page': 'kingdoms-of-kalamar/index.md',
     },
     {
+        # !
         'title': 'Lankhmar',
         'image': 'lankhmar/images/lm-logos.gif',
         'slug': 'lankhmar',
         'index_page': 'lankhmar/index.md',
     },
+    {'title': 'Legends of Anglerre'},
     {
         'title': 'Mahasarpa',
         'image': 'mahasarpa/images/Mahasarpa.jpg',
         'slug': 'mahasarpa',
         'index_page': 'mahasarpa/index.md',
     },
+    {'title': 'Категория:Megaverse'},
+    {'title': 'Mekton'},
+    {'title': 'Mighty Fortress'},
+
     {
         'title': 'Mortal Kombat',
         'image': 'mortal-kombat/images/MortalKombat.jpg',
         'slug': 'mortal-kombat',
         'index_page': 'mortal-kombat/index.md',
     },
+    {'title': 'Mutant City Blues'},
     {
+        # !
         'title': 'Mystara',
         'image': 'mystara/images/ms-logos.gif',
         'slug': 'mystara',
         'index_page': 'mystara/index.md',
     },
+    {'title': 'Mythic Vistas'},
+    {'title': 'Necessary Evil'},
+    {'title': 'Necropolis (Savage Worlds)'},
+    {'title': 'Numenera'},
     {
         'title': 'Nentir Vale',
         'image': 'nentir-vale/images/NentirVale.jpg',
@@ -402,41 +328,62 @@ WORLDS_DATA = [
         'slug': 'oriental-adventures',
         'index_page': 'oriental-adventures/index.md',
     },
+    {'title': 'Paranoia'},
     {
         'title': 'Pelinore',
         'image': 'pelinore/images/Pelinore.jpg',
         'slug': 'pelinore',
         'index_page': 'pelinore/index.md',
     },
-    {
-        'title': 'Planescape',
-        'image': 'planescape/images/PlanescapeLogo.jpg',
-        'slug': 'planescape',
-        'index_page': 'planescape/index.md',
-    },
-    {
-        'title': 'Ravenloft',
-        'image': 'ravenloft/images/rv-logos.gif',
-        'slug': 'ravenloft',
-        'index_page': 'ravenloft/index.md',
-    },
+    {'title': 'Pirates of the Spanish Main'},
+
+    # {
+    #     # !
+    #     'title': 'Planescape',
+    #     'image': 'planescape/images/PlanescapeLogo.jpg',
+    #     'slug': 'planescape',
+    #     'index_page': 'planescape/index.md',
+    #
+    #     'link': 'https://rpg.fandom.com/ru/wiki/Planescape',
+    # },
+    {'title': 'Points of Light'},
+    {'title': 'Ptolus'},
+    # {
+    #     # !
+    #     'title': 'Ravenloft',
+    #     'image': 'ravenloft/images/rv-logos.gif',
+    #     'slug': 'ravenloft',
+    #     'index_page': 'ravenloft/index.md',
+    #
+    #     'link': 'https://rpg.fandom.com/ru/wiki/Ravenloft',
+    # },
+    {'title': 'Rippers'},
+    {'title': 'Rippers Resurrected'},
     # {
     #     'title': 'S.T.A.L.K.E.R.',
     #     'image': 'stalker/images/Stalker.jpg',
     #     'slug': 'stalker',
     #     'index_page': 'stalker/index.md',
     # },
+    {'title': 'Savage Coast'},
     {
         'title': 'SCP Foundation',
         'slug': 'scp-foundation',
         'index_page': 'scp-foundation/index.md',
     },
+    # {'title': 'Shadowrun', 'link': 'https://rpg.fandom.com/ru/wiki/Shadowrun'},
+
+    {'title': 'Shaintar: Immortal Legends'},
+    {'title': 'Spellbound Kingdoms'},
     {
+        # !
         'title': 'Spelljammer',
         'image': 'spelljammer/images/sj-logos.gif',
         'slug': 'spelljammer',
         'index_page': 'spelljammer/index.md',
     },
+    {'title': 'Sundered Skies'},
+    {'title': 'Terah'},
     SluggedWorld(
         title='The Elder Scrolls',
         slug='the-elder-scrolls',
@@ -447,12 +394,19 @@ WORLDS_DATA = [
         'slug': 'thunder-rift',
         'index_page': 'thunder-rift/index.md',
     },
+    {'title': 'Unhallowed Metropolis'},
+    {'title': 'Urban Arcana'},
+    # {'title': 'Vampire: The Masquerade', 'link': 'https://rpg.fandom.com/ru/wiki/Vampire:_The_Masquerade'},
+
+    {'title': 'Vampire: The Requiem'},
+    {'title': 'Категория:Warcraft'},
     {
         'title': 'Warcraft',
         'image': 'warcraft/images/wc-logos.gif',
         'slug': 'warcraft',
         'index_page': 'warcraft/index.md',
     },
+    {'title': 'Warhammer'},
     {
         'title': 'Warhammer 40.000',
         'slug': 'warhammer-40000',
@@ -470,12 +424,15 @@ WORLDS_DATA = [
 
         lurkmore=False,
     ),
+    {'title': 'Weird Wars'},
+    {'title': 'Werewolf: The Apocalypse'},
     {
         'title': 'Wilderlands of High Fantasy',
         'image': 'wilderlands-of-high-fantasy/images/WilderlandsOfHighFantasy.jpg',
         'slug': 'wilderlands-of-high-fantasy',
         'index_page': 'wilderlands-of-high-fantasy/index.md',
     },
+    {'title': 'World’s Largest Dungeon'},
     {
         'title': 'Авенхейм',
         'image': 'avenheim/images/avenheim.jpg',
@@ -499,18 +456,24 @@ WORLDS_DATA = [
 
         lurkmore=False,
     ),
+    {'title': 'Анакен'},
+    {'title': 'Анима'},
+
+    {'title': 'Арадия'},
     {
         'title': 'Арда',
         'image': 'arda/images/tolkien.jpg',
         'slug': 'arda',
         'index_page': 'arda/index.md',
     },
+    {'title': 'АРРРГХЪ!'},
     {
         'title': 'Белория',
         'image': 'beloriya/images/beloria.jpg',
         'slug': 'beloriya',
         'index_page': 'beloriya/index.md',
     },
+    {'title': 'Вавилон-5'},
     SluggedWorld(
         title='Ведьмак',
         slug='vedmak',
@@ -534,12 +497,14 @@ WORLDS_DATA = [
             'elrik': 'Элрик Мелнибонийский Майкла Муркока и его мир',
         },
     ),
+    {'title': 'Волчье солнце'},
     {
         'title': 'Волшебная Страна',
         'image': 'volshebnaya-strana/images/emerald.jpg',
         'slug': 'volshebnaya-strana',
         'index_page': 'volshebnaya-strana/index.md',
     },
+    {'title': 'Вселенная Warcraft'},
     {
         'title': 'Геройский Мир',
         'image': 'geroyskiy-mir/images/HoMM.jpg',
@@ -550,21 +515,35 @@ WORLDS_DATA = [
         title='Гиперион',
         slug='giperion',
     ),
+    {'title': 'Глоранта'},
+    {'title': 'Голарион'},
+    {'title': 'Горная ведьма'},
+
+    {'title': 'Грань Вселенной'},
+    {'title': 'Дзайбацу'},
     {
         'title': 'Дино',
         'slug': 'dino',
         'index_page': 'dino/index.md',
     },
+    {'title': 'Замок Фалькенштайн'},
     {
         'title': 'Звездные Войны',
         'slug': 'star-wars',
         'index_page': 'star-wars/index.md',
     },
+    {'title': 'Звёздный путь'},
+    {'title': 'Земля (BESM)'},
     # SluggedWorld(
     #     title='Земноморье',
     #     slug='zemnomorye',
     #     # image='images/Pet9.png',
     # ),
+    {'title': 'Известный мир'},
+    {'title': 'Искусство волшебства'},
+    {'title': 'Исторический сеттинг'},
+
+    {'title': 'История сеттинга Greyhawk'},
     {
         'title': 'Кинг',
         'slug': 'king',
@@ -582,18 +561,17 @@ WORLDS_DATA = [
         'slug': 'korol-i-shut',
         'index_page': 'korol-i-shut/index.md',
     },
+    {'title': 'Красная земля'},
     {
         'title': 'Крон',
         'image': 'kron/images/chronos.jpg',
         'slug': 'kron',
         'index_page': 'kron/index.md',
     },
-    {
-        'title': 'Мир Полудня',
-        'image': 'mir-poludnya/images/midday.jpg',
-        'slug': 'mir-poludnya',
-        'index_page': 'mir-poludnya/index.md',
-    },
+    {'title': 'Категория:Лаар'},
+    {'title': 'Лавикандия'},
+    {'title': 'Лайран'},
+    {'title': 'Маска Красной Смерти'},
     {
         'title': 'Мир номер три',
         'image': 'mir-nomer-tri/images/TretiyMir.jpg',
@@ -601,11 +579,20 @@ WORLDS_DATA = [
         'index_page': 'mir-nomer-tri/index.md',
     },
     {
+        'title': 'Мир Полудня',
+        'image': 'mir-poludnya/images/midday.jpg',
+        'slug': 'mir-poludnya',
+        'index_page': 'mir-poludnya/index.md',
+    },
+    {'title': 'Мир Тьмы'},
+    {
         'title': 'Миры Ктулху',
         'slug': 'mir-ktulhu',
         'index_page': 'mir-ktulhu/index.md',
     },
     future_moscow,
+    {'title': 'Муршамбала'},
+
     SluggedWorld(
         title='Нарния',
         slug='narniya',
@@ -614,6 +601,12 @@ WORLDS_DATA = [
         title='Невендаар',
         slug='nevendaar',
     ),
+    {'title': 'Неизвестные армии'},
+    {'title': 'Новый Мир Тьмы'},
+    {'title': 'Нудмер'},
+    {'title': 'Ньямбе'},
+    {'title': 'Оборотни въ фофудьяхъ'},
+    {'title': 'Перекрёсток миров'},
     SluggedWorld(
         title='Плоский мир',
         slug='discworld',
@@ -625,53 +618,21 @@ WORLDS_DATA = [
             'disc': "https://disc.fandom.com/ru/",
         },
     ),
-    SluggedWorld(
-        title='Путеводитель по коридорам Ада',
-        slug='putevoditel-po-koridoram-ada',
-        image='images/Hell.jpg',
+    {'title': 'Полночь'},
+    {'title': 'Порох и хлеб'},
 
-        wiki={
-            'lurkmore': "http://lurkmore.to/Путеводитель по коридорам Ада"
-        },
-    ),
-    SluggedWorld(
-        title='Рик и Морти',
-        slug='rick-and-morty',
-        image='images/LabRick.png',
-
-        links={
-            'en': "https://rickandmorty.fandom.com/",
-            'ru': "https://rickandmorty.fandom.com/ru/",
-        },
-
-        pages={
-            'science': '«Рик и Морти» с точки зрения науки',
-            'references': 'Obscure Pop Culture References From Rick And Morty, Explained',
-            'easter-eggs': '13 Important "Rick And Morty" Easter Eggs That Prove '
-                           'It\'s The Smartest Show On Television',
-            'universes': 'Вселенные',
-        },
-    ),
-
+    {'title': 'Рокуган'},
+    {'title': 'Категория:Сады Ислага'},
+    {'title': 'Сальвеблюз'},
     # spectre,
-    # SluggedWorld(
-    #     title='Утиные истории',
-    #     slug='duck-tales',
-    # ),
-    # SluggedWorld(
-    #     title='Этория',
-    #     slug='etoriya',
-    # ),
-
-    # SluggedWorld(
-    #     title='Юрий Петухов',
-    #     slug='yuriy-petuhov',
-    #     # image='images/Pet9.png',
-    #
-    #     wiki={
-    #         'lurkmore': "http://lurkmore.to/Юрий_Петухов"
-    #     },
-    # ),
+    {'title': 'Категория:Старый Мир Тьмы'},
+    {'title': 'Странствующие миры'},
+    {'title': 'Категория:Текумель'},
+    {'title': 'Фэн Шуй'},
+    {'title': 'Категория:Храмовники Рока'},
+    {'title': 'Шандария'},
+    {'title': 'Эберрон', 'link': 'https://rpg.fandom.com/ru/wiki/%D0%AD%D0%B1%D0%B5%D1%80%D1%80%D0%BE%D0%BD'},
+    {'title': 'Эра Водолея'},
 ]
 # 'image': '3e-logos.gif',
 # 'image': 'hw-logos.gif',
@@ -706,10 +667,20 @@ def parse_folder(folder):
 
 
 def folder_loader():
-    for slug in os.listdir(Config.WIKI_ROOT):
+    folders = list(os.listdir(Config.WIKI_ROOT))
+    for slug in folders:
         if not os.path.isdir(os.path.join(Config.WIKI_ROOT, slug)):
             continue
         yield parse_folder(WorldFolder(slug))
+
+    for world in worlds:
+        slug = world.get('slug') or world.get('title')
+        if slug in folders:
+            continue
+        yield lambda: {
+            'slug': slug,
+            **world,
+        }
 
 
 WORLDS = WorldsDB(
