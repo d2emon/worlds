@@ -1,0 +1,4 @@
+# Скамья
+## medieval bench
+
+*   stone
