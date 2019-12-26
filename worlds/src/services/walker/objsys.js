@@ -1,10 +1,10 @@
 import {
   getState,
 } from './state';
+import {getPlayer} from "./world";
 
 const isdest = item => true;
 const fobnsys = (name, mode, args) => null;
-const fpbns = name => null;
 const seeplayer = player => false;
 const dumpstuff = (player, channel) => null;
 
@@ -25,8 +25,28 @@ export const isCarriedBy = (item, player) => {
   return true;
 };
 
+export const findPlayer = (name) => {
+  for (let playerId = 0; playerId < 48; playerId += 1) {
+    const player = getPlayer(playerId);
+    if (player.name) {
+      const n1 = name.toLowerCase();
+      const n2 = player.name.toLowerCase();
+
+      if (n1 === n2) {
+        return player;
+      }
+      if ((n2.substr(0, 4) === 'the')
+        && (n1 === n2.substr(4))
+      ) {
+        return player;
+      }
+    }
+  }
+  return false;
+};
+
 export const findPlayerVisible = (name) => {
-  const player = fpbns(name);
+  const player = findPlayer(name);
   return Promise.resolve((player && seeplayer(player)) ? player : null);
 };
 

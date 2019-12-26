@@ -13,8 +13,15 @@ import {
   loose,
 } from './player';
 import {
+  findPlayer,
   findPlayerVisible,
 } from './objsys';
+import {
+  isDark,
+} from './utils/room';
+import {
+  listFile,
+} from './utils';
 
 const sendMessage = message => new Promise(() => {
   if (message.length > 255) {
@@ -59,65 +66,72 @@ export const seePlayer = (player) => {
   if (state.ailBlind) {
     return false;
   }
-  if ((state.channel === player.location) && isdark(state.channel)) {
+  if ((state.channel === player.location) && isDark(state.channel)) {
     return false;
   }
-  return setName(player.playerId)
-    .then(true);
+  return true;
 };
 
+export const lookPlayer = async (player) => {
+  const see = seePlayer(player);
+  const { playerId } = getState();
+
+  if (
+    see
+      && player
+      && (player.playerId !== playerId)
+  ) {
+    await setState(setName(player.playerId));
+  }
+  return see;
+};
+
+const lookPlayerName = name => {
+  const player = findPlayer(name);
+  return player && lookPlayer(player);
+};
+
+// Specials
+export const fromFile = message => `[f]${message}[/f]`;
+export const audial = message => `[d]${message}[/d]`;
+export const visual = (name, message) => `[s name="${name}"]${message}[/s]`;
+export const playerVisible = message => `[p]${message}[/p]`;
+export const dark = message => `[c]${message}[/c]`;
+export const playerDeaf = message => `[P]${message}[/P]`;
+export const playerBlind = message => `[D]${message}[/D]`;
+export const fromKeyboard = message => `[l]${message}[/l]`;
+
 const pfile = (match, filename) => {
-  const content = fListfl(filename);
-  return getState().debugMode
+  const { debugMode } = getState();
+  const content = listFile(filename);
+  return debugMode
     ? `[FILE ${filename} ]\n${content}`
     : content;
 };
 
-const pndeaf = (match, message) => !getState().ailDeaf
-  ? message
-  : '';
+const pndeaf = (match, message) => !getState().ailDeaf ? message : '';
 
-const pcansee = (match, name, message) => {
-  const player = fpbns(name);
-  return (player && seePlayer(player))
-    ? message
-    : '';
-};
+const pcansee = (match, name, message) => lookPlayerName(name) ? message : '';
 
-const prname = (match, message) => {
-  const player = fpbns(name);
-  return (player && seeplayer(player))
-    ? message
-    : 'Someone';
-};
+const prname = (match, name) => lookPlayerName(name) ? name : 'Someone';
 
-const pndark = (match, message) => (!isdark() && ! getState().ailBlind)
-  ? message
-  : '';
+const pndark = (match, message) => (!isDark() && ! getState().ailBlind) ? message : '';
 
-const ppndeaf = (match, message) => {
+const ppndeaf = (match, name) => {
   if (getState().ailDeaf) {
     return '';
   }
-  const player = fpbns(name);
-  return (player && seeplayer(player))
-    ? message
-    : 'Someone';
+  return lookPlayerName(name) ? name : 'Someone';
 };
 
 const ppnblind = (match, message) => {
   if (getState().ailBlind) {
     return '';
   }
-  const player = fpbns(name);
-  return (player && seeplayer(player))
-    ? message
-    : 'Someone';
+  return lookPlayerName(name) ? name : 'Someone';
 };
 
-const pnotkb = isKeyboard => (match, message) => !isKeyboard
-  ? message
-  : '';
+const pnotkb = isKeyboard => (match, message) => (!isKeyboard) ? message : '';
 
 export const showFile = filename => `[f]${filename}[/f]`;
 export const audio = message => `[d]${message}[/d]`;
@@ -198,7 +212,7 @@ export const showMessages = () => Promise.resolve(blockAlarm())
     const promise = Promise.resolve();
     if (logFl) {
       promise
-        .then(() => dcprnt(messages, logFl, false))
+        .then(() => applySpecial(messages, logFl, false))
     }
     if (state.snoopDestination) {
       promise
@@ -207,13 +221,13 @@ export const showMessages = () => Promise.resolve(blockAlarm())
           return player && opensnoop(player.name, 'a');
         })
         .then((fln) => Promise.resolve()
-          .then(() => dcprnt(messages, fln, false))
+          .then(() => applySpecial(messages, fln, false))
           .then(fcloselock)
         )
         .catch(() => {});
     }
     promise
-      .then(() => dcprnt(messages, null, true))
+      .then(() => applySpecial(messages, null, true))
       .then(makeBuffer)
       .then(() => snoopTarget && viewsnoop());
   })
@@ -299,20 +313,3 @@ export const chksnp = () => getState().snoopTarget && sendsys(
   0,
   null,
 );
-
-const setName = (x) => {
-  if ((x > 15) && (x != fpbns('riatha')) && (x != fpbns('shazareth'))) {
-    return setState({ wdIt: x.name });
-  }
-  return setState(
-    x.sex
-      ? {
-        wdHer: x.name,
-        wdThem: x.name,
-      }
-      : {
-        wdHim: x.name,
-        wdThem: x.name,
-      }
-  )
-};
