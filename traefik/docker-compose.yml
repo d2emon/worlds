@@ -1,0 +1,75 @@
+version: '3'
+services:
+  traefik:
+    image: traefik:v2.0
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      traefik.domain: worlds.localhost
+      traefik.docker.network: proxy
+      traefik.frontend.rule: Host:monitor.worlds.local
+      traefik.port: 8080
+    networks:
+      - default
+    command: --api.insecure=true --providers.docker
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=wordpresspassword
+    labels:
+      - traefik.enable=false
+    networks:
+      - internal
+  wp_blog:
+    image: wordpress:4.7.5-apache
+    environment:
+      - WORDPRESS_DB_PASSWORD=wordpresspassword
+    labels:
+      - "traefik.docker.network=proxy"
+      - "traefik.port=8080"
+      - "traefik.http.routers.wp-blog-worlds.rule=Host(`wp-blog.worlds.local`)"
+    networks:
+      - internal
+      - default
+    depends_on:
+      - mysql
+  adminer:
+    image: adminer:4.3.1-standalone
+    labels:
+      - "traefik.backend=adminer"
+      - "traefik.frontend.rule=Host:db-admin.worlds.local"
+      - "traefik.docker.network=proxy"
+      - "traefik.port=8080"
+    networks:
+      - internal
+      - default
+    depends_on:
+      - mysql
+  mail:
+    labels:
+      - "traefik.enable=false"
+  db:
+    labels:
+      traefik.enable: false
+  front:
+    labels:
+      traefik.port: 8081
+      traefik.http.routers.front-worlds.rule: Host(`worlds.local`)
+      traefik.http.services.front-worlds.loadbalancer.server.port: 80
+  back:
+    labels:
+      - "traefik.port=80"
+      - "traefik.http.routers.back-worlds.rule=Host(`api.worlds.local`)"
+  blog:
+    labels:
+      - "traefik.port=80"
+      - "traefik.http.routers.blog-worlds.rule=Host(`blog.worlds.local`)"
+networks:
+  default:
+    external:
+      name: proxy
+  internal:
+    external: false

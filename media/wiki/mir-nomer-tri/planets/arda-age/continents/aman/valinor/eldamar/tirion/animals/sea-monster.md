@@ -1,0 +1,43 @@
+# Морское чудовище
+## sea monster
+
+*   sea monster thoughts
+*   ...
+    *   tentacle (0-6)
+        *   tentacle
+    *   fish fin (0-4)
+        *   fish fin
+    *   ...
+    *   ...
+*   stinger (20%)
+*   ...
+    *   crustacean claw (0-4)
+        *   crustacean claw
+    *   ...
+*   ...
+    *   crustacean leg (0-8)
+        *   crustacean leg
+    *   ...
+*   ...
+    *   crustacean shell
+    *   scales
+    *   fur
+    *   exoskeleton
+    *   ...
+*   ...
+    *   mouth (1-2)
+        *   mouth
+    *   beak (1-2)
+        *   beak
+*   skull (80%)
+*   ...
+    *   eye (1-8)
+        *   eye
+    *   simple eye (1-8)
+        *   simple eye
+    *   ...
+    *   ...
+*   weird soft organ (0-4)
+    *   weird soft organ
+*   weird hard organ (0-4)
+    *   weird hard organ
