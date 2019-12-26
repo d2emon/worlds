@@ -32,7 +32,7 @@ services:
     volumes:
       - "./worlds:/app"
     networks:
-      - default
+      - worlds
   back:
     build: ./worlds-server
     environment:
@@ -53,7 +53,7 @@ services:
       - "./media:/media"
       - "./log:/app/log"
     networks:
-      - default
+      - worlds
       - internal
   blog:
     build: ./blog
@@ -68,10 +68,10 @@ services:
       - "./blog:/app"
       - "./log:/app/log"
     networks:
-      - default
+      - worlds
       - internal
 networks:
-  default:
+  worlds:
     external: true
   internal:
     external: false
