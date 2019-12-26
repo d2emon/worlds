@@ -51,4 +51,13 @@ export default {
   letter-spacing: normal !important;
   font-family: "Roboto", sans-serif !important;
 }
+.wiki h1 {
+  margin-bottom: 16px;
+}
+.wiki h2 {
+  margin-bottom: 16px;
+}
+.wiki h3 {
+  margin-bottom: 16px;
+}
 </style>

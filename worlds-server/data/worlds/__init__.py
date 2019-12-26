@@ -74,7 +74,7 @@ class WorldFolder:
 
         filename = os.path.join(self.root, 'books.json')
         if not os.path.isfile(filename):
-            return ['no-books']
+            return []
         with open(filename, "r", encoding='utf-8') as fp:
             data = json.load(fp)
             books = data.get('books', {})
