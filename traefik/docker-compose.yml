@@ -2,15 +2,14 @@ version: '3'
 services:
   traefik:
     image: traefik:v2.0
+    restart: always
     ports:
-      - 80:80
-      - 8080:8080
+      - 5051:80
+      - 5050:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      traefik.domain: worlds.localhost
-      traefik.docker.network: proxy
-      traefik.frontend.rule: Host:monitor.worlds.local
+      traefik.docker.network: default
       traefik.port: 8080
     networks:
       - default
@@ -23,14 +22,13 @@ services:
       - traefik.enable=false
     networks:
       - internal
-  wp_blog:
+  wp-blog:
     image: wordpress:4.7.5-apache
     environment:
       - WORDPRESS_DB_PASSWORD=wordpresspassword
     labels:
-      - "traefik.docker.network=proxy"
-      - "traefik.port=8080"
-      - "traefik.http.routers.wp-blog-worlds.rule=Host(`wp-blog.worlds.local`)"
+      traefik.docker.network: default
+      traefik.port: 8080
     networks:
       - internal
       - default
@@ -39,10 +37,11 @@ services:
   adminer:
     image: adminer:4.3.1-standalone
     labels:
-      - "traefik.backend=adminer"
-      - "traefik.frontend.rule=Host:db-admin.worlds.local"
-      - "traefik.docker.network=proxy"
-      - "traefik.port=8080"
+      traefik.docker.network: default
+      traefik.port: 8080
+      traefik.http.routers.adminer-worlds.rule: PathPrefix(`/admin`)
+      traefik.http.routers.adminer-worlds.middlewares: adminer-stripprefix
+      traefik.http.middlewares.adminer-stripprefix.stripprefix.prefixes: /admin
     networks:
       - internal
       - default
@@ -56,13 +55,16 @@ services:
       traefik.enable: false
   front:
     labels:
-      traefik.port: 8081
+      traefik.port: 80
       traefik.http.routers.front-worlds.rule: Host(`worlds.local`)
       traefik.http.services.front-worlds.loadbalancer.server.port: 80
   back:
     labels:
-      - "traefik.port=80"
-      - "traefik.http.routers.back-worlds.rule=Host(`api.worlds.local`)"
+      traefik.docker.network: default
+      traefik.port: 80
+      traefik.http.routers.back-worlds.rule: PathPrefix(`/api`)
+      traefik.http.routers.back-worlds.middlewares: back-stripprefix
+      traefik.http.middlewares.back-stripprefix.stripprefix.prefixes: /api
   blog:
     labels:
       - "traefik.port=80"
@@ -70,6 +72,6 @@ services:
 networks:
   default:
     external:
-      name: proxy
+      name: worlds
   internal:
     external: false
