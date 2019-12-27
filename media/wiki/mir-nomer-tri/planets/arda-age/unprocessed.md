@@ -1,6 +1,7 @@
 *   ale
 *   ancient continent
 *   ash
+*   beach
 *   beak
 *   bird body
 *   bird thoughts
@@ -63,8 +64,9 @@
 *   proton
 *   rock
 *   scales
-*   sea
+*   sea life
 *   sea monster thoughts
+*   sea water
 *   shark
 *   simple eye
 *   skull
