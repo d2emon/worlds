@@ -23,6 +23,24 @@ services:
       - "./log:/app/log"
     networks:
       - internal
+  search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - "./search/searchdata:/usr/share/elasticsearch/data"
+    networks:
+      - internal
+  redis:
+    image: redis:3-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - "./redis/data:/data"
+    networks:
+      - internal
   front:
     build: ./worlds
     environment:
@@ -70,6 +88,39 @@ services:
     networks:
       - worlds
       - internal
+  blog-back:
+    build: ./flask-blog/back
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+      - ELASTICSEARCH_URL=search:9200
+      - MAIL_SERVER=mail
+      - MAIL_PORT=1025
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - mail
+      - search
+      - redis
+    links:
+      - mail
+      - search
+      - redis
+    ports:
+      - "5003:5000"
+    volumes:
+      - "./blog-db:/db"
+      - "./log:/log"
+  blog-front:
+    build: ./flask-blog/front
+    depends_on:
+      - blog-back
+    links:
+      - blog-back
+    ports:
+      - "8082:8080"
+    entrypoint:
+      - "npm"
+    command: ["run", "serve"]
 networks:
   worlds:
     external: true
