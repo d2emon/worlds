@@ -5,10 +5,12 @@
 *   beak
 *   bird body
 *   bird thoughts
+*   blood
 *   body
 *   cat thoughts
 *   ceramic
 *   cloth
+*   corpse
 *   crustacean claw
 *   crustacean leg
 *   crustacean shell
@@ -35,7 +37,6 @@
 *   magma
 *   mammal body
 *   marble
-*   medieval battlefield
 *   medieval cemetery
 *   medieval clothing set
 *   medieval commercial area
@@ -71,6 +72,7 @@
 *   simple eye
 *   skull
 *   soft flesh
+*   soldier
 *   space animal
 *   space monster
 *   stinger
