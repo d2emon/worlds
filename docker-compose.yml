@@ -73,23 +73,8 @@ services:
     networks:
       - worlds
       - internal
-  blog:
-    build: ./blog
-    environment:
-      - FLASK_DEBUG=1
-      - FLASK_ENV=development
-    links:
-      - db
-    ports:
-      - "5001:5000"
-    volumes:
-      - "./blog:/app"
-      - "./log:/app/log"
-    networks:
-      - worlds
-      - internal
   blog-back:
-    build: ./flask-blog/back
+    build: https://github.com/d2emon/flask-blog.git
     environment:
       - FLASK_DEBUG=1
       - FLASK_ENV=development
@@ -106,21 +91,20 @@ services:
       - search
       - redis
     ports:
-      - "5003:5000"
+      - "5001:5000"
     volumes:
       - "./blog-db:/db"
       - "./log:/log"
   blog-front:
-    build: ./flask-blog/front
+    build: https://github.com/d2emon/vue-blog.git
+    environment:
+      - "BACKEND_ROOT=http://127.0.0.1:5002"
     depends_on:
       - blog-back
     links:
       - blog-back
     ports:
-      - "8082:8080"
-    entrypoint:
-      - "npm"
-    command: ["run", "serve"]
+      - "8083:8080"
 networks:
   worlds:
     external: true
