@@ -1,11 +1,27 @@
 <template>
   <v-container>
-    <world-edit-form
-      v-if="world"
-      :world="world"
-      :wiki="wiki"
-      @save="setWorld"
-    />
+    <v-layout
+      row
+      wrap
+    >
+      <v-flex xs6>
+        <v-container>
+          <world-edit-form
+            v-if="world"
+            :world="world"
+            :wiki="wiki"
+            @save="setWorld"
+          />
+        </v-container>
+      </v-flex>
+      <v-flex xs6>
+        <v-container>
+          <v-card>
+            <world-volumes />
+          </v-card>
+        </v-container>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
@@ -18,7 +34,8 @@ import {
 export default {
   name: 'EditWorld',
   components: {
-    WorldEditForm: () => import('@/components/WorldEditForm.vue'),
+    WorldEditForm: () => import('@/forms/WorldEditForm.vue'),
+    WorldVolumes: () => import('@/components/WorldVolumes.vue'),
   },
   computed: {
     ...mapState('worlds', [
