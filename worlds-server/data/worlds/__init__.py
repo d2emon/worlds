@@ -597,12 +597,12 @@ WORLDS_DATA = [
     {'title': 'Лавикандия'},
     {'title': 'Лайран'},
     {'title': 'Маска Красной Смерти'},
-    {
-        'title': 'Мир номер три',
-        'image': 'mir-nomer-tri/images/TretiyMir.jpg',
-        'slug': 'mir-nomer-tri',
-        'index_page': 'mir-nomer-tri/index.md',
-    },
+    # {
+    #     'title': 'Мир номер три',
+    #     'image': 'mir-nomer-tri/images/TretiyMir.jpg',
+    #     'slug': 'mir-nomer-tri',
+    #     'index_page': 'mir-nomer-tri/index.md',
+    # },
     {
         'title': 'Мир Полудня',
         'image': 'mir-poludnya/images/midday.jpg',
