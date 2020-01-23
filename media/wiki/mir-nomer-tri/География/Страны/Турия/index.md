@@ -71,316 +71,156 @@
 
 ----
 
-## Северо-Восток
+## Северо-Восточная Турия
 
+В древности известен как Белерианд
 На восток от Анауроч.
 На север от Верхних Пустошей
 
 *   Верхний Лес
+    *   ...
     *   К востоку от Долины Делимбир
 *   Фрозенфар
+    *   ...
     *   Севернее Хребта Мира
 *   Долина Делимбир
+    *   ...
     *   К югу от Дикого Фронтира
     *   К западу от Верхнего Леса
 *   Дикий Фронтир
+    *   ...
     *   К северу от Долины Делимбир
     *   К востоку от Луруара
     *   К западу от Северного Побережья Мечей
 *   Луруар - Серебрянные Болота
+    *   Пустоши
     *   К западу от Дикого Фронтира
     *   Официальный язык - Хондатский (Балтийский)
 *   Северное Побержье Мечей
+    *   Аман
     *   К востоку от Дикого Фронтира
     *   К югу от Хребта Мира
 *   Вотердип
+    *   ?
 
-## Север
+## Центральная и Западная Турия
+
+Пустоши
 
 *   Анауроч
+    *   Бедуины
     *   Пустыня на севере
     *   К востоку от Долин и Пограничного Леса
 *   Долины
+    *   Аваллон
     *   К западу от Анауроч
     *   К западу от Драконьего Берега
     *   К югу от Лунного Моря и Драконьего Хребта
 *   Лунное Море
+    *   Руритания
     *   К югу от Тар
     *   К северу от Долин, Васта и Сембии
 *   Райд
+    *   ?
     *   Степи
     *   К востоку от Тар
     *   К северу от Драконьего Хребта
     *   К западу от Пограничного Леса
 *   Васт
+    *   Тилея
     *   К югу от Лунного Моря
     *   К западу от Драконьего Берега
     *   К востоку от Серого Леса и Импильтура
     *   К северу от Моря Павших Звезд
     *   Официальные языки - Истинг и Дамарский (Славянские)
 
-## Северо-Запад
-
-*   Дамара
-    *   К западу от Ваасы
-    *   К югу от Великого Ледника
-    *   К северу от Великого Дола
-*   Великий Дол
-    *   К югу от Дамары
-    *   К северу от Теска
-    *   К западу от Импильтура
-*   Импильтур
-    *   На побережье Моря Павших Звезд
-    *   К югу от Нарфела
-    *   К востоку от Великого Дола
-*   Ордынские Земли
-    *   К западу от Рашемена и Нарфела
-*   Нарфел
-    *   К северу от Импильтура
-    *   К западу от Дамары
-    *   К востоку от Рашемена и Ордынских Земель
-*   Рашемен
-    *   К западу от Нарфела
-    *   К востоку от Ордынских Земель
-    *   Официальный язык - Рашемский (Славянский)
-*   Теск
-    *   На побережье Моря Павших Звезд
-    *   К югу от Великого Дола
-*   Вааса
-    *   К востоку от Дамары
-    *   К северу от Лунного Моря
-*   Пельвурия
-    *   Великий ледник на севере
-
-## Восток
+## Юго-Восточная Турия
 
 *   Эверешка
+    *   Атель Лорен
     *   К востоку от Ануроч
     *   К западу от Восточного Сердцеземья
 *   Земли Интриг
     *   Амн
+        *   Эсталия
         *   К югу от Восточного Сердцеземья
         *   К северу от Тетира
     *   Калимшан
+        *   Арабия
         *   К югу от Тетира
         *   На северном побережье Сияющего Моря
         *   Официальный язык - Альжедо (Арабский)
         *   Арабы, Оттоманы
     *   Тетир
+        *   Эсталия
         *   К югу от Амна
         *   К северу от Калимшана
 *   Восточное Сердцеземье
+    *   ?
     *   К северу от Амна
     *   Включает Побережье Мечей
+        *   Аман
+*   Эрлказар
+    *   ?
 *   Восточные Острова
     *   Эвермит
+        *   ?
     *   Лантан
+        *   ?
     *   Муншае
+        *   Аваллон
+        *   Руатим
+            *   Пустоши
     *   Нелантер
+        *   Ящерики
     *   Нимбрал
+        *   ?
 
-## Внутренняя Турия
+## Юго-Западная(Внутренняя) Турия
 
 *   Аканул
+    *   ...
     *   К северо-востоку от Чессенты
 *   Кормир
+    *   Аваллон
     *   К югу от Анауроч и Долин
     *   К востоку от Сембии
     *   К западу от Восточного Сердцеземья
 *   Драконий Берег
+    *   Аман
     *   На востоке моря Павших Звезд
 *   Пиратские Острова
+    *   ...
     *   Острова в море Павших Звезд
 *   Сембия
+    *   Тилея
     *   На северо-восточном берегу моря Павших Звезд
     *   К западу от Кормира
 *   Вильонское Побережье
     *   Хондат
+        *   Тилея
         *   На южном бергу Вильонского Побережья
         *   К юго-западу от Сеспеха
         *   К северу от Чондальвуда
     *   Хлондет
+        *   Тилея
         *   На северном берегу Вильонского Побережья
         *   К югу от Турмиша
         *   К северо-востоку от Сеспеха
         *   К западу от Сияющих Равнин
     *   Сеспех
+        *   Тилея
         *   На южном бергу Вильонского Побережья
         *   К юго-востоку от Хондата
         *   К юго-западу от Хлондета
     *   Турмиш
+        *   Турия
         *   На северном берегу Вильонского Побережья
         *   К северу от Хлондета
 *   Сияющие Равнины
+    *   ...
     *   К востоку от Хлондета
     *   К западу от Амна
-
-## Запад
-
-*   Агларонд
-    *   На полуострове на западе моря Павших Звезд
-*   Альтумбель
-    *   На полуострове на западе моря Павших Звезд
-*   Чессента
-    *   На южном берегу моря Павших Звезд
-    *   К северу от Чондальвуда, Тимантера и Унтера
-    *   Официальный язык - Чессентийский (Греческий)
-*   Чондальвуд
-    *   К югу от Чессенты и Хондата
-*   Мульхоранд
-    *   К югу от Мургома
-    *   К западу от Унтера
-    *   Включает Верхний Имаскар
-    *   Официальные языки:
-        *   Мульхорандский (Хамитский)
-        *   Агларондский ()
-        *   Чессентийский (Греческий)
-        *   Змийский
-        *   Дурпарский (Алтайский)
-        *   Гоблинский
-        *   Туйганский (Алтайский)
-        *   Унтерский (Семитский)
-*   Мургом
-    *   К северу от Мульхоранда
-*   Окот
-    *   В долине Соленого Озера
-*   Тай
-    *   На Тайском плоскогорье
-    *   Официальные языки:
-        *   Тайский (Хамитский)
-        *   Мульхорандский (Хамитский)
-        *   Чессентийский (Греческий)
-        *   Дамарский (Балтийский)
-        *   Гноллий
-        *   Инферно
-        *   Рашемский (Славянский)
-        *   Туйганский (Алтайский)
-        *   Унтерский (Семитский)
-*   Тимантер
-    *   К югу от Чессенты
-    *   Официальные языки:
-        *   Общий (Английский)
-        *   Тимантерский (Змийский)
-        *   Унтерский (Семитский)
-*   Унтер
-    *   К югу от Чессенты
-
-## Юго-Восток
-
-*   Хульт
-    *   На восточном краю Хультанского полуострова
-*   Лапалия
-    *   На юго-западном берегу Сияющего Моря
-*   Самара
-    *   На юго-восточном краю Хультианского полуострова
-*   Ташалар
-    *   На южном берегу Сияющего моря
-    *   К западу от Хульта
-    *   К востоку от Хальруа
-*   Тиндол
-    *   На Тиндольском перешейке
-    *   Официальный язык - Ташальский (Греческий)
-
-## Юг
-
-*   Пограничные Королевства
-    *   К северу от Лапалии и Шаара
-    *   К западу от Парящего Озера
-    *   К востоку от Шаара
-    *   Официальный язык - Общий (Английский)
-*   Великий Разлом
-    *   В Западном Шааре
-*   Хальруа
-    *   На северном берегу Великого Моря
-*   Парящее Озеро
-    *   К востоку от Шаара
-*   Шаар
-    *   К юго-западу от Пограничных Королевств
-    *   К западу от Парящего Озера
-
-## Юго-Запад
-
-*   Дамбрат
-    *   На юго-западном побережье
-*   Сияющие Земли
-    *   Дурпар
-        *   К северу от Эстагунда
-    *   Эстагунд
-        *   К югу от Дурпара
-    *   Луйрен
-        *   На побережье Великого Моря
-        *   К югу от Шаара
-*   Золотой Вар
-    *   На побережье Золотого Залива
-*   Ульгарт
-    *   К западу от Дурпара
-    *   Официальные языки:
-        *   Девский (Алтайский)
-        *   Общий (Английский)
-*   Вельдорн
-    *   На западе от Шаара
-*   Дальний Запад
-    *   Официальные языки:
-        *   Маранский (Семитский)
-        *   Велянский (Кельтский)
-
-----
-
-## Кара-Тур
-
-*   Шу Лунь
-*   Ту Лунь
-*   Табот
-*   Лошадиные Равнины
-*   Северные Пустоши
-*   Малатра
-*   Островные Королевства
-    *   Корйо
-    *   Козакура
-    *   Ва
-
-## Мацтика
-
-*   Запад
-    *   Паит
-    *   Дальний Паит
-    *   Азульское Море
-    *   Кордельский Залив
-*   Центр
-    *   Рецелаки
-    *   Долина Нешаль
-    *   Уакли
-    *   Культака
-*   Юг
-    *   Дом Тецка
-    *   Колан
-*   Север
-    *   Пески Ицкаля
-    *   Бассейн Пасокада
-
-## Захара
-
-## Лераконд
-
-*   Порты Даска
-*   Гонталь
-*   Мелаброт
-*   Фимбруль
-*   Рельмаур
-*   Скелькор
-*   Эскорн
-*   Земли Мечей
-*   Тармалун и Наветренные Порты
-
-## Анкором
-
-## Каташака
-
-*   Эшовы
-*   Табахи
-*   Тингуты
-
-## Оссе
 
 ----
 
@@ -404,14 +244,15 @@
     *   If the Dalesfolk have an accent at all, I usually find it's a dialect from some country shire from England.
 *   Дамара
     *   Consciously or not, many Polish-Lithuanian influences have crept into my Damara. I base this on the nomenclature in the FRCS, descriptions of the houses seen in The Year of Rogue Dragons and the relative status of it as less wild and northerly than Vaasa, but north of Impiltur and less stable.
-*   Dambrath: ?
+*   Дамбрат
+    *   ?
 *   ?   Драконий Берег
     *   A cultural melting pot of Tethyrians and Chondathans, with little or no regional dialect to call its own. A Dragon Coast man is as likely to speak perfect Calant-dialect as he is to speak Chondathan with a broad Cormyrean accent. Most likely, his accent is so mixed that it's unrecognisable as any specific one (except, conveivably, as Dragon Coast patois). Come to think of it, the Dragon Coast might well sound a bit New York-like.
-*   ??  Durpar
-*   ??  Erlkazar
+*   ??  Дурпар
+*   ??  Эрлказар
 *   ??  Эвермит
-*   ??  Estagund
-*   ?   The Golden Water: ?
+*   ??  Эстагунд
+*   ?   Золотая Вода
 *   ?   Великий Дол
     *   I'm wondering what I'll do with this. On one hand, the people are ethnically related to the Dalesfolk, but on the other, they're situated in an exotic locale. I wonder if they'd be Germano-Celtic or perhaps, by now, Gallic.
 *   ?   Великий Ледник
@@ -420,7 +261,7 @@
     *   Not a clue.
 *   ?   Ордынские Земли
     *   Mongols, I guess.
-*   ??  Imaskar
+*   ??  Имаскар
 *   Импильтур
     *   Impiltur reminds me of the Holy Roman Empire. The upper parts of it have accent that are remniscient of German, but the lower parts, particularly Lyrabar itself, is more like Procampur in that their speech sounds more French.
 *   ?   Парящее Озеро
@@ -429,7 +270,7 @@
     *   I'm thinking perhaps the mix of Shoon, Chult and Shaar might have created something like Brazil in looks and sound, even though the culture is obviously different.
 *   Лантан
     *   Here, I'm lost.
-*   ??  Luiren
+*   ??  Луйрен
 *   ?   Лунное Море
     *   A bit like the Balkans, aye? Especially if my Vaasans speak with a Russian accent and wear furs.
 *   Муншае
@@ -441,45 +282,48 @@
     *   Tartars, I'm guessing.
 *   ?   Нелантел
     *   Very mixed, of course, but a bit Carribean in character. Locals there might be jungle tribes or might have joined with pirates.
-*   ?   The North: Scandinavian.
+*   ?   Север
+    *   Scandinavian.
 *   ?   Нимбрал
     *   ?
 *   Рашемен
     *   The 'other' Russia, that is, the non-European, non-Imperial part of it.
 *   ?   Райд
     *   ?
-*   ??  Ruathym
+*   ??  Руатим
 *   ?   Самара
     *   ?
 *   Сембия
     *   Sembia, is, of course, Sembia, but I've drawn some inspiration from Italian-American immigrants, both in attitudes towards the 'old country' (Chondath) and in the importance of family over law or personal desire.
-*   ??  Semphar
+*   ??  Семфар
 *   ?   Шаар
     *   From what I can tell, nomenclature (and, therefore, probably language and at least some of the culture) is African, but the people look somewhat like stereotypical 'Red Indians' or alternatively, Turkic tribes. Confusing and I'm not decided on how to portray them.
-*   ?   Silverymoon: Ethnically mostly Scandinavian, but the standard of education is such that the 'typical' accent is probably close to RP. 
-*   ??  Sossal
+*   ?   Silverymoon
+    *   Ethnically mostly Scandinavian, but the standard of education is such that the 'typical' accent is probably close to RP. 
+*   ??  Соссал
 *   ?   Побережье Мечей
     *   The mix on the Sword Coast means that American accents wouldn't seem out of place. After all, both places are formed by successive waves of immigration from very different people.
 *   ?   Ташалар
     *   With their Yuan-Ti heritage, uniquely Realmsian, I guess. Don't quite know how they'd talk.
 *   Тетир
     *   Again, somewhat post-Moorish Spain, with knights in the El Cid tradition. The landed nobility are very much like the Dons. The tribes of the hills are Talfiric, obviously, with some influence on the language. Although I can't imagine a dialect combining Spanish (proto-) and Gaelic, the historical Celtiberians had no such trouble.
-*   ?   Tharsult: ?
+*   ?   Тарсульт
+    *   ?
 *   Тай
     *   Uniquely Realmsian, of course, but sound somewhat Turkish (if I could get the accent right).
 *   Теск
     *   With Thayvian, Tuigan and Silk Road influences, a bit Bulgarian, though more mixed.
-*   ??  Threskel
+*   ??  Трескель
 *   ?   Тиндол
     *   ?
 *   Турмиш
     *   The combination of looks and culture among the Turami isn't visibly real world derived, but I've snuck in some Indian influences in Turmish.
-*   Ulthgardt Tribesfolk:
+*   Ульгардт
 *   Унтер
     *   I've much Persian influence there.
 *   Вааса
     *   Russians.
-*   ??  Var the Golden
+*   ??  Золотой Вар
 *   ?   Васт
     *   The lower Vast (Procampur, primarily) I have a bit Gallic/French in character and the upper is a bit like Dalmatia.
 *   ?   Вильонское Побережье
