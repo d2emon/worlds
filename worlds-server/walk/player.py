@@ -43,6 +43,65 @@ def turn(command=None):
     return wrapper
 
 
+class Person:
+    __records = {}
+
+    def __init__(
+        self,
+        player_id=None,
+        strength=0,
+        level=0,
+        flags=None,
+        score=0,
+    ):
+        self.player_id = player_id
+        self.strength = strength
+        self.level = level
+        self.flags = flags or []
+        self.score = score
+
+    def as_dict(self):
+        return {
+            'player_id': self.player_id,
+            'strength': self.strength,
+            'score': self.score,
+            'level': self.level,
+            'flags': self.flags,
+        }
+
+    def save(self):
+        record = self.__records.get(self.player_id)
+        self.player_id = record.player_id if record else len(self.__records)
+        self.__records[self.player_id] = self
+        return self
+
+    @classmethod
+    def load(cls, player, on_create):
+        person = cls.__records.get(player.name)
+        if person is not None:
+            return person.as_dict()
+
+        player = on_create()
+        return cls(
+            player_id=player.name,
+            strength=player.strength,
+            level=player.level,
+            flags=[player.sex],
+            score=player.score,
+        ).save().as_dict()
+
+    @classmethod
+    def remove(cls, player_id):
+        name = player_id.lower()
+        record = cls.__records.get(player_id)
+        if record is None:
+            return
+        if record.name.lower() != name:
+            raise StopGame("Panic: Invalid Persona Delete")
+        record.name = ""
+        record.level = -1
+
+
 class Player:
     __PLAYER = None
 
@@ -72,6 +131,9 @@ class Player:
         self.__text_messages = []
 
         self.__room = None
+
+        self.__zapped = False
+        self.__snoop_target = None
 
         # Talker
         World.load()
@@ -205,12 +267,7 @@ class Player:
     @classmethod
     def restart(cls, name):
         cls.__PLAYER = cls(name)
-        return {
-            'player': {
-                'name': cls.__PLAYER.name,
-            },
-            'message': "Hello {}".format(cls.__PLAYER.name),
-        }
+        return cls.__PLAYER
 
     @classmethod
     def set_pronoun(cls, character):
@@ -232,6 +289,50 @@ class Player:
             return
 
         Globals.wd_them = character
+
+    def __check_snoop(self):
+        if self.__snoop_target is None:
+            return
+        return sendsys(
+            self.__snoop_target,
+            self.name,
+            -400,
+            0,
+            "",
+        )
+
+    def save(self):
+        if self.__zapped:
+            return False
+
+        Person(
+            player_id=self.name,
+            strength=self.strength,
+            level=self.level,
+            # flags=self.character.flags,
+            flags=[self.character.sex],
+            score=self.score,
+        ).save()
+        return True
+
+    def remove(self):
+        Globals.i_setup = True
+
+        World.load()
+        dumpitems()
+        if self.character.visible < 10000:
+            sendsys(
+                self.name,
+                self.name,
+                -10113,
+                self.room_id,
+                "{name} has departed from AberMUDII\n".format(name=self.name),
+            )
+        self.character.name = ""
+        World.save()
+
+        self.__check_snoop()
+        return self.save()
 
     def start_fight(self, enemy, fight=300):
         self.__fight = enemy
@@ -427,8 +528,9 @@ class Player:
             return
 
         logging.log("{} slain by {}".format(self.name, character.name))
-        dumpitems()
-        loseme()
+
+        saved = self.remove()
+        # "Saving {}".format(self.name) if self.remove() else "",
         World.save()
 
         delpers(self.name)
@@ -472,10 +574,28 @@ class Player:
 
     # Specials
     def start(self):
+        def ask_sex():
+            # self.show_messages()
+            s = 'm'  # input("Sex (M/F) : ")[:1].lower()
+            if s[0] == 'm':
+                return 0
+            elif s[0] == 'f':
+                return 1
+            else:
+                return ask_sex()
+
+        def on_create():
+            # self.add_message("Creating character....")
+            self.score = 0
+            self.strength = 40
+            self.level = 1
+            self.sex = ask_sex()
+            return self
+
         self.__message_id = -1
         Globals.curmode = True
 
-        initme()
+        Person.load(self, on_create)
 
         self.character.start(self.strength, self.level, self.sex)
 
@@ -607,7 +727,10 @@ class Player:
         Globals.curmode = 0
         self.room_id = 0
 
-        saveme()
+        result = {
+            'message': "\nSaving {}".format(self.name) if self.save() else None,
+            'error': "Goodbye",
+        }
         raise StopGame('Goodbye')
 
     @turn('take')
@@ -710,8 +833,11 @@ class Player:
         if self.room.death_room:
             Globals.ail_blind = False
             if not self.is_wizard:
-                loseme(self.name)
-                raise StopGame("bye bye.....")
+                return {
+                    'save': self.remove(),
+                    # "Saving {}".format(self.name) if self.remove() else "",
+                    'message': "bye bye.....",
+                }
 
         World.load()
 
@@ -807,10 +933,14 @@ class Player:
         umbrella = Item.get(1)
         if not self.is_wizard and (not self.has_item(umbrella.item_id) or umbrella.state == 0):
             self.__room_id = room_id
-            loseme()
             return {
-                'message': "Wheeeeeeeeeeeeeeeee  <<<<SPLAT>>>>\nYou seem to be splattered all over the place\n",
-                'crapup': "I suppose you could be scraped up - with a spatula",
+                'save': self.remove(),
+                # "Saving {}".format(self.name) if self.remove() else "",
+                'message': "\n".join([
+                    "Wheeeeeeeeeeeeeeeee  <<<<SPLAT>>>>",
+                    "You seem to be splattered all over the place",
+                    "I suppose you could be scraped up - with a spatula",
+                ]),
             }
 
         sendsys(
@@ -874,10 +1004,6 @@ class Player:
         return {'message': "You find nothing.\n"}
 
     # Events
-
-    def on_error(self):
-        loseme(self)
-        return {'fatalError': 255}
 
     def on_look(self):
         turn_undead = self.has_item(45)
@@ -953,9 +1079,15 @@ class Player:
 
     def on_quit(self):
         if self.in_fight:
-            raise ActionError("^C\n")
-        loseme(self)
-        raise StopGame("Byeeeeeeeeee  ...........")
+            raise ActionError("^C")
+
+        return self.remove()
+
+        return {
+            'save': self.remove(),
+            # "Saving {}".format(self.name) if self.remove() else "",
+            'message': "Byeeeeeeeeee  ...........",
+        }
 
     def on_stop_game(self):
         return self.get_text()
@@ -1013,6 +1145,10 @@ def chkcrip(*args):
     return False
 
 
+def dumpitems(*args):
+    raise NotImplementedError()
+
+
 def delpers(*args):
     # raise NotImplementedError()
     print("delpers({})".format(args))
@@ -1038,19 +1174,10 @@ def gamecom(*args):
     print("gamecom({})".format(args))
 
 
-def initme(*args):
-    # raise NotImplementedError()
-    print("initme({})".format(args))
-
-
 def iswornby(*args):
     # raise NotImplementedError()
     print("iswornby({})".format(args))
     return False
-
-
-def loseme(*args):
-    raise NotImplementedError()
 
 
 def mstoout(*args):
@@ -1079,11 +1206,6 @@ def randperc(*args):
     # raise NotImplementedError()
     print("randperc({})".format(args))
     return 0
-
-
-def saveme(*args):
-    # raise NotImplementedError()
-    print("saveme({})".format(args))
 
 
 __MESSAGES = []
