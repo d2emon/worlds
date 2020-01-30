@@ -69,7 +69,15 @@ def start(name):
 def wait():
     @do_action
     def __action():
-        return current_player().wait()
+        player = current_player()
+        messages = player.wait()
+        return {
+            'player': {
+                'player_id': player.character_id,
+                'name': player.name,
+            },
+            'messages': messages,
+        }
     return jsonify(__action())
 
 

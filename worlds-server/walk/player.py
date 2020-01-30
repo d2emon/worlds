@@ -632,7 +632,7 @@ class Player:
         self.read_messages(interrupt=True)
         self.on_time()
         World.save()
-        return {'messages': self.__text_messages}
+        return self.__text_messages
 
     @turn()
     def go(self, direction_id):
