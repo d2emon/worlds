@@ -290,6 +290,14 @@ class Player:
 
         Globals.wd_them = character
 
+    def as_dict(self):
+        return {
+            'character_id': self.character_id,
+            'name': self.name,
+
+            'messages': self.__text_messages,
+        }
+
     def __check_snoop(self):
         if self.__snoop_target is None:
             return
@@ -316,6 +324,7 @@ class Player:
         return True
 
     def remove(self):
+        # Disable timer
         Globals.i_setup = True
 
         World.load()
@@ -629,9 +638,14 @@ class Player:
 
     # Actions
     def wait(self):
+        # if(sig_active==0) return;
+        # sig_aloff()
+        # openworld()
         self.read_messages(interrupt=True)
         self.on_time()
         World.save()
+        # key_reprint()
+        # sig_alon()
         return self.__text_messages
 
     @turn()

@@ -54,11 +54,10 @@ def start(name):
         player = Player.restart(name)
         app.logger.info("GAME ENTRY: %s[%s]", player.name, request.remote_addr)
         return {
-            'player': {
-                'player_id': player.character_id,
-                'name': player.name,
-            },
-            # 'message': "Hello {}".format(player.name),
+            'player': player.as_dict(),
+            'messages': [
+                # 'message': "Hello {}".format(player.name),
+            ],
         }
     return jsonify(__action())
 
@@ -69,13 +68,12 @@ def start(name):
 def wait():
     @do_action
     def __action():
+        # Disable timer
         player = current_player()
         messages = player.wait()
+        # Enable timer
         return {
-            'player': {
-                'player_id': player.character_id,
-                'name': player.name,
-            },
+            'player': player.as_dict(),
             'messages': messages,
         }
     return jsonify(__action())
