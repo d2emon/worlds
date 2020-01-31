@@ -109,11 +109,13 @@ class Player:
 
     UNARMED_DAMAGE = 4
 
-    def __init__(self, name):
+    def __init__(self):
+        self.__PLAYER = self
+
         # Set Fields
         self.character_id = 0  # mynum
-        self.name = "The {}".format(name) if name == "Phantom" else name  # globme
-        self.__message_id = -1  # cms
+        self.name = ""  # globme
+        self.__event_id = -1  # cms
 
         self.level = 10000  # my_lev
         self.strength = 0  # my_str
@@ -135,34 +137,21 @@ class Player:
         self.__zapped = False
         self.__snoop_target = None
 
-        # Talker
-        World.load()
-        self.character_id = Character.add(self.name)
-        self.read_messages()
-        # for c in Character.all():
-        #     print(c.serialized)
-        World.save()
-
-        self.start()
-        Globals.i_setup = True
-
-        self.__PLAYER = self
-
     @property
-    def message_id(self):
-        return self.__message_id
+    def event_id(self):
+        return self.__event_id
 
-    @message_id.setter
-    def message_id(self, value):
-        self.__message_id = value
+    @event_id.setter
+    def event_id(self, value):
+        self.__event_id = value
 
-        if abs(self.__message_id - self.__updated):
+        if abs(self.__event_id - self.__updated):
             return
 
         World.load()
-        self.character.message_id = self.message_id
+        self.character.message_id = self.event_id
         self.character.save()
-        self.__updated = self.message_id
+        self.__updated = self.event_id
 
     @property
     def character(self):
@@ -259,14 +248,9 @@ class Player:
         return None
 
     @classmethod
-    def player(cls, name="Name"):
+    def player(cls):
         if cls.__PLAYER is None:
-            cls.__PLAYER = cls(name)
-        return cls.__PLAYER
-
-    @classmethod
-    def restart(cls, name):
-        cls.__PLAYER = cls(name)
+            cls.__PLAYER = cls()
         return cls.__PLAYER
 
     @classmethod
@@ -297,6 +281,36 @@ class Player:
 
             'messages': self.__text_messages,
         }
+
+    @classmethod
+    def restore(cls):
+        return cls.player()
+
+    def restart(self, name):
+        Globals.i_setup = False
+
+        World.load()
+        self.name = "The {}".format(name) if name == "Phantom" else name
+        self.__event_id = -1
+        self.__text_messages = []
+        self.character_id = Character.add(self.name)
+
+        self.read_messages()
+        World.save()
+
+        self.start()
+
+        Globals.i_setup = True
+        return self
+
+    def __do_turn(self):
+        # pbfr()
+        # sendmsg(self)
+        # if self.rd_qd:
+        #    self.read_messages()
+        # self.rd_wd = False
+        World.save()
+        # pbfr()
 
     def __check_snoop(self):
         if self.__snoop_target is None:
@@ -387,10 +401,12 @@ class Player:
     def read_messages(self, interrupt=False):
         World.load()
 
-        for block in Message.read_from(self.message_id):
+        for block in Message.read_from(self.event_id):
             mstoout(block, self)
+            # self.event_id = block.event_id
 
-        self.message_id = Message.last_message_id()
+        self.event_id = Message.last_message_id()
+        # self.update()
         self.on_after_messages(interrupt=interrupt)
 
         Globals.rdes = 0
@@ -601,7 +617,7 @@ class Player:
             self.sex = ask_sex()
             return self
 
-        self.__message_id = -1
+        self.__event_id = -1
         Globals.curmode = True
 
         Person.load(self, on_create)
@@ -640,7 +656,7 @@ class Player:
     def wait(self):
         # if(sig_active==0) return;
         # sig_aloff()
-        # openworld()
+        # World.load()
         self.read_messages(interrupt=True)
         self.on_time()
         World.save()
@@ -1030,6 +1046,8 @@ class Player:
         self.check_help()
 
     def on_after_messages(self, interrupt=True):
+        # eorte
+
         def check_invisibility():
             if not Globals.me_ivct:
                 return
@@ -1094,16 +1112,11 @@ class Player:
     def on_quit(self):
         if self.in_fight:
             raise ActionError("^C")
-
         return self.remove()
 
-        return {
-            'save': self.remove(),
-            # "Saving {}".format(self.name) if self.remove() else "",
-            'message': "Byeeeeeeeeee  ...........",
-        }
-
     def on_stop_game(self):
+        # pbfr()
+        # pr_due=0
         return self.get_text()
 
     def on_time(self):

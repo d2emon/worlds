@@ -24,9 +24,9 @@ def __on_error(message):
 
 def __on_stop(message):
     return {
-        'errorCode': 2,
+        'errorCode': 0,
         'error': str(message),
-        'messages': Player.player().on_stop_game(),
+        'messages': current_player().on_stop_game(),
     }
 
 

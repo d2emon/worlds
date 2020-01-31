@@ -27,7 +27,8 @@ from .utils import current_player, do_action
 def fatal_error():
     @do_action
     def __action():
-        current_player().remove()
+        player = Player.restore()
+        player.remove()
         return {
             'errorCode': 255,
         }
@@ -38,12 +39,11 @@ def fatal_error():
 def disconnect():
     @do_action
     def __action():
+        player = Player.restore()
         return {
-            'saved': current_player().on_quit(),  # "Saving {}".format(self.name) if self.remove() else "",
+            'saved': player.on_quit(),  # "Saving {}".format(self.name) if self.remove() else "",
             'message': "Byeeeeeeeeee  ...........",
         }
-    print(__action)
-    print(__action())
     return jsonify(__action())
 
 
@@ -51,7 +51,8 @@ def disconnect():
 def start(name):
     @do_action
     def __action():
-        player = Player.restart(name)
+        player = Player.restore()
+        player.restart(name)
         app.logger.info("GAME ENTRY: %s[%s]", player.name, request.remote_addr)
         return {
             'player': player.as_dict(),

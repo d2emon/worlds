@@ -146,8 +146,8 @@ class Character(Model):
 
     @classmethod
     def add(cls, name):
-        # if any(cls.find(name=name)):
-        #     raise StopGame("You are already on the system - you may only be on once at a time")
+        if any(cls.find(name=name)):
+            raise StopGame("You are already on the system - you may only be on once at a time")
 
         characters = (character for character in cls.all() if character.character_id < cls.MAX_USER)
         character = next((character for character in characters if not character.is_created), None)
