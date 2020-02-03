@@ -1,16 +1,16 @@
 *   IV
     *   307
         *   Рождение Малаха
-        *   Malach is born.
     *   310
         *   Первые поселения народа Старого Беора в южном Таргелионе
         *   Установлены контакты народа Старого Беора и народа Финрода XII
         *   Переселение народа Старого Беора в Эстолад
-        *   Bëor leads the First House of the Edain into Beleriand: they are discovered by Finrod. They move to Estolad, and after a few years the Second House enters Thargelion and the Third settles in Estolad.[5][6] Imlach born.
+            *   Через несколько лет халадины поселяются в Белерианде, а
+                народ Мараха - в Эстоладе
+            *   Рождение Имлаха
     *   311
         *   Финрод и Беор покинули Эстолад
         *   Баран возглавил народ Старого Беора
-        *   Finrod and Bëor leave Estolad together. Baran becomes lord of the House of Bëor.
     *   312
         *   Приход халадинов в южный Таргелион.
     *   313
@@ -20,7 +20,7 @@
     *   315
         *   Рождение Борона.
     *   316
-        *   Aredhel departs from Gondolin and comes to Eöl.
+        *   Путешествие Аредели из Гондолина
     *   317
         *   Рождение Баранора.
     *   320
@@ -31,7 +31,6 @@
                 Дортонион
             *   Часть народа Мараха (народ Арадана) начала переселение в Хитлум
             *   Часть народа Арадана (народ Магора) начала переселение на Эред Ветрин
-        *   The Edain begin migrating from Estolad to Dorthonion, Hithlum and Talath Dirnen.[5]
     *   337
         *   Рождение Амлаха.
     *   338
@@ -55,19 +54,16 @@
     *   369
         *   Бунт Амлаха
         *   Многие аданы во главе с Берегом ушли в Эриадор
-        *   Many of the Edain, led by Bereg, leave to Eriador
     *   374
         *   Рождение Берена, сына Белемира.
     *   375
         *   Нападение аваров из-за Синих гор на халадинов Таргелиона
-        *   Карантир спасает Племя Халет от гибели
-        *   Халадины во главе с Халет начал переселение в Эстолад
-        *   Orcs attack Thargelion; many of the Second House of the Edain perish, but next year Haleth leads the remnants to Estolad.[5]
+            *   Многие из халадинов погибли
+            *   Карантир спасает Племя Халет от гибели
+            *   Халадины во главе с Халет начал переселение в Эстолад
     *   376
         *   Переселение халадинов в Бретиль.
         *   Смерть Мараха.
-    *   379
-        *   Аредель уехала из Гондолина и попала к Эолу
     *   380
         *   Смерть Барана.
     *   386
@@ -77,7 +73,9 @@
     *   390
         *   Рождение Хадора и Халмира.
         *   Народ Халет уходит из Эриадора
-        *   Haleth lead her people from Eriador and in 391 they come to the lands south of Taeglin. The majority later enter the forest of Brethil.[5][7]
+    *   392
+        *   Народ Халет приходит к югу от Тейглина
+            *   Большая часть халадинов позже переселяется в Бретиль
     *   397
         *   Рождение Гильвен.
     *   398
@@ -85,4 +83,3 @@
     *   400
         *   Аредель и Майглин бежали в Гондолин
         *   Эол и Аредель погибают
-        *   Aredhel and Maeglin return to Gondolin; later, Eöl and Aredhel die.
