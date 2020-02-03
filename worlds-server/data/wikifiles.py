@@ -1,16 +1,26 @@
 import os
+import requests
 from app import app
 
 
 def get_wiki(page):
-    filename = os.path.join(app.config.get('WIKI_ROOT'), page)
-    if not os.path.exists(filename):
+    request_url = "{}{}{}".format(
+        app.config.get('WIKI_SERVER'),
+        app.config.get('WIKI_API_PATH'),
+        page,
+    )
+
+    app.logger.debug("Send request to '%s'", request_url)
+    response = requests.get(request_url)
+    app.logger.debug("Get response from '%s' - %s", request_url, response.status_code)
+
+    if response.status_code != 200:
         return None
 
-    with open(filename, "r", encoding='utf-8') as file:
-        content = file.read()
-
-    return content
+    wiki = response.json()
+    if wiki.get('status') != 'success':
+        return None
+    return wiki.get('wiki')
 
 
 def list_pages(path):

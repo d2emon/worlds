@@ -51,28 +51,6 @@ services:
       - "./worlds:/app"
     networks:
       - worlds
-  back:
-    build: ./worlds-server
-    environment:
-      - FLASK_DEBUG=1
-      - FLASK_ENV=development
-      - WORLDS_FRONT=http://worlds_front_1:8080/
-    depends_on:
-      - front
-      - db
-      - mail
-    links:
-      - front
-    ports:
-      - "5000:5000"
-    volumes:
-      - "./worlds-server:/app"
-      - "./config.py:/app/config.py"
-      - "./media:/media"
-      - "./log:/app/log"
-    networks:
-      - worlds
-      - internal
   wiki:
     build: ./wiki-server
     environment:
@@ -82,6 +60,30 @@ services:
       - "5003:5000"
     volumes:
       - "./wiki-server:/app"
+      - "./config.py:/app/config.py"
+      - "./media:/media"
+      - "./log:/app/log"
+    networks:
+      - worlds
+      - internal
+  back:
+    build: ./worlds-server
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+      - WORLDS_FRONT=http://worlds_front_1:8080/
+      - WIKI_SERVER=http://worlds_wiki_1:5000/
+    depends_on:
+      - front
+      - db
+      - mail
+    links:
+      - front
+      - wiki
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./worlds-server:/app"
       - "./config.py:/app/config.py"
       - "./media:/media"
       - "./log:/app/log"
