@@ -398,15 +398,26 @@ class Player:
         elif helping.room_id != self.room_id:
             return self.__stop_help(helping.name)
 
+    def __process_event(self, event):
+        # 0
+        # 1 code
+        # 2 payload
+        # if player.debug_mode:
+        #     player.add_messages("", "<{}>".format(event.code))
+        if event.code < -3:
+            # gamrcv(event, self)
+            pass
+        else:
+            self.add_messages(event.payload)
+
     def read_messages(self, interrupt=False):
         World.load()
 
-        for block in Message.read_from(self.event_id):
-            mstoout(block, self)
-            # self.event_id = block.event_id
+        for event in Message.read_from(self.event_id):
+            # self.__event_id = event.event_id
+            self.__process_event(event)
 
         self.event_id = Message.last_message_id()
-        # self.update()
         self.on_after_messages(interrupt=interrupt)
 
         Globals.rdes = 0
@@ -558,7 +569,7 @@ class Player:
         # "Saving {}".format(self.name) if self.remove() else "",
         World.save()
 
-        delpers(self.name)
+        Person.remove(self.name)
 
         World.load()
         sendsys(
@@ -1046,8 +1057,6 @@ class Player:
         self.check_help()
 
     def on_after_messages(self, interrupt=True):
-        # eorte
-
         def check_invisibility():
             if not Globals.me_ivct:
                 return
@@ -1161,6 +1170,9 @@ def set_room(room_id):
 # TODO: Implement
 
 
+__MESSAGES = []
+
+
 def calibme(*args):
     # raise NotImplementedError()
     print("calibme({})".format(args))
@@ -1172,23 +1184,13 @@ def chkcrip(*args):
     return False
 
 
-def dumpitems(*args):
-    raise NotImplementedError()
-
-
-def delpers(*args):
-    # raise NotImplementedError()
-    print("delpers({})".format(args))
-
-
 def dosumm(*args):
     # raise NotImplementedError()
     print("dosumm({})".format(args))
 
 
 def dumpitems(*args):
-    # raise NotImplementedError()
-    print("dumpitems({})".format(args))
+    raise NotImplementedError()
 
 
 def forchk(*args):
@@ -1205,11 +1207,6 @@ def iswornby(*args):
     # raise NotImplementedError()
     print("iswornby({})".format(args))
     return False
-
-
-def mstoout(*args):
-    # raise NotImplementedError()
-    print("mstoout({})".format(args))
 
 
 def obyte(*args):
@@ -1233,9 +1230,6 @@ def randperc(*args):
     # raise NotImplementedError()
     print("randperc({})".format(args))
     return 0
-
-
-__MESSAGES = []
 
 
 def sendsys(*args):
