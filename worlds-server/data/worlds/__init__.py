@@ -106,7 +106,7 @@ class WorldFolder:
         if not os.path.exists(path):
             return
         for file in os.listdir(path):
-            yield Planet.load(path, os.path.splitext(os.path.basename(file))[0])
+            yield Planet.load(path, self.slug, os.path.splitext(os.path.basename(file))[0])
 
     @property
     def root(self):

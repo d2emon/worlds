@@ -1,6 +1,6 @@
 import json
 import os
-from ..wikifiles import list_pages
+from ..wikifiles import WikiFile
 
 
 class WikiPage:
@@ -9,12 +9,18 @@ class WikiPage:
         title,
         order=None,
         url=None,
+        path=None,
     ):
         self.__fields = {'title': title}
         if order is not None:
             self.__fields['order'] = order
         if url is not None:
             self.__fields['url'] = url
+        self.__path = path
+
+    @classmethod
+    def from_file(cls, file):
+        return cls(**file.as_dict())
 
     @property
     def title(self):
@@ -146,7 +152,7 @@ class Planet:
         sorted_pages=()
     ):
         pages = [WikiPage(page) for page in pages]
-        file_pages = [WikiPage(file) for file in files]
+        file_pages = [WikiPage.from_file(file) for file in files]
         new_pages = [
             WikiPage(title, order=order)
             for (order, title) in enumerate(sorted_pages)
@@ -164,7 +170,7 @@ class Planet:
         )
 
     @classmethod
-    def __planet_map(cls, root):
+    def __planet_map(cls, root, wiki_path):
         root = os.path.join(root, 'map')
         planet_map = {
             # 'title': '',
@@ -183,15 +189,16 @@ class Planet:
                     ]
                 })
         # From files
-        for file in list_pages(root):
-            if any(page for page in planet_map['wiki'] if page.get('title') == file):
+        for file in WikiFile.pages("{}/{}".format(wiki_path, 'map')):
+            if any(page for page in planet_map['wiki'] if page.get('title') == file.title):
                 continue
-            planet_map['wiki'].append(WikiPage(file).as_dict())
+            planet_map['wiki'].append(WikiPage.from_file(file).as_dict())
         return planet_map
 
     @classmethod
-    def load(cls, path, slug):
+    def load(cls, path, world, slug):
         root = os.path.join(path, slug)
+        wiki_path = "{}/{}".format(world, slug)
         filename = os.path.join(root, 'planet.json')
         if not os.path.isdir(root) or not os.path.isfile(filename):
             return cls()
@@ -207,13 +214,14 @@ class Planet:
             return cls(**{
                 **{field: data.get(field) for field in fields},
                 'about': cls.__about(
-                    files=list_pages(root),
+                    files=WikiFile.pages(wiki_path),
                     pages=data.get('about', []),
                     sorted_pages=data.get('sortPages', []),
                 ),
                 'name': data.get('name', slug),
                 'planetMap': cls.__planet_map(
                     root=os.path.join(root),
+                    wiki_path=wiki_path,
                 ),
                 'slug': slug,
             })

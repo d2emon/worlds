@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import current_app, jsonify
 
 
 def try_response(f):
@@ -8,6 +8,7 @@ def try_response(f):
             **f(),
         })
     except Exception as e:
+        current_app.logger.error(str(e))
         return jsonify({
             'status': 'fail',
             'error': str(e),

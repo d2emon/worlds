@@ -3,40 +3,51 @@ import requests
 from app import app
 
 
-def get_wiki(page):
-    request_url = "{}{}{}".format(
-        app.config.get('WIKI_SERVER'),
-        app.config.get('WIKI_API_PATH'),
-        page,
-    )
+class WikiFile:
+    def __init__(self, title="index", path=None):
+        self.title = title
+        self.path = path or "{}.md".format(title)
 
-    app.logger.debug("Send request to '%s'", request_url)
-    response = requests.get(request_url)
-    app.logger.debug("Get response from '%s' - %s", request_url, response.status_code)
+    def get_wiki(self):
+        request_url = "{}{}page/{}".format(
+            app.config.get('WIKI_SERVER'),
+            app.config.get('WIKI_API_PATH'),
+            self.path,
+        )
 
-    if response.status_code != 200:
-        return None
+        app.logger.debug("Send request to '%s'", request_url)
+        response = requests.get(request_url)
+        app.logger.debug("Get response from '%s' - %s", request_url, response.status_code)
 
-    wiki = response.json()
-    if wiki.get('status') != 'success':
-        return None
-    return wiki.get('wiki')
+        if response.status_code != 200:
+            return None
 
+        return response.text
 
-def list_pages(path):
-    if not os.path.isdir(path):
-        return []
-    for file in os.listdir(path):
-        if not file.endswith('.md'):
-            continue
-        if file == 'index.md':
-            continue
-        yield os.path.splitext(os.path.basename(file))[0]
+    def as_dict(self):
+        return {
+            'title': self.title,
+            'path': self.path,
+        }
 
+    @classmethod
+    def pages(cls, path):
+        request_url = "{}{}pages/{}".format(
+            app.config.get('WIKI_SERVER'),
+            app.config.get('WIKI_API_PATH'),
+            path,
+        )
 
-def list_wiki(slug):
-    path = os.path.join(app.config.get('WIKI_ROOT'), slug)
-    return list_pages(path)
+        app.logger.debug("Send request to '%s'", request_url)
+        response = requests.get(request_url)
+        app.logger.debug("Get response from '%s' - %s", request_url, response.status_code)
+
+        response_data = response.json()
+        app.logger.debug(response_data.get('status'))
+        if response.status_code != 200 or response_data.get('status') != 'success':
+            return
+
+        yield from (cls(**page) for page in response_data.get('pages', []) if page.get('title') != 'index')
 
 
 def wikis(
