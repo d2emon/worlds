@@ -20,8 +20,8 @@ CORS(app)
 # app.register_blueprint(images)
 
 # API
-# from .api.wiki import blueprint as wiki
-# app.register_blueprint(wiki)
+from .api.characters import blueprint as characters
+app.register_blueprint(characters)
 
 
 # @app.route('/<path:path>')
