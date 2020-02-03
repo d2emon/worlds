@@ -76,7 +76,7 @@ import {
 export default {
   name: 'Walk',
   components: {
-    WalkControls: () => import('@/components/WalkControls.vue'),
+    WalkControls: () => import('@/components/walk/WalkControls.vue'),
     Room: () => import('@/components/Room.vue'),
     Inventory: () => import('@/components/Inventory.vue'),
   },

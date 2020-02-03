@@ -1,10 +1,10 @@
 from flask import jsonify, request
-from walk.exceptions import ActionError, StopGame
 from walk.models.item import Item
 from walk.parser import Parser
 from walk.player import Player
 from .. import app
 from . import blueprint
+from .utils import current_player, do_action
 
 # from walk.models.room import Room
 # from walk.models.room_exit import Exit
@@ -21,59 +21,80 @@ from . import blueprint
 # print([item.name for item in Zone.all()])
 
 
-def on_error(message):
-    return jsonify({'error': str(message)})
+# Main routes
+
+@blueprint.route('/error', methods=['GET'])
+def fatal_error():
+    @do_action
+    def __action():
+        player = Player.restore()
+        player.remove()
+        return {
+            'errorCode': 255,
+        }
+    return jsonify(__action())
 
 
-def on_stop(message):
-    return jsonify({
-        'messages': Player.player().on_stop_game(),
-        'crapup': str(message),
-    })
-
-
-def do_action(action, *args, **kwargs):
-    try:
-        return jsonify(action(*args, **kwargs) or {})
-    except ActionError as e:
-        return on_error(e)
-    except StopGame as e:
-        return on_stop(e)
-
-
-@blueprint.route('/oops', methods=['GET'])
-def oops():
-    return do_action(Player.player().on_error)
-
-
-@blueprint.route('/ctrlc', methods=['GET'])
-def ctrlc():
-    return do_action(Player.player().on_quit)
+@blueprint.route('/disconnect', methods=['GET'])
+def disconnect():
+    @do_action
+    def __action():
+        player = Player.restore()
+        return {
+            'saved': player.on_quit(),  # "Saving {}".format(self.name) if self.remove() else "",
+            'message': "Byeeeeeeeeee  ...........",
+        }
+    return jsonify(__action())
 
 
 @blueprint.route('/start/<name>', methods=['GET'])
 def start(name):
-    response = Player.restart(name)
-    app.logger.info("GAME ENTRY: %s[%s]", Player.player().name, request.remote_addr)
-    return jsonify(response)
+    @do_action
+    def __action():
+        player = Player.restore()
+        player.restart(name)
+        app.logger.info("GAME ENTRY: %s[%s]", player.name, request.remote_addr)
+        return {
+            'player': player.as_dict(),
+            'messages': [
+                # 'message': "Hello {}".format(player.name),
+            ],
+        }
+    return jsonify(__action())
 
+
+# Actions
 
 @blueprint.route('/wait', methods=['GET'])
 def wait():
-    return do_action(Player.player().wait)
+    @do_action
+    def __action():
+        # Disable timer
+        player = current_player()
+        messages = player.wait()
+        # Enable timer
+        return {
+            'player': player.as_dict(),
+            'messages': messages,
+        }
+    return jsonify(__action())
 
 
 @blueprint.route('/go/<direction>', methods=['GET'])
 def go(direction):
-    def action():
+    @do_action
+    def __action():
         direction_id = Parser.get_direction_id(direction) - 2
-        return Player.player().go(direction_id)
-    return do_action(action)
+        return current_player().go(direction_id)
+    return jsonify(__action())
 
 
 @blueprint.route('/quit', methods=['GET'])
 def quit_system():
-    return do_action(Player.player().quit_game)
+    @do_action
+    def __action():
+        return current_player().quit_game()
+    return jsonify(__action())
 
 
 @blueprint.route('/take/', methods=['GET'])
@@ -81,7 +102,11 @@ def quit_system():
 def take(item=None):
     if item is None:
         return jsonify({'error': "Get what?"})
-    return do_action(Player.player().take, next(Item.find(slug=item), None))
+
+    @do_action
+    def __action():
+        return current_player().take(next(Item.find(slug=item), None))
+    return jsonify(__action())
 
 
 @blueprint.route('/take/<item>/from/', methods=['GET'])
@@ -91,13 +116,14 @@ def take_from(item, container=None):
     if container is None:
         return jsonify({'error': "From what?"})
 
-    def action(item_name, container_name):
-        player = Player.player()
+    @do_action
+    def __action(item_name, container_name):
+        player = current_player()
         c = player.find_item(slug=container_name, available_for=player.character)
         if c is None:
             return {'error': "You can't take things from that - it's not here"}
         return player.take(player.find_item(slug=item_name, container=c))
-    return do_action(action, item, container)
+    return jsonify(__action(item, container))
 
 
 @blueprint.route('/drop/', methods=['GET'])
@@ -105,12 +131,19 @@ def take_from(item, container=None):
 def drop(item=None):
     if item is None:
         return jsonify({'error': "Drop what?"})
-    return do_action(Player.player().drop, next(Item.find(slug=item), None))
+
+    @do_action
+    def __action():
+        return current_player().drop(next(Item.find(slug=item), None))
+    return jsonify(__action())
 
 
 @blueprint.route('/look', methods=['GET'])
 def look():
-    return do_action(Player.player().look)
+    @do_action
+    def __action():
+        return current_player().look()
+    return jsonify(__action())
 
 
 @blueprint.route('/look/at/<word>', methods=['GET'])
@@ -141,12 +174,18 @@ def look_in(word=None):
 
 @blueprint.route('/inventory', methods=['GET'])
 def inventory():
-    return do_action(Player.player().get_inventory)
+    @do_action
+    def __action():
+        return current_player().get_inventory()
+    return jsonify(__action())
 
 
 @blueprint.route('/who', methods=['GET'])
 def who():
-    return do_action(Player.player().who)
+    @do_action
+    def __action():
+        return current_player().who()
+    return jsonify(__action())
 
 
 @blueprint.route('/wield', methods=['GET'])
@@ -154,11 +193,14 @@ def who():
 def wield(weapon=None):
     if weapon is None:
         return jsonify({'error': "Which weapon do you wish to select though"})
-    player = Player.player()
-    return do_action(
-        player.wield,
-        player.find_item(slug=weapon, owner=player),
-    )
+    player = current_player()
+
+    @do_action
+    def __action():
+        return player.wield(
+            player.find_item(slug=weapon, owner=player),
+        )
+    return jsonify(__action())
 
 
 @blueprint.route('/break/<item>', methods=['GET'])
@@ -167,11 +209,14 @@ def break_item(item=None):
         return jsonify({'error': "Kill who"})
     if item == "door":
         return jsonify({'error': "Who do you think you are, Moog?"})
-    player = Player.player()
-    return do_action(
-        player.break_item,
-        player.find_item(slug=item, available_for=player),
-    )
+    player = current_player()
+
+    @do_action
+    def __action():
+        return player().break_item(
+            player.find_item(slug=item, available_for=player),
+        )
+    return jsonify(__action())
 
 
 @blueprint.route('/kill', methods=['GET'])
@@ -180,24 +225,36 @@ def break_item(item=None):
 def kill(victim=None, weapon=None):
     if victim is None:
         return jsonify({'error': "Kill who"})
-    player = Player.player()
-    return do_action(
-        player.kill,
-        player.find_character(name=victim),
-        player.find_item(slug=weapon, owner=player),
-    )
+    player = current_player()
+
+    @do_action
+    def __action():
+        return player.kill(
+            player.find_character(name=victim),
+            player.find_item(slug=weapon, owner=player),
+        )
+    return jsonify(__action())
 
 
 @blueprint.route('/exits', methods=['GET'])
 def exits():
-    return do_action(Player.player().list_exits)
+    @do_action
+    def __action():
+        return current_player().list_exits()
+    return jsonify(__action())
 
 
 @blueprint.route('/jump', methods=['GET'])
 def jump():
-    return do_action(Player.player().jump)
+    @do_action
+    def __action():
+        return current_player().jump()
+    return jsonify(__action())
 
 
 @blueprint.route('/dig', methods=['GET'])
 def dig():
-    return do_action(Player.player().dig)
+    @do_action
+    def __action():
+        return current_player().dig()
+    return jsonify(__action())
