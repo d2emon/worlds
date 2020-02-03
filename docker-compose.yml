@@ -73,6 +73,21 @@ services:
     networks:
       - worlds
       - internal
+  wiki:
+    build: ./wiki-server
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+    ports:
+      - "5003:5000"
+    volumes:
+      - "./wiki-server:/app"
+      - "./config.py:/app/config.py"
+      - "./media:/media"
+      - "./log:/app/log"
+    networks:
+      - worlds
+      - internal
   blog-back:
     build: https://github.com/d2emon/flask-blog.git
     environment:
