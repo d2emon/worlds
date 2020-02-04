@@ -23,18 +23,8 @@ CORS(app)
 from .api.characters import blueprint as characters
 app.register_blueprint(characters)
 
-
-# @app.route('/<path:path>')
-# @app.route('/', defaults={'path': ''})
-# def index(path):
-#     if current_app.config.get('FLASK_ENV') == 'development':
-#         spa = requests.get("{}{}".format(current_app.config.get('FRONT'), path))
-#         return (
-#             spa.content,
-#             spa.status_code,
-#             spa.headers.items()
-#         )
-#     return send_file(os.path.join(current_app.config.get('DIST_ROOT'), 'index.html'))
+from .api.person import blueprint as person
+app.register_blueprint(person)
 
 
 # error 404

@@ -272,11 +272,10 @@ class Player:
             return False
 
         Person(
-            player_id=self.name,
+            person_id=self.name,
             strength=self.strength,
             level=self.level,
-            # flags=self.character.flags,
-            flags=[self.character.sex],
+            flags=[self.character.sex],  # self.character.flags,
             score=self.score,
         ).save()
         return True
@@ -577,7 +576,11 @@ class Player:
         self.__event_id = -1
         Globals.curmode = True
 
-        Person.load(self, on_create)
+        person = Person.load(self, on_create)
+        self.score = person.score
+        self.strength = person.strength
+        self.level = person.level
+        self.sex = person.flags[0]
 
         Character(
             self.character_id,

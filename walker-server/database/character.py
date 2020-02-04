@@ -1,8 +1,8 @@
-from flask import current_app
 import uuid
+from .model import Model
 
 
-class Character:
+class Character(Model):
     MAX_USER = 16
 
     def __init__(
@@ -31,16 +31,36 @@ class Character:
 
         self.is_player = is_player
 
+        super().__init__()
+
     @property
-    def __item(self):
-        return next((item for item in DATA if item.get('character_id') == self.character_id), None)
+    def id(self):
+        return self.character_id
+
+    @property
+    def _item(self):
+        return next((item for item in self._items() if item.get('character_id') == self.character_id), None)
+
+    def serialize(self):
+        return {
+            'character_id': self.character_id,
+            'name': self.name,
+            'channel_id': self.channel_id,
+            'event_id': self.event_id,
+            'level': self.level,
+            'visible': self.visible,
+            'strength': self.strength,
+            'weapon': self.weapon,
+            'sex': self.sex,
+        }
+
+    @classmethod
+    def _items(cls):
+        return DATA
 
     @property
     def is_created(self):
         return len(self.name) > 0
-
-    def save(self):
-        self.__item.update(self.serialize())
 
     def reset(self, name):
         if name is None:
@@ -57,30 +77,9 @@ class Character:
 
         self.save()
 
-    def serialize(self):
-        return {
-            'character_id': self.character_id,
-            'name': self.name,
-            'channel_id': self.channel_id,
-            'event_id': self.event_id,
-            'level': self.level,
-            'visible': self.visible,
-            'strength': self.strength,
-            'weapon': self.weapon,
-            'sex': self.sex,
-        }
-
-    @classmethod
-    def all(cls):
-        return (cls(**item) for item in DATA)
-
     @classmethod
     def players(cls):
         return (player for player in cls.all() if player.is_player)
-
-    @classmethod
-    def get(cls, character_id):
-        return (character for character in cls.all() if character.character_id == character_id)
 
     @classmethod
     def find(cls, name):

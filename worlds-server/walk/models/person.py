@@ -1,59 +1,65 @@
-class Person:
-    __records = {}
+from .model import RequestModel
+
+
+class Person(RequestModel):
+    _URL = "http://worlds_walker_1:5000/api/person"
 
     def __init__(
         self,
-        player_id=None,
+        person_id=None,
         strength=0,
         level=0,
         flags=None,
         score=0,
     ):
-        self.player_id = player_id
+        self.person_id = person_id
         self.strength = strength
         self.level = level
         self.flags = flags or []
         self.score = score
 
-    def as_dict(self):
+    @classmethod
+    def _parse_response(cls, data):
+        return data.get('person')
+
+    def serialize(self):
         return {
-            'player_id': self.player_id,
+            'person_id': self.person_id,
             'strength': self.strength,
             'score': self.score,
             'level': self.level,
             'flags': self.flags,
         }
 
+    @classmethod
+    def get(cls, item_id):
+        person = cls._get("{}/{}".format(cls._URL, item_id))
+        return cls(**person) if person is not None else None
+
     def save(self):
-        record = self.__records.get(self.player_id)
-        self.player_id = record.player_id if record else len(self.__records)
-        self.__records[self.player_id] = self
+        self._put("{}/{}".format(self._URL, self.person_id), self.serialize())
         return self
 
     @classmethod
-    def load(cls, player, on_create):
-        person = cls.__records.get(player.name)
-        if person is not None:
-            return person.as_dict()
+    def load(cls, player, new_player):
+        person_id = player.name.lower()
 
-        player = on_create()
-        return cls(
-            player_id=player.name,
+        person = cls.get(person_id)
+        if person is not None:
+            return person
+
+        player = new_player()
+        person = cls(
+            person_id=person_id,
             strength=player.strength,
             level=player.level,
             flags=[player.sex],
             score=player.score,
-        ).save().as_dict()
+        )
+        return person.save()
 
     @classmethod
-    def remove(cls, player_id):
-        name = player_id.lower()
-        record = cls.__records.get(player_id)
-        if record is None:
-            return
-        if record.name.lower() != name:
-            raise StopGame("Panic: Invalid Persona Delete")
-        record.name = ""
-        record.level = -1
+    def remove(cls, person_id):
+        return cls._delete("{}/{}".format(cls._URL, person_id))
 
 
