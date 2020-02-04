@@ -199,21 +199,6 @@ class Character(Model):
     def save(self):
         return self.__put("{}/character/{}".format(self.__URL, self.character_id), {'event_id': self.event_id})
 
-    def start(
-        self,
-        strength,
-        level,
-        sex,
-    ):
-        World.load()
-        self.strength = strength
-        self.level = level
-        self.visible = 0 if level < 10000 else 10000
-        self.weapon = None
-        self.sex = sex
-        self.helping = None
-        self.save()
-
     def check_move(self):
         pass
 
