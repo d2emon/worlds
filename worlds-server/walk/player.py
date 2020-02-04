@@ -1,3 +1,4 @@
+from flask import current_app
 import logging
 import random
 import time
@@ -148,16 +149,16 @@ class Player:
         if abs(self.__event_id - self.__updated):
             return
 
-        World.load()
-        self.character.message_id = self.event_id
-        self.character.save()
+        character = Character(
+            character_id=self.character_id,
+            event_id=self.event_id,
+        )
+        character.save()
+
         self.__updated = self.event_id
 
     @property
     def character(self):
-        #
-        World.load()
-        #
         return Character.get(self.character_id)
 
     @property
@@ -289,6 +290,8 @@ class Player:
     def restart(self, name):
         Globals.i_setup = False
 
+        current_app.logger.debug('LOAD')
+
         World.load()
         self.name = "The {}".format(name) if name == "Phantom" else name
         self.__event_id = -1
@@ -298,7 +301,11 @@ class Player:
         self.read_messages()
         World.save()
 
+        current_app.logger.debug('SAVE')
+
         self.start()
+
+        current_app.logger.debug('START')
 
         Globals.i_setup = True
         return self
