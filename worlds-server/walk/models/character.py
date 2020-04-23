@@ -1,4 +1,6 @@
+from flask import current_app
 import random
+import requests
 from ..exceptions import StopGame
 from ..database import World
 from ..globalVars import Globals
@@ -19,12 +21,14 @@ class Character(Model):
     WIZARD_LEVEL = 10
     GOD_LEVEL = 10000
 
+    __URL = "http://worlds_walker_1:5000/api/character"
+
     def __init__(
         self,
         character_id,
         name="",
-        room_id=0,
-        message_id=-1,
+        channel_id=0,
+        event_id=-1,
         strength=-1,
         visible=0,
         level=1,
@@ -37,8 +41,8 @@ class Character(Model):
         super().__init__()
         self.character_id = character_id
         self.name = name
-        self.room_id = room_id
-        self.message_id = message_id
+        self.room_id = channel_id
+        self.event_id = event_id
         self.strength = strength
         self.visible = visible
         self.level = level
@@ -49,11 +53,54 @@ class Character(Model):
         self.is_undead = is_undead
 
     @classmethod
+    def __log_request(cls, url, request):
+        response = request()
+        current_app.logger.debug("Response from '%s' - %s", url, response.status_code)
+        data = response.json()
+        current_app.logger.debug(data)
+        if response.status_code != 200:
+            raise StopGame(data.get('error', "Unknown exception: {}".format(response.status_code)))
+        return data
+
+    @classmethod
+    def __post(cls, url, json):
+        current_app.logger.debug("POST %s: %s", url, json)
+        data = cls.__log_request(url, lambda: requests.post(url, json=json))
+        return data.get('character')
+
+    @classmethod
+    def __get(cls, url):
+        current_app.logger.debug("GET %s", url)
+        data = cls.__log_request(url, lambda: requests.get(url))
+        return data.get('character')
+
+    @classmethod
+    def __put(cls, url, values):
+        current_app.logger.debug("PUT %s: %s", url, values)
+        data = cls.__log_request(url, lambda: requests.put(url, values))
+        return data.get('character')
+
+    @classmethod
     def database(cls):
         #
         # World.load()
         #
         return World.instance.players
+
+    @classmethod
+    def get(cls, item_id):
+        character = cls.__get("{}/character/{}".format(cls.__URL, item_id))
+        return cls(**character) if character is not None else None
+
+    @classmethod
+    def find(cls, items=None, **kwargs):
+        current_app.logger.debug(kwargs)
+        yield from []
+
+    @classmethod
+    def find_by_name(cls, name=None):
+        character = cls.__get("{}/character/find/{}".format(cls.__URL, name))
+        return cls(character) if character is not None else None
 
     @property
     def is_created(self):
@@ -111,7 +158,7 @@ class Character(Model):
             'name': self.name,
             'level': disl4(self.level, self.sex),
             'invisible': self.visible > 0,
-            'absent': self.message_id == -2,
+            'absent': self.event_id == -2,
         }
 
     @property
@@ -120,7 +167,7 @@ class Character(Model):
             'character_id': self.character_id,
             'name': self.name,
             'room_id': self.room_id,
-            'message_id': self.message_id,
+            'message_id': self.event_id,
             'strength': self.strength,
             'visible': self.visible,
             'level': self.level,
@@ -136,8 +183,8 @@ class Character(Model):
     def list_characters(cls, player):
         for character in cls.find(
             not_player=player,
-            exists_only=True,
-            room_id=player.room_id,
+            channel_id=player.room_id,
+            is_created=True,
             visible_for=player,
         ):
             result = character.serialize
@@ -146,45 +193,11 @@ class Character(Model):
 
     @classmethod
     def add(cls, name):
-        if any(cls.find(name=name)):
-            raise StopGame("You are already on the system - you may only be on once at a time")
-
-        characters = (character for character in cls.all() if character.character_id < cls.MAX_USER)
-        character = next((character for character in characters if not character.is_created), None)
-        if character is None:
-            raise StopGame("Sorry AberMUD is full at the moment")
-
-        return character.restart(name).character_id
+        character = cls.__post("{}/character".format(cls.__URL), {'name': name})
+        return character.get('character_id')
 
     def save(self):
-        self.database().set(self.character_id, **self.serialized)
-
-    def restart(self, name):
-        self.name = name
-        self.room_id = 0
-        self.message_id = -1
-        self.level = 1
-        self.visible = 0
-        self.strength = -1
-        self.weapon = -1
-        self.sex = 0
-        self.save()
-        return self
-
-    def start(
-        self,
-        strength,
-        level,
-        sex,
-    ):
-        World.load()
-        self.strength = strength
-        self.level = level
-        self.visible = 0 if level < 10000 else 10000
-        self.weapon = None
-        self.sex = sex
-        self.helping = None
-        self.save()
+        return self.__put("{}/character/{}".format(self.__URL, self.character_id), {'event_id': self.event_id})
 
     def check_move(self):
         pass
@@ -212,7 +225,7 @@ class Character(Model):
         if randperc() > 40:
             return
 
-        yeti = next(Character.find(name="yeti"))
+        yeti = Character.find_by_name("yeti")
         if yeti and self.character_id == yeti.character_id and ohany({13: True}):
             return
 

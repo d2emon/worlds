@@ -1,3 +1,4 @@
+from flask import current_app
 import logging
 import random
 import time
@@ -8,6 +9,7 @@ from .messages import process
 from .models.character import Character
 from .models.item import Item
 from .models.message import Message
+from .models.person import Person
 from .models.room import Room
 
 
@@ -41,65 +43,6 @@ def turn(command=None):
             return result
         return wrapped
     return wrapper
-
-
-class Person:
-    __records = {}
-
-    def __init__(
-        self,
-        player_id=None,
-        strength=0,
-        level=0,
-        flags=None,
-        score=0,
-    ):
-        self.player_id = player_id
-        self.strength = strength
-        self.level = level
-        self.flags = flags or []
-        self.score = score
-
-    def as_dict(self):
-        return {
-            'player_id': self.player_id,
-            'strength': self.strength,
-            'score': self.score,
-            'level': self.level,
-            'flags': self.flags,
-        }
-
-    def save(self):
-        record = self.__records.get(self.player_id)
-        self.player_id = record.player_id if record else len(self.__records)
-        self.__records[self.player_id] = self
-        return self
-
-    @classmethod
-    def load(cls, player, on_create):
-        person = cls.__records.get(player.name)
-        if person is not None:
-            return person.as_dict()
-
-        player = on_create()
-        return cls(
-            player_id=player.name,
-            strength=player.strength,
-            level=player.level,
-            flags=[player.sex],
-            score=player.score,
-        ).save().as_dict()
-
-    @classmethod
-    def remove(cls, player_id):
-        name = player_id.lower()
-        record = cls.__records.get(player_id)
-        if record is None:
-            return
-        if record.name.lower() != name:
-            raise StopGame("Panic: Invalid Persona Delete")
-        record.name = ""
-        record.level = -1
 
 
 class Player:
@@ -148,16 +91,16 @@ class Player:
         if abs(self.__event_id - self.__updated):
             return
 
-        World.load()
-        self.character.message_id = self.event_id
-        self.character.save()
+        character = Character(
+            character_id=self.character_id,
+            event_id=self.event_id,
+        )
+        character.save()
+
         self.__updated = self.event_id
 
     @property
     def character(self):
-        #
-        World.load()
-        #
         return Character.get(self.character_id)
 
     @property
@@ -289,16 +232,17 @@ class Player:
     def restart(self, name):
         Globals.i_setup = False
 
-        World.load()
         self.name = "The {}".format(name) if name == "Phantom" else name
         self.__event_id = -1
         self.__text_messages = []
         self.character_id = Character.add(self.name)
 
+        # World.load()
         self.read_messages()
-        World.save()
+        # World.save()
 
         self.start()
+        current_app.logger.debug('START')
 
         Globals.i_setup = True
         return self
@@ -328,11 +272,10 @@ class Player:
             return False
 
         Person(
-            player_id=self.name,
+            person_id=self.name,
             strength=self.strength,
             level=self.level,
-            # flags=self.character.flags,
-            flags=[self.character.sex],
+            flags=[self.character.sex],  # self.character.flags,
             score=self.score,
         ).save()
         return True
@@ -413,12 +356,14 @@ class Player:
     def read_messages(self, interrupt=False):
         World.load()
 
+        current_app.logger.debug('Start reading Messages')
         for event in Message.read_from(self.event_id):
             # self.__event_id = event.event_id
             self.__process_event(event)
 
         self.event_id = Message.last_message_id()
         self.on_after_messages(interrupt=interrupt)
+        current_app.logger.debug('Finish reading Messages')
 
         Globals.rdes = 0
         Globals.tdes = 0
@@ -631,9 +576,21 @@ class Player:
         self.__event_id = -1
         Globals.curmode = True
 
-        Person.load(self, on_create)
+        person = Person.load(self, on_create)
+        self.score = person.score
+        self.strength = person.strength
+        self.level = person.level
+        self.sex = person.flags[0]
 
-        self.character.start(self.strength, self.level, self.sex)
+        Character(
+            self.character_id,
+            strength=self.strength,
+            level=self.level,
+            visible=0 if self.level < 10000 else 10000,
+            weapon=None,
+            sex=self.sex,
+            helping=None,
+        ).save()
 
         sendsys(
             self.name,
@@ -645,14 +602,14 @@ class Player:
         self.read_messages()
         self.room_id = random.choice((
             # START
-            # -5,
+            -5,
             # BLIZZARD
-            # -183,
+            -183,
             # -167,
             # DIZZY
             # -2515
             # ARDA
-            -14510,
+            # -14510,
         ))  # -5 if randperc() > 50 else -183
         self.set_room()
         sendsys(

@@ -1,32 +1,53 @@
 import os
+import requests
 from app import app
 
 
-def get_wiki(page):
-    filename = os.path.join(app.config.get('WIKI_ROOT'), page)
-    if not os.path.exists(filename):
-        return None
+class WikiFile:
+    def __init__(self, title="index", path=None):
+        self.title = title
+        self.path = path or "{}.md".format(title)
 
-    with open(filename, "r", encoding='utf-8') as file:
-        content = file.read()
+    def get_wiki(self):
+        request_url = "{}{}page/{}".format(
+            app.config.get('WIKI_SERVER'),
+            app.config.get('WIKI_API_PATH'),
+            self.path,
+        )
 
-    return content
+        app.logger.debug("Send request to '%s'", request_url)
+        response = requests.get(request_url)
+        app.logger.debug("Get response from '%s' - %s", request_url, response.status_code)
 
+        if response.status_code != 200:
+            return None
 
-def list_pages(path):
-    if not os.path.isdir(path):
-        return []
-    for file in os.listdir(path):
-        if not file.endswith('.md'):
-            continue
-        if file == 'index.md':
-            continue
-        yield os.path.splitext(os.path.basename(file))[0]
+        return response.text
 
+    def as_dict(self):
+        return {
+            'title': self.title,
+            'path': self.path,
+        }
 
-def list_wiki(slug):
-    path = os.path.join(app.config.get('WIKI_ROOT'), slug)
-    return list_pages(path)
+    @classmethod
+    def pages(cls, path):
+        request_url = "{}{}pages/{}".format(
+            app.config.get('WIKI_SERVER'),
+            app.config.get('WIKI_API_PATH'),
+            path,
+        )
+
+        app.logger.debug("Send request to '%s'", request_url)
+        response = requests.get(request_url)
+        app.logger.debug("Get response from '%s' - %s", request_url, response.status_code)
+
+        response_data = response.json()
+        app.logger.debug(response_data.get('status'))
+        if response.status_code != 200 or response_data.get('status') != 'success':
+            return
+
+        yield from (cls(**page) for page in response_data.get('pages', []) if page.get('title') != 'index')
 
 
 def wikis(
