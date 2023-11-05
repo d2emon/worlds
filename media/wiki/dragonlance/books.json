@@ -1,0 +1,287 @@
+{
+  "books": {
+    "1050": "Time of the Dragon",
+
+    "1074": "Tales of the Lance",
+
+    "1086": "Dwarven Kingdoms of Krynn",
+
+    "1148": "Dragonlance Fifth Age",
+    "1149": "The Last Tower: The Legacy of Rasitlin",
+    "1150": "Heroes of Steel",
+
+    "2021": "Dragonlance Adventures",
+
+    "2105": "MC4 Monstrous Compendium",
+
+    "2143": "PG1 Player’s Guide to the Dragonlance Campaign",
+
+    "8372": "The History of Dragonlance",
+
+    "8446": "Leaves From the Inn of the Last Home",
+    "8447": "The Art of the Dragonlance Saga",
+    "8448": "The Atlas of the Dragonlance World",
+
+    "9130": "DL1 Dragons of Despair",
+    "9131": "DL3 Dragons of Hope",
+    "9132": "DL2 Dragons of Flame",
+    "9133": "DL12 Dragons of Faith",
+
+    "9135": "DL5 Dragons of Mystery",
+    "9136": "DL7 Dragons of Light",
+    "9137": "DL9 Dragons of Deceit",
+
+    "9139": "DL4 Dragons of Desolation",
+    "9140": "DL6 Dragons of Ice",
+    "9141": "DL8 Dragons of War",
+    "9142": "DL10 Dragons of Dreams",
+
+    "9144": "DL11 Dragons of Glory",
+
+    "9176": "DL13 Dragons of Truth",
+
+    "9180": "DL14 Dragons of Triumph",
+
+    "9231": "DL15 Mists of Krynn",
+
+    "9237": "DL16 World of Krynn",
+
+    "9243": "DLE1 In Search of Dragons",
+    "9244": "DLE2 Dragon Magic",
+    "9245": "DLE3 Dragon Keep",
+
+    "9275": "DLA1 Dragon Dawn",
+
+    "9278": "DLR1 Otherlands",
+
+    "9285": "DLA2 Dragon Knight",
+
+    "9291": "DLC1 Classics Volume One",
+
+    "9294": "DLA3 Dragon’s Rest",
+
+    "9314": "DLS1 New Beginnings",
+
+    "9319": "DLS2 Tree Lords",
+
+    "9327": "DLS3 Oak Lords",
+
+    "9334": "DLS4 Wild Elves",
+
+    "9344": "DLR2 Taladas: The Minotaurs",
+
+    "9381": "DLQ1 Knight’s Sword",
+    "9382": "DLQ2 Flint’s Axe",
+    "9383": "DLR3 Unsung Heroes",
+
+    "9394": "DLC2 Classics Volume Two",
+    "9395": "DLT1 New Tales: The Land Reborn",
+    "9396": "(DLT2) Book of Lairs",
+
+    "9400": "TM3 The World of Krynn Trail Map",
+
+    "9453": "(DLC3) Classics Volume Three",
+
+    "9517": "Heroes of Defiance",
+
+    "9543": "Heroes of Sorcery",
+
+    "9546": "Heroes of Hope",
+
+    "9551": "Wings of Fury",
+
+    "9554": "Citadel of Light",
+
+    "9564": "The Bestiary",
+    "9565": "Fate Deck",
+    "9566": "A Saga Companion",
+
+    "9587": "Seeds of Chaos",
+    "9588": "Palanthas",
+
+    "11329": "The Sylvan Veil",
+
+    "11350": "Classics 15th Anniversary Edition",
+
+    "11372": "Chaos Spawn",
+
+    "11396": "Rise of the Titans",
+
+    "21516": "More Leaves from the Inn of the Last Home",
+
+    "SVP4001": "Age of Mortals",
+    "SVP4002": "War of the Lance",
+    "SVP4003": "Legends of the Twins",
+
+    "SVP4201": "Key of Destiny",
+    "SVP4202": "Spectre of Sorrows",
+
+    "SVP4401": "Towers of High Sorcery",
+    "SVP4402": "Holy Orders of the Stars",
+    "SVP4403": "Knightly Orders of Ansalon",
+    "SVP4404": "Races of Ansalon",
+    "SVP4405": "Bestiary of Krynn (Revised)",
+
+    "SVP4801": "Bestiary of Krynn",
+    "SVP4802": "Dragonlance Adventure Game - cancelled",
+
+    "SVP4901": "Dungeon Master's Screen",
+    "SVP4902": "Tasslehoff's Map Pouch: The Age of Mortals",
+    "SVP4903": "Tasslehoff's Map Pouch: War of the Lance",
+
+    "DV1": "Dragonlance Volume 1: DL1 - DL8",
+    "DV2": "Dragonlance Volume 2: DL9 - DL16",
+
+    "WTC86990": "Dragonlance Campaign Setting"
+  },
+  "categories": [
+    {
+      "title": "Hardbacks",
+      "books": [
+        "2021"
+      ]
+    },
+    {
+      "title": "Boxed Sets",
+      "books": [
+        "1050",
+        "1074",
+        "1086",
+        "DV1",
+        "DV2"
+      ]
+    },
+    {
+      "title": "Accessories",
+      "books": [
+        "2143",
+        "8372",
+        "8446",
+        "8447",
+        "8448",
+        "9135",
+        "9144",
+        "9278",
+        "9344",
+        "9383",
+        "9400",
+        "2105"
+      ]
+    },
+    {
+      "title": "Adventures",
+      "books": [
+        "9130",
+        "9132",
+        "9131",
+        "9139",
+        "9140",
+        "9136",
+        "9141",
+        "9137",
+        "9142",
+        "9133",
+        "9176",
+        "9180",
+        "9231",
+        "9237",
+        "9275",
+        "9285",
+        "9294",
+        "9291",
+        "9394",
+        "9453",
+        "9243",
+        "9244",
+        "9245",
+        "9381",
+        "9382",
+        "9314",
+        "9319",
+        "9327",
+        "9334",
+        "9395",
+        "9396"
+      ]
+    },
+    {
+      "title": "The Fifth Age",
+      "categories": [
+        {
+          "title": "Boxed Sets",
+          "books": [
+            "1148",
+            "1149",
+            "1150",
+            "9543",
+            "9546",
+            "9517",
+            "9551",
+            "9554"
+          ]
+        },
+        {
+          "title": "Accessories",
+          "books": [
+            "9564",
+            "9565",
+            "9566",
+            "9588",
+            "21516"
+          ]
+        },
+        {
+          "title": "Adventures",
+          "books": [
+            "9587",
+            "11329",
+            "11372",
+            "11396",
+            "11350"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "3 ed",
+      "categories": [
+        {
+          "title": "Hardbacks",
+          "books": [
+            "WTC86990",
+            "SVP4001",
+            "SVP4002",
+            "SVP4003",
+            "SVP4401",
+            "SVP4402",
+            "SVP4403",
+            "SVP4404",
+            "SVP4405",
+            "SVP4801"
+          ]
+        },
+        {
+          "title": "Boxed Sets",
+          "books": [
+            "SVP4802"
+          ]
+        },
+        {
+          "title": "Accessories",
+          "books": [
+            "SVP4901",
+            "SVP4902",
+            "SVP4903"
+          ]
+        },
+        {
+          "title": "Adventures",
+          "books": [
+            "SVP4201",
+            "SVP4202"
+          ]
+        }
+      ]
+    }
+  ]
+}

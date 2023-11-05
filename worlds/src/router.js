@@ -25,6 +25,11 @@ export default new Router({
           component: () => import('@/views/wiki/World.vue'),
         },
         {
+          path: 'edit',
+          name: 'world-edit',
+          component: () => import('@/views/edit/World.vue'),
+        },
+        {
           path: 'wiki/:pageId',
           name: 'world-wiki',
           component: () => import('@/views/wiki/World.vue'),
@@ -66,19 +71,6 @@ export default new Router({
       path: '/walk',
       name: 'walk',
       component: () => import('@/views/Walk.vue'),
-    },
-    {
-      path: '/hello',
-      name: 'hello',
-      component: () => import('@/views/Home.vue'),
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
     },
     {
       path: '/categories',

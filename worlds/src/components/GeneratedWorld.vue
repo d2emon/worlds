@@ -7,18 +7,17 @@
     >
       <v-card>
         <v-list>
-          <v-list-tile
+          <v-list-item
             v-for="(item, id) in generated.children"
             :key="`item-${id}`"
             :to="`/generated/${item}`"
           >
-            <v-list-tile-content>
-              <v-list-tile-title v-text="item" />
-            </v-list-tile-content>
-          </v-list-tile>
+            <v-list-item-content>
+              <v-list-item-title v-text="item" />
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-card>
-      {{generated}}
     </v-container>
   </world>
 </template>

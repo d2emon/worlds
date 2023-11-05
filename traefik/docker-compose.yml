@@ -1,0 +1,83 @@
+version: '3'
+services:
+  traefik:
+    image: traefik:v2.0
+    restart: always
+    ports:
+      - 5051:80
+      - 5050:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      traefik.docker.network: default
+      traefik.port: 8080
+    networks:
+      - default
+    command: --api.insecure=true --providers.docker
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=wordpresspassword
+    labels:
+      - traefik.enable=false
+    networks:
+      - internal
+  wp-blog:
+    image: wordpress:4.7.5-apache
+    environment:
+      - WORDPRESS_DB_PASSWORD=wordpresspassword
+    labels:
+      traefik.docker.network: default
+      traefik.port: 8080
+    networks:
+      - internal
+      - default
+    depends_on:
+      - mysql
+  adminer:
+    image: adminer:4.3.1-standalone
+    labels:
+      traefik.docker.network: default
+      traefik.port: 8080
+      traefik.http.routers.adminer-worlds.rule: PathPrefix(`/admin`)
+      traefik.http.routers.adminer-worlds.middlewares: adminer-stripprefix
+      traefik.http.middlewares.adminer-stripprefix.stripprefix.prefixes: /admin
+    networks:
+      - internal
+      - default
+    depends_on:
+      - mysql
+  mail:
+    labels:
+      - "traefik.enable=false"
+  db:
+    labels:
+      traefik.enable: false
+  front:
+    labels:
+      traefik.port: 8081
+      traefik.http.routers.front-worlds.rule: Host(`worlds.local`)
+      traefik.http.services.front-worlds.loadbalancer.server.port: 80
+  back:
+    labels:
+      traefik.docker.network: default
+      traefik.port: 5000
+      traefik.http.routers.back-worlds.rule: PathPrefix(`/api`)
+      traefik.http.routers.back-worlds.middlewares: back-stripprefix
+      traefik.http.middlewares.back-stripprefix.stripprefix.prefixes: /api
+  blog-front:
+    environment:
+      - "BACKEND_ROOT=http://127.0.0.1:5002"
+    labels:
+      traefik.port: 8083
+      traefik.http.routers.blog-worlds.rule: Host(`blog.worlds.local`)
+  blog-back:
+    labels:
+      traefik.port: 5002
+      traefik.http.routers.blog-worlds.rule: Host(`blog-back.worlds.local`)
+networks:
+  default:
+    external:
+      name: worlds
+  internal:
+    external: false

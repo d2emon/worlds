@@ -34,6 +34,7 @@ app.register_blueprint(worlds)
 from .api.generated import blueprint as generated
 app.register_blueprint(generated)
 
+# Walk
 from .walk import blueprint as walk
 app.register_blueprint(walk)
 

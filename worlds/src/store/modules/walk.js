@@ -76,6 +76,10 @@ const actions = {
     commit('setMessage', {});
     return onMessage ? onMessage() : null;
   },
+  modalMessage: ({ dispatch }, message) => new Promise(resolve => dispatch('showMessage', {
+    message,
+    onMessage: resolve,
+  })),
 
   inputCommand: ({ commit, dispatch, state }, command) => {
     const onInput = (raw) => {
@@ -119,8 +123,8 @@ const actions = {
     }),
 
   restart: ({ dispatch, state }) => Promise.all([
-    walkService.getStart(state.name),
     dispatch('modalMessage', 'Entering Game ....'),
+    walkService.getStart(state.name),
   ])
     .then(([response]) => dispatch('processResponse', response))
     .then(response => dispatch('getRoom').then(() => response))
@@ -201,10 +205,6 @@ const actions = {
     commit('setDebugMode', debugMode);
   },
 
-  modalMessage: ({ dispatch }, message) => new Promise(resolve => dispatch('showMessage', {
-    message,
-    onMessage: resolve,
-  })),
   processResponse: ({ commit, dispatch }, {
     crapup,
     error,

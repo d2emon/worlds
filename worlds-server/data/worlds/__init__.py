@@ -14,8 +14,10 @@ class WorldFolder:
     field_names = [
         'author',
         'book_pages',
+        'books',
         'created_at',
         'image',
+        'image_url',
         'isbn',
         # 'index_page',
         'language',
@@ -33,8 +35,10 @@ class WorldFolder:
     serializable = [
         'author',
         'book_pages',
+        'books',
         'created_at',
         'image',
+        'image_url',
         'index_page',
         'isbn',
         'language',
@@ -55,9 +59,34 @@ class WorldFolder:
         }
 
     @property
-    def image(self):
-        image = self.fields.get('image')
-        return "{}/images/{}".format(self.slug, image) if image else None
+    def books(self):
+        def parse_book(book_id):
+            return {
+                'book_id': book_id,
+                'title': books.get(book_id),
+            }
+
+        def parse_category(category):
+            subcategory = category.get('categories')
+            return {
+                'title': category.get('title'),
+                'books': [parse_book(b) for b in category.get('books', [])],
+                'categories': subcategory and [parse_category(c) for c in subcategory],
+            }
+
+        filename = os.path.join(self.root, 'books.json')
+        if not os.path.isfile(filename):
+            return []
+        with open(filename, "r", encoding='utf-8') as fp:
+            data = json.load(fp)
+            books = data.get('books', {})
+            categories = data.get('categories', [])
+            return [parse_category(c) for c in categories]
+
+    @property
+    def image_url(self):
+        image_url = self.fields.get('image')
+        return "{}/images/{}".format(self.slug, image_url) if image_url else None
 
     @property
     def images(self):
@@ -77,7 +106,7 @@ class WorldFolder:
         if not os.path.exists(path):
             return
         for file in os.listdir(path):
-            yield Planet.load(path, os.path.splitext(os.path.basename(file))[0])
+            yield Planet.load(path, self.slug, os.path.splitext(os.path.basename(file))[0])
 
     @property
     def root(self):
@@ -124,13 +153,15 @@ class WorldFolder:
             self.load()
 
         computed = {
-            'image': self.image,
+            'books': self.books,
+            'image_url': self.image_url,
             'index_page': self.index_page,
             'planets': [__planet.fields for __planet in self.planets],
             'slug': self.slug,
             'title': self.title,
             'wiki': self.wiki,
         }
+        print(computed)
         return {
             **{key: self.fields.get(key) for key in self.serializable},
             **computed,
@@ -566,12 +597,12 @@ WORLDS_DATA = [
     {'title': 'Лавикандия'},
     {'title': 'Лайран'},
     {'title': 'Маска Красной Смерти'},
-    {
-        'title': 'Мир номер три',
-        'image': 'mir-nomer-tri/images/TretiyMir.jpg',
-        'slug': 'mir-nomer-tri',
-        'index_page': 'mir-nomer-tri/index.md',
-    },
+    # {
+    #     'title': 'Мир номер три',
+    #     'image': 'mir-nomer-tri/images/TretiyMir.jpg',
+    #     'slug': 'mir-nomer-tri',
+    #     'index_page': 'mir-nomer-tri/index.md',
+    # },
     {
         'title': 'Мир Полудня',
         'image': 'mir-poludnya/images/midday.jpg',

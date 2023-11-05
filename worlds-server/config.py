@@ -10,6 +10,9 @@ class Config:
 
     FRONT = os.getenv('WORLDS_FRONT', "http://localhost:8080/")
     BACK = os.getenv('WORLDS_BACK', "http://localhost:5000/")
+    WIKI_SERVER = os.getenv('WIKI_SERVER', "http://localhost:5000/")
+
+    WIKI_API_PATH = "api/wiki/"
 
     APP_DIR = os.path.dirname(__file__)
     ROOT_DIR = os.path.dirname(APP_DIR)

@@ -1,3 +1,4 @@
+from flask import current_app
 import logging
 import random
 import time
@@ -8,6 +9,7 @@ from .messages import process
 from .models.character import Character
 from .models.item import Item
 from .models.message import Message
+from .models.person import Person
 from .models.room import Room
 
 
@@ -50,11 +52,13 @@ class Player:
 
     UNARMED_DAMAGE = 4
 
-    def __init__(self, name):
+    def __init__(self):
+        self.__PLAYER = self
+
         # Set Fields
         self.character_id = 0  # mynum
-        self.name = "The {}".format(name) if name == "Phantom" else name  # globme
-        self.__message_id = -1  # cms
+        self.name = ""  # globme
+        self.__event_id = -1  # cms
 
         self.level = 10000  # my_lev
         self.strength = 0  # my_str
@@ -73,40 +77,30 @@ class Player:
 
         self.__room = None
 
-        # Talker
-        World.load()
-        self.character_id = Character.add(self.name)
-        self.read_messages()
-        # for c in Character.all():
-        #     print(c.serialized)
-        World.save()
-
-        self.start()
-        Globals.i_setup = True
-
-        self.__PLAYER = self
+        self.__zapped = False
+        self.__snoop_target = None
 
     @property
-    def message_id(self):
-        return self.__message_id
+    def event_id(self):
+        return self.__event_id
 
-    @message_id.setter
-    def message_id(self, value):
-        self.__message_id = value
+    @event_id.setter
+    def event_id(self, value):
+        self.__event_id = value
 
-        if abs(self.__message_id - self.__updated):
+        if abs(self.__event_id - self.__updated):
             return
 
-        World.load()
-        self.character.message_id = self.message_id
-        self.character.save()
-        self.__updated = self.message_id
+        character = Character(
+            character_id=self.character_id,
+            event_id=self.event_id,
+        )
+        character.save()
+
+        self.__updated = self.event_id
 
     @property
     def character(self):
-        #
-        World.load()
-        #
         return Character.get(self.character_id)
 
     @property
@@ -197,20 +191,10 @@ class Player:
         return None
 
     @classmethod
-    def player(cls, name="Name"):
+    def player(cls):
         if cls.__PLAYER is None:
-            cls.__PLAYER = cls(name)
+            cls.__PLAYER = cls()
         return cls.__PLAYER
-
-    @classmethod
-    def restart(cls, name):
-        cls.__PLAYER = cls(name)
-        return {
-            'player': {
-                'name': cls.__PLAYER.name,
-            },
-            'message': "Hello {}".format(cls.__PLAYER.name),
-        }
 
     @classmethod
     def set_pronoun(cls, character):
@@ -232,6 +216,89 @@ class Player:
             return
 
         Globals.wd_them = character
+
+    def as_dict(self):
+        return {
+            'character_id': self.character_id,
+            'name': self.name,
+
+            'messages': self.__text_messages,
+        }
+
+    @classmethod
+    def restore(cls):
+        return cls.player()
+
+    def restart(self, name):
+        Globals.i_setup = False
+
+        self.name = "The {}".format(name) if name == "Phantom" else name
+        self.__event_id = -1
+        self.__text_messages = []
+        self.character_id = Character.add(self.name)
+
+        # World.load()
+        self.read_messages()
+        # World.save()
+
+        self.start()
+        current_app.logger.debug('START')
+
+        Globals.i_setup = True
+        return self
+
+    def __do_turn(self):
+        # pbfr()
+        # sendmsg(self)
+        # if self.rd_qd:
+        #    self.read_messages()
+        # self.rd_wd = False
+        World.save()
+        # pbfr()
+
+    def __check_snoop(self):
+        if self.__snoop_target is None:
+            return
+        return sendsys(
+            self.__snoop_target,
+            self.name,
+            -400,
+            0,
+            "",
+        )
+
+    def save(self):
+        if self.__zapped:
+            return False
+
+        Person(
+            person_id=self.name,
+            strength=self.strength,
+            level=self.level,
+            flags=[self.character.sex],  # self.character.flags,
+            score=self.score,
+        ).save()
+        return True
+
+    def remove(self):
+        # Disable timer
+        Globals.i_setup = True
+
+        World.load()
+        dumpitems()
+        if self.character.visible < 10000:
+            sendsys(
+                self.name,
+                self.name,
+                -10113,
+                self.room_id,
+                "{name} has departed from AberMUDII\n".format(name=self.name),
+            )
+        self.character.name = ""
+        World.save()
+
+        self.__check_snoop()
+        return self.save()
 
     def start_fight(self, enemy, fight=300):
         self.__fight = enemy
@@ -274,14 +341,29 @@ class Player:
         elif helping.room_id != self.room_id:
             return self.__stop_help(helping.name)
 
+    def __process_event(self, event):
+        # 0
+        # 1 code
+        # 2 payload
+        # if player.debug_mode:
+        #     player.add_messages("", "<{}>".format(event.code))
+        if event.code < -3:
+            # gamrcv(event, self)
+            pass
+        else:
+            self.add_messages(event.payload)
+
     def read_messages(self, interrupt=False):
         World.load()
 
-        for block in Message.read_from(self.message_id):
-            mstoout(block, self)
+        current_app.logger.debug('Start reading Messages')
+        for event in Message.read_from(self.event_id):
+            # self.__event_id = event.event_id
+            self.__process_event(event)
 
-        self.message_id = Message.last_message_id()
+        self.event_id = Message.last_message_id()
         self.on_after_messages(interrupt=interrupt)
+        current_app.logger.debug('Finish reading Messages')
 
         Globals.rdes = 0
         Globals.tdes = 0
@@ -427,11 +509,12 @@ class Player:
             return
 
         logging.log("{} slain by {}".format(self.name, character.name))
-        dumpitems()
-        loseme()
+
+        saved = self.remove()
+        # "Saving {}".format(self.name) if self.remove() else "",
         World.save()
 
-        delpers(self.name)
+        Person.remove(self.name)
 
         World.load()
         sendsys(
@@ -472,12 +555,42 @@ class Player:
 
     # Specials
     def start(self):
-        self.__message_id = -1
+        def ask_sex():
+            # self.show_messages()
+            s = 'm'  # input("Sex (M/F) : ")[:1].lower()
+            if s[0] == 'm':
+                return 0
+            elif s[0] == 'f':
+                return 1
+            else:
+                return ask_sex()
+
+        def on_create():
+            # self.add_message("Creating character....")
+            self.score = 0
+            self.strength = 40
+            self.level = 1
+            self.sex = ask_sex()
+            return self
+
+        self.__event_id = -1
         Globals.curmode = True
 
-        initme()
+        person = Person.load(self, on_create)
+        self.score = person.score
+        self.strength = person.strength
+        self.level = person.level
+        self.sex = person.flags[0]
 
-        self.character.start(self.strength, self.level, self.sex)
+        Character(
+            self.character_id,
+            strength=self.strength,
+            level=self.level,
+            visible=0 if self.level < 10000 else 10000,
+            weapon=None,
+            sex=self.sex,
+            helping=None,
+        ).save()
 
         sendsys(
             self.name,
@@ -489,14 +602,14 @@ class Player:
         self.read_messages()
         self.room_id = random.choice((
             # START
-            # -5,
+            -5,
             # BLIZZARD
-            # -183,
+            -183,
             # -167,
             # DIZZY
             # -2515
             # ARDA
-            -14510,
+            # -14510,
         ))  # -5 if randperc() > 50 else -183
         self.set_room()
         sendsys(
@@ -509,10 +622,15 @@ class Player:
 
     # Actions
     def wait(self):
+        # if(sig_active==0) return;
+        # sig_aloff()
+        # World.load()
         self.read_messages(interrupt=True)
         self.on_time()
         World.save()
-        return {'messages': self.__text_messages}
+        # key_reprint()
+        # sig_alon()
+        return self.__text_messages
 
     @turn()
     def go(self, direction_id):
@@ -607,7 +725,10 @@ class Player:
         Globals.curmode = 0
         self.room_id = 0
 
-        saveme()
+        result = {
+            'message': "\nSaving {}".format(self.name) if self.save() else None,
+            'error': "Goodbye",
+        }
         raise StopGame('Goodbye')
 
     @turn('take')
@@ -710,8 +831,11 @@ class Player:
         if self.room.death_room:
             Globals.ail_blind = False
             if not self.is_wizard:
-                loseme(self.name)
-                raise StopGame("bye bye.....")
+                return {
+                    'save': self.remove(),
+                    # "Saving {}".format(self.name) if self.remove() else "",
+                    'message': "bye bye.....",
+                }
 
         World.load()
 
@@ -807,10 +931,14 @@ class Player:
         umbrella = Item.get(1)
         if not self.is_wizard and (not self.has_item(umbrella.item_id) or umbrella.state == 0):
             self.__room_id = room_id
-            loseme()
             return {
-                'message': "Wheeeeeeeeeeeeeeeee  <<<<SPLAT>>>>\nYou seem to be splattered all over the place\n",
-                'crapup': "I suppose you could be scraped up - with a spatula",
+                'save': self.remove(),
+                # "Saving {}".format(self.name) if self.remove() else "",
+                'message': "\n".join([
+                    "Wheeeeeeeeeeeeeeeee  <<<<SPLAT>>>>",
+                    "You seem to be splattered all over the place",
+                    "I suppose you could be scraped up - with a spatula",
+                ]),
             }
 
         sendsys(
@@ -874,10 +1002,6 @@ class Player:
         return {'message': "You find nothing.\n"}
 
     # Events
-
-    def on_error(self):
-        loseme(self)
-        return {'fatalError': 255}
 
     def on_look(self):
         turn_undead = self.has_item(45)
@@ -953,11 +1077,12 @@ class Player:
 
     def on_quit(self):
         if self.in_fight:
-            raise ActionError("^C\n")
-        loseme(self)
-        raise StopGame("Byeeeeeeeeee  ...........")
+            raise ActionError("^C")
+        return self.remove()
 
     def on_stop_game(self):
+        # pbfr()
+        # pr_due=0
         return self.get_text()
 
     def on_time(self):
@@ -1002,6 +1127,9 @@ def set_room(room_id):
 # TODO: Implement
 
 
+__MESSAGES = []
+
+
 def calibme(*args):
     # raise NotImplementedError()
     print("calibme({})".format(args))
@@ -1013,19 +1141,13 @@ def chkcrip(*args):
     return False
 
 
-def delpers(*args):
-    # raise NotImplementedError()
-    print("delpers({})".format(args))
-
-
 def dosumm(*args):
     # raise NotImplementedError()
     print("dosumm({})".format(args))
 
 
 def dumpitems(*args):
-    # raise NotImplementedError()
-    print("dumpitems({})".format(args))
+    raise NotImplementedError()
 
 
 def forchk(*args):
@@ -1038,24 +1160,10 @@ def gamecom(*args):
     print("gamecom({})".format(args))
 
 
-def initme(*args):
-    # raise NotImplementedError()
-    print("initme({})".format(args))
-
-
 def iswornby(*args):
     # raise NotImplementedError()
     print("iswornby({})".format(args))
     return False
-
-
-def loseme(*args):
-    raise NotImplementedError()
-
-
-def mstoout(*args):
-    # raise NotImplementedError()
-    print("mstoout({})".format(args))
 
 
 def obyte(*args):
@@ -1079,14 +1187,6 @@ def randperc(*args):
     # raise NotImplementedError()
     print("randperc({})".format(args))
     return 0
-
-
-def saveme(*args):
-    # raise NotImplementedError()
-    print("saveme({})".format(args))
-
-
-__MESSAGES = []
 
 
 def sendsys(*args):

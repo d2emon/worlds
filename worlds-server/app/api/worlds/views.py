@@ -1,64 +1,35 @@
-from flask import jsonify
+from flask import current_app
 from . import blueprint
-from data.worlds import WORLDS, World
-
-
-class RecordNotFound(Exception):
-    pass
-
-
-def world_by_slug(slug):
-    data = WORLDS.by_slug(slug)
-    if data is None:
-        raise RecordNotFound()
-    return World(**data)
-
-
-def planet_by_slug(world_id, planet_id):
-    item = world_by_slug(world_id).get_planet(planet_id)
-    if item is None:
-        raise RecordNotFound()
-    return item
-
-
-def wiki_by_slug(world_id=None, planet_id=None, page_id=None, page_type='page'):
-    if world_id is None:
-        return None
-    return world_by_slug(world_id).get_wiki(
-        planet_id=planet_id,
-        page_id=page_id,
-        page_type=page_type,
-    )
-
-
-def try_response(f):
-    try:
-        return jsonify({
-            'status': 'success',
-            **f(),
-        })
-    except RecordNotFound:
-        return jsonify({'status': 'fail'})
+from app.api.helpers import try_response
+from worlds import WorldModel
 
 
 @blueprint.route('/', methods=['GET'])
 def worlds():
     return try_response(lambda: {
-        'worlds': [World(**data).as_dict() for data in WORLDS.all()],
+        'worlds': [world.as_dict() for world in WorldModel.all()],
     })
 
 
 @blueprint.route('/world/<world_id>', methods=['GET'])
 def get_world(world_id):
     return try_response(lambda: {
-        'world': world_by_slug(world_id).as_dict(full=True),
+        'world': WorldModel.by_slug(world_id).as_dict(full=True),
+    })
+
+
+@blueprint.route('/world/<world_id>', methods=['PUT'])
+def put_world(world_id):
+    current_app.logger.debug(world_id)
+    return try_response(lambda: {
+        'world': WorldModel.by_slug(world_id).as_dict(full=True),
     })
 
 
 @blueprint.route('/world/<world_id>/planet/<planet_id>', methods=['GET'])
 def get_planet(world_id, planet_id):
     return try_response(lambda: {
-        'planet': planet_by_slug(world_id, planet_id).as_dict(full=True),
+        'planet': WorldModel.planet(world_id, planet_id).as_dict(full=True),
     })
 
 
@@ -67,7 +38,7 @@ def get_planet(world_id, planet_id):
 @blueprint.route('/wiki/page/<path:page_id>', methods=['GET'])
 def get_wiki(world_id=None, planet_id=None, page_id='index', page_type='page'):
     return try_response(lambda: {
-        'wiki': wiki_by_slug(
+        'wiki': WorldModel.wiki(
             world_id=world_id,
             planet_id=planet_id,
             page_id=page_id,

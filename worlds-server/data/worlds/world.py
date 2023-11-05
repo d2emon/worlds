@@ -1,6 +1,6 @@
 import os
 from app import app
-from ..wikifiles import get_wiki, list_wiki, wikis
+from ..wikifiles import wikis, WikiFile
 from .planet import Planet
 
 
@@ -31,6 +31,7 @@ class World:
     __fields = {
         'id': Field('id', is_main=True),
         'author': Field('author'),
+        'books': Field('books'),
         'book_pages': Field('book_pages', serialize_name='bookPages'),
         'created_at': Field('created_at', serialize_name='createdAt'),
         'data_loader': Field(
@@ -38,11 +39,13 @@ class World:
             is_hidden=True,
             default=lambda: {},
         ),
-        'image': Field(
-            'image',
+        'image': Field('image'),
+        'image_url': Field(
+            'image_url',
             default="portal.jpg",
             is_main=True,
-            normalize=lambda item: item and '{}/wiki/{}'.format(app.config.get('MEDIA_URL'), item)
+            normalize=lambda item: item and '{}/wiki/{}'.format(app.config.get('MEDIA_URL'), item),
+            serialize_name='imageUrl',
         ),
         'index_page': Field('index_page', serialize_name='indexPage'),
         'isbn': Field('isbn'),
@@ -94,10 +97,10 @@ class World:
         return sorted(
             [
                 {
-                    'title': self.get_field('pages').get(file, file),
-                    'url': file,
+                    'title': self.get_field('pages').get(file.title, file.title),
+                    'url': file.title,
                 }
-                for file in list_wiki(self.get_field('slug'))
+                for file in WikiFile.pages(self.get_field('slug'))
             ],
             key=lambda item: item.get('title', 0),
         )
@@ -138,7 +141,7 @@ class World:
             return None
 
         if page_id is None:
-            return get_wiki(self.get_field('index_page'))
+            return WikiFile(path=self.get_field('index_page')).get_wiki()
 
         path = self.get_field('slug')
         if planet_id is not None:
@@ -146,7 +149,7 @@ class World:
         if page_type == 'map':
             path = os.path.join(path, 'map')
         path = os.path.join(path, "{}.md".format(page_id))
-        return get_wiki(path)
+        return WikiFile(path=path).get_wiki()
 
     # Dictionary
     def as_dict(self, full=False):

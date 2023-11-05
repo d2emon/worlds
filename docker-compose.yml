@@ -1,5 +1,46 @@
-version: '2'
+version: '3'
 services:
+  mail:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - internal
+  db:
+    build: ./db
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+    depends_on:
+      - mail
+    links:
+      - mail
+    ports:
+      - "5002:5000"
+    volumes:
+      - "./db:/app"
+      - "./log:/app/log"
+    networks:
+      - internal
+  search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - "./search/searchdata:/usr/share/elasticsearch/data"
+    networks:
+      - internal
+  redis:
+    image: redis:3-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - "./redis/data:/data"
+    networks:
+      - internal
   front:
     build: ./worlds
     environment:
@@ -8,39 +49,58 @@ services:
       - "8081:8080"
     volumes:
       - "./worlds:/app"
+    networks:
+      - worlds
+  walker:
+    build: ./walker-server
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+    ports:
+      - "5004:5000"
+    volumes:
+      - "./walker-server:/app"
+      - "./config.py:/app/config.py"
+      - "./media:/media"
+      - "./log:/app/log"
+    networks:
+      - worlds
+      - internal
+  wiki:
+    build: ./wiki-server
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+    ports:
+      - "5003:5000"
+    volumes:
+      - "./wiki-server:/app"
+      - "./config.py:/app/config.py"
+      - "./media:/media"
+      - "./log:/app/log"
+    networks:
+      - worlds
+      - internal
   back:
     build: ./worlds-server
-    depends_on:
-      - front
     environment:
       - FLASK_DEBUG=1
       - FLASK_ENV=development
       - WORLDS_FRONT=http://worlds_front_1:8080/
+      - WIKI_SERVER=http://worlds_wiki_1:5000/
+    depends_on:
+      - front
+      - db
+      - mail
     links:
       - front
+      - wiki
     ports:
       - "5000:5000"
     volumes:
       - "./worlds-server:/app"
       - "./config.py:/app/config.py"
       - "./media:/media"
-      - "./log:/app/log"
-  mail:
-    image: mailhog/mailhog:v1.0.0
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-  db:
-    build: ./db
-    environment:
-      - FLASK_DEBUG=1
-      - FLASK_ENV=development
-    links:
-      - mail
-    ports:
-      - "5002:5000"
-    volumes:
-      - "./db:/app"
       - "./log:/app/log"
   blog:
     build: ./blog
@@ -54,3 +114,40 @@ services:
     volumes:
       - "./blog:/app"
       - "./log:/app/log"
+  blog-back:
+    build: https://github.com/d2emon/flask-blog.git
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+      - ELASTICSEARCH_URL=search:9200
+      - MAIL_SERVER=mail
+      - MAIL_PORT=1025
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - mail
+      - search
+      - redis
+    links:
+      - mail
+      - search
+      - redis
+    ports:
+      - "5001:5000"
+    volumes:
+      - "./blog-db:/db"
+      - "./log:/log"
+  blog-front:
+    build: https://github.com/d2emon/vue-blog.git
+    environment:
+      - "BACKEND_ROOT=http://127.0.0.1:5002"
+    depends_on:
+      - blog-back
+    links:
+      - blog-back
+    ports:
+      - "8083:8080"
+networks:
+  worlds:
+    external: true
+  internal:
+    external: false

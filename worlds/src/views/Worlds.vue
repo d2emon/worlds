@@ -1,7 +1,7 @@
 <template>
   <v-layout justify-center>
-    <v-flex xs12 sm9>
-      <worlds-list :worlds="worlds" />
+    <v-flex xs12 xl9>
+      <worlds-list :worlds="sorted" />
     </v-flex>
   </v-layout>
 </template>
@@ -22,10 +22,28 @@ export default {
       'worlds',
     ]),
   },
+  data: () => ({
+    sorted: [],
+  }),
   methods: {
     ...mapActions('worlds', [
       'getWorlds',
     ]),
+    sortWorlds(worlds, mode) {
+      if (mode === 'title') {
+        return worlds.sort((a, b) => {
+          if (a.title > b.title) return 1;
+          if (a.title < b.title) return -1;
+          return 0;
+        });
+      }
+      return worlds;
+    },
+  },
+  watch: {
+    worlds(value) {
+      this.sorted = value ? this.sortWorlds([...value], 'title') : [];
+    },
   },
   mounted() {
     this.getWorlds();

@@ -1,0 +1,1 @@
+[["fire","ice","forst","arcane","ancient","wise","guardian","copper","bronze","steel","obsidian","gem","undead","skeletal","sea","sky","cloud","green","red","white","golden","silver","chrome","rainbow","mist","mother"],[" "],["dragon","wyrm","wyvern","guivre"]]

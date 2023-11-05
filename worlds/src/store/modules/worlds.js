@@ -37,6 +37,13 @@ const actions = {
       html: wiki2html(world.text, worldId),
     }))
     .then(world => commit('setWorld', world)),
+  setWorld: ({ commit }, { slug, ...data }) => worldsService
+    .putWorld(slug, data)
+    .then(world => ({
+      ...world,
+      html: wiki2html(world.text, slug),
+    }))
+    .then(world => commit('setWorld', world)),
   getWiki: ({ commit }, params) => (params.pageId
     ? worldsService.getWiki(params)
     : Promise.resolve(null)

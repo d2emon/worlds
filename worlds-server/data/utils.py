@@ -79,8 +79,5 @@ class Database:
 class ListDatabase(Database):
     def __init__(self, items):
         super().__init__()
-        map(self.add, items)
-
-    @property
-    def items(self):
-        return self.all()
+        for item in items:
+            self.add(item)

@@ -48,7 +48,7 @@
     <v-content>
       <v-container>
         <v-layout justify-center>
-          <v-flex xs12 sm9>
+          <v-flex xs12 xl9>
             <router-view />
           </v-flex>
         </v-layout>

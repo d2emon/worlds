@@ -1,249 +1,306 @@
-const Globals = {
-  mynum: 0,
-  myLev: 0,
-  mySco: 0,
-  globme: '',
-  curch: 0,
-};
-const sendsys = (from_player, to_player, code, chanel, message) => null;
-const oname = (itemId) => '';
-const otstbit = (itemId, bitId) => false;
-const obyte = (itemId, byteId) => 0;
-const pname = (playerId) => '';
-const pstr = (playerId) => 0;
-const plev = (playerId) => 0;
-const damof = (playerId) => 0;
-const setpstr = (playerId, value) => null;
-const brkword = () => null;
-const bprintf = text => console.log(text);
-const calibme = () => null;
-const randperc = () => 50;
-const iscarrby = (itemId, playerId) => false;
-const iswornby = (itemId, playerId) => false;
-const fobnc = (item) => null;
-const woundmn = (playerId, damage) => null;
-const __p = text => text;
+import addMessage, {
+  visualName,
+} from './bprintf';
+import {
+  getState,
+  setState,
+} from './state';
+import {
+  sendWound,
+  sendMessage,
+  sendWizardMessage,
+} from './events';
+import {
+  getItem,
+  getPlayer, loadWorld, saveWorld,
+  setPlayer,
+} from './world';
+import {
+  updatePlayer,
+} from './parse';
+import {
+  randomPercent,
+} from './magic';
+import {
+  dumpItems,
+  findItemAvailable,
+  findItemOwned,
+  findPlayerVisible,
+  isCarriedBy,
+} from './objsys';
+import {
+  isWornBy,
+  woundMonster,
+} from './new1';
+import {
+  sysReset,
+} from './mobile';
+import {
+  loose,
+} from './player';
+import {
+  deleteUser,
+} from './newuaf';
+import {
+  error,
+} from './crapup';
 
-export const Blood = {
-  inFight: 0,
+const unarmedDamage = 4;
+const onBreakItem = {
+  171: () => sysReset(),
+};
+const onHitWithItem = {
+  32: (target) => {
+    if (isCarriedBy(getItem(16), target)) {
+      throw new Error('The runesword flashes back away from its target, growling in anger!');
+    }
+    return true;
+  },
+};
+
+const maxDamageByItem = (item) => {
+  if (!item) return unarmedDamage;
+  return item.isWeapon ? item.data[0] : null;
+};
+
+const breakItem = (item) => {
+  if (!item) {
+    addMessage('What is that?');
+    return;
+  }
+
+  const event = onBreakItem[item.itemId];
+  if (!event) {
+    addMessage('You can\'t do that');
+    return;
+  }
+
+  event();
+};
+
+const playerWounded = (player, weapon, damage) => {
+  if (player.isBot) {
+    return woundMonster(player, damage || 0);
+  }
+
+  const {
+    playerId,
+    channel,
+  } = getState();
+  return sendWound(
+    player.playerId,
+    playerId,
+    channel,
+    damage || null,
+    weapon,
+  );
+};
+
+const startFight = target => setState({
+  fighting: target,
+  inFight: 300,
+});
+const stopFight = () => setState({
   fighting: null,
-  wpnheld: null,
-};
+  inFight: 0,
+});
 
-const damageByItem = (itemId) => {
-  if (!itemId) return 4;
-  if (!otstbit(itemId, 15)) return null;
-  return obyte(itemId, 0);
-};
+export const weapcom = (itemName) => {
+  if (!itemName) {
+    throw new Error('Which weapon do you wish to select though');
+  }
 
-export const weapcom = () => {
-  const itemName = brkword();
-  if (!itemName) return bprintf('Which weapon do you wish to select though');
+  const item = findItemOwned(itemName);
+  if (!item) {
+    throw new Error('Whats one of those?');
+  }
 
-  const itemId = fobnc(itemName);
-  if (!itemId) return bprintf('Whats one of those?');
-
-  const damage = damageByItem(itemId);
+  const damage = maxDamageByItem(item);
   if (!damage) {
-    Blood.wpnheld = null;
-    return bprintf('That\'s not a weapon');
+    return setState({ weapon: null })
+      .then(() => throw new Error('That\'s not a weapon'));
   }
 
-  Blood.wpnheld = itemId;
-  calibme();
-  bprintf('OK...');
+  return Promise.all([
+    setState({ weapon: item.itemId }),
+    updatePlayer(),
+  ])
+    .then(() => addMessage('OK...'));
 };
 
-export const hitplayer = (target, weapon) => {
-  if (!pname(target)) return;
+export const hitPlayer = (target, weaponId) => {
+  const player = getPlayer(target);
+  if (!player.name) return Promise.resolve();
 
-  if (weapon && !iscarrby(weapon, Globals.mynum)) {
-    bprintf(`You belatedly realise you dont have the ${oname(weapon)},and are forced to use your hands instead..`);
-    weapon = null;
+  let item = getItem(weaponId);
+  const {
+    playerId,
+  } = getState();
+  if (isCarriedBy(item, playerId)) {
+    addMessage(
+      `You belatedly realise you dont have the ${item.name},and are forced to use your hands instead..`,
+    );
+    item = null;
   }
 
-  Blood.wpnheld = weapon;
-
-  if ((weapon === 32) && iscarrby(16, target)) {
-    bprintf('The runesword flashes back away from its target, growling in anger!');
-    return;
-  }
-  if (damageByItem(weapon) === null) {
-    weapon = null;
-    bprintf('That\'s no good as a weapon');
-    return;
-  }
-  if (Blood.inFight) {
-    bprintf('You are already fighting!');
-    return;
-  }
-
-  Blood.fighting = target;
-  Blood.inFight = 300;
-
-  const res = randperc();
-  let toHit = 40 + 3 * Globals.myLev;
-  if ([89, 113, 114].some(itemId => iswornby(itemId, target))) {
-    toHit -= 10;
-  }
-  if (toHit < 0) {
-    toHit = 0;
-  }
-
-  if (res < toHit) {
-    let message = `You hit ${__p(pname(target))}`;
-    if (weapon) {
-      message += ` with the ${oname(weapon)}`;
-    }
-    bprintf(message);
-    const damage = randperc() % damageByItem(weapon);
-    const x = {
-      enemy: Globals.mynum,
-      damage,
-      weapon,
-    };
-
-    if (pstr(target) - damage < 0) {
-      bprintf('Your last blow did the trick');
-
-      if (pstr(target) >= 0) {
-        Globals.mySco += (target < 16)
-          ? (plev(target) * plev(target) * 100)
-          : (10 * damof(target));
+  return setState({ weapon: item && item.itemId })
+    .then((state) => {
+      const event = item && onHitWithItem[item.itemId];
+      if (event) {
+        event();
       }
-      setpstr(target, -1);
-      Blood.inFight = 0;
-      Blood.fighting = null;
-    }
 
-    if (target < 16) {
-      sendsys(pname(target), Globals.globme, -10021, Globals.curch, x);
-    } else {
-      woundmn(target, damage);
-    }
-
-    Globals.mySco += damage * 2;
-    calibme();
-  } else {
-    bprintf(`You missed ${__p(pname(target))}`);
-    const x = {
-      enemy: Globals.mynum,
-      damage: null,
-      weapon,
-    };
-    if (target < 16) {
-      sendsys(pname(target), Globals.globme, -10021, Globals.curch, x);
-    } else {
-      woundmn(target, 0);
-    }
-  }
-};
-
-export const killcom = () => {
-  const target = brkword();
-  if (!target) {
-    return bprintf('Kill who');
-  }
-  if (target === 'door') {
-    return bprintf('Who do you think you are, Moog?');
-  }
-
-  const itemId = fobna(target);
-  if (itemId) {
-    return breakItem(itemId);
-  }
-
-  const playerId = fpbn(target);
-  if (!playerId) {
-    return bprintf('You can\'t do that');
-  }
-  if (playerId === Globals.mynum) {
-    return bprintf('Come on, it will look better tomorrow...');
-  }
-  if (ploc(playerId) !== Globals.curch) {
-    return bprintf('They aren\'t here');
-  }
-
-  const xwisc = (weapon) => {
-    if (!weapon) {
-      return hitplayer(target, Blood.wpnheld);
-    }
-
-    if (weapon === 'with') {
-      weapon = brkword();
-      if (!weapon) {
-        return bprintf('with what?');
-      } else {
-        return xwisc(weapon);
+      if (maxDamageByItem(item) === null) {
+        throw new Error('That\'s no good as a weapon');
       }
-    }
+      if (state.inFight) {
+        throw new Error('You are already fighting!');
+      }
 
-    const weaponId = fobnc(weapon);
-    if (!weaponId) {
-      return bprintf('with what?');
-    }
-    hitplayer(playerId, weaponId);
-    return null;
-  };
+      return startFight(target);
+    })
+    .then((state) => {
+      const ac = [89, 113, 114].some(armor => isWornBy(getItem(armor), target)) ? 10 : 0;
+      const res = randomPercent();
+      const toHit = 40 + 3 * state.level - ac;
+      if (res < toHit) {
+        const weaponMessage = item ? ` with the ${item.name}` : '';
+        addMessage(`You hit ${visualName(player.name)} ${weaponMessage}`);
+        const damage = randomPercent() % maxDamageByItem(item);
 
-  xwisc(brkword());
-};
+        const promises = [];
+        if (player.strength < damage) {
+          addMessage('Your last blow did the trick');
 
-export const bloodrcv = (data, isMe) => {
-  if (!isMe) return;
-  if (!data.enemy) return;
-
-  if (!pname(data.enemy)) return;
-  Blood.fighting = data.enemy;
-  Blood.inFight = 300;
-  if (!data.damage) {
-    let message = `${__p(pname(data.enemy))} attacks you`;
-    if (data.weapon) {
-      message += ` with the ${oname(data.weapon)}`;
-    }
-    bprintf(message);
-  } else {
-    let message = `You are wounded by ${__p(pname(data.enemy))}`;
-    if (data.weapon) {
-      message += ` with the ${oname(data.weapon)}`;
-    }
-    bprintf(message);
-
-    if (Globals.myLev < 10) {
-      Globals.myStr -= data.damage;
-      if (data.enemy === 16) {
-        Globals.mySco -= 100 * data.damage;
-        bprintf('You feel weaker, as the wraiths icy touch seems to drain your very life force');
-        if (Globals.mySco < 0) {
-          Globals.myStr = -1;
+          promises.push(setState({
+            score: (player.strength >= 0)
+              ? state.score + player.value
+              : state.score,
+          }));
+          promises.push(setPlayer({
+            ...player,
+            strength: -1,
+          }));
+          promises.push(stopFight());
         }
+        promises.push(playerWounded(player, item.itemId, damage));
+        return Promise.all(promises)
+          .then(() => setState({ score: state.score + (damage * 2) }))
+          .then(updatePlayer);
       }
-    }
-
-    if (Globals.myStr < 0) {
-      console.log(`${Globals.globme} slain by ${pname(data.enemy)}`);
-      dumpitems();
-      loseme();
-      closeworld();
-
-      delpers(Globals.globme);
-
-      openworld();
-      sendsys(Globals.globme, Globals.globme, -10000, Globals.curch, `${__p(Globals.globme)} has just died.`);
-      sendsys(Globals.globme, Globals.globme, -10113, Globals.curch, `[ ${__p(Globals.globme)} has been slain by ${pname(data.enemy)} ]`);
-      crapup('Oh dear... you seem to be slightly dead');
-    }
-
-    Globals.meCal = true;
-  }
+      addMessage(`You missed ${visualName(player.name)}`);
+      return playerWounded(player, item.itemId, 0);
+    })
+    .catch(e => addMessage(e.message));
 };
 
-const breakItem = (itemId) => {
-  if (itemId === 171) {
-    return sysReset();
-  }
-  if (!itemId) {
-    return bprintf('What is that?');
-  }
-  return bprintf('You can\'t do that');
+export const killcom = (target, weaponName = null, ...args) => Promise.resolve()
+  .then(() => {
+    if (!target) {
+      throw new Error('Kill who');
+    }
+    if (target === 'door') {
+      throw new Error('Who do you think you are, Moog?');
+    }
+
+    const item = findItemAvailable(target);
+    if (item) {
+      return breakItem(item);
+    }
+
+    const player = findPlayerVisible(target);
+    const state = getState();
+    if (!player) {
+      throw new Error('You can\'t do that');
+    }
+    if (player.playerId === state.playerId) {
+      throw new Error('Come on, it will look better tomorrow...');
+    }
+    if (player.location !== state.channel) {
+      throw new Error('They aren\'t here');
+    }
+
+    const xwisc = (selectWeapon) => {
+      if (!selectWeapon) {
+        return hitPlayer(player.playerId, state.weapon);
+      }
+
+      if (selectWeapon === 'with') {
+        const itemName = args.length && args[0];
+        if (!itemName) {
+          throw new Error('with what?');
+        }
+        return xwisc(itemName);
+      }
+
+      const weapon = findItemAvailable(selectWeapon);
+      if (!weapon) {
+        throw new Error('with what?');
+      }
+      return hitPlayer(player.playerId, weapon.itemId);
+    };
+
+    return xwisc(weaponName);
+  })
+  .catch(e => addMessage(e.message));
+
+export const bloodrcv = (data, enemyId, isMe) => {
+  if (!isMe) return Promise.resolve();
+
+  const enemy = getPlayer(enemyId);
+  if (!enemy) return Promise.resolve();
+  if (!enemy.name) return Promise.resolve();
+
+  return setState({
+    fighting: enemyId,
+    inFight: 300,
+  })
+    .then((state) => {
+      const item = getItem(data.weapon);
+      const weaponMessage = item ? ` with the ${item.name}` : '';
+      if (!data.damage) {
+        throw new Error(`${visualName(enemy.name)} attacks you${weaponMessage}`);
+      }
+
+      addMessage(`You are wounded by ${visualName(enemy.name)}${weaponMessage}`);
+
+      if (state.level < 10) {
+        let {
+          strength,
+          score,
+        } = state;
+        strength -= data.damage;
+        if (enemy.playerId === 16) {
+          score -= 100 * data.damage;
+          addMessage('You feel weaker, as the wraiths icy touch seems to drain your very life force');
+          if (score < 0) {
+            strength = -1;
+          }
+        }
+        return setState({
+          strength,
+          score,
+        });
+      }
+      return state;
+    })
+    .then((state) => {
+      if (state.strength < 0) {
+        console.log(`${state.name} slain by ${enemy.name}`);
+        return Promise.resolve()
+          .then(dumpItems)
+          .then(loose)
+          .then(saveWorld)
+          .then(() => deleteUser(state.name))
+          .then(loadWorld)
+          .then(() => {
+            sendMessage(state.playerId, state.channel, `${visualName(state.name)} has just died.`);
+            sendWizardMessage(`[ ${visualName(state.name)} has been slain by ${enemy.name} ]`);
+            return error('Oh dear... you seem to be slightly dead');
+          });
+      }
+      return null;
+    })
+    .then(() => setState({ toUpdate: true }))
+    .catch(e => addMessage(e.message));
 };
